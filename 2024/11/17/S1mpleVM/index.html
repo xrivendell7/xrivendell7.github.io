@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>S1mpleVM | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="S1mpleVM12345if ( (unsigned int)sub_140001D30(v30, v8) )&#123;  sub_1400011B0(&quot;Ultimate secret box is not only the name muahahaha&quot;);  return 0;&#125;  可以找到最关键的函数 sub_140001D30 就是 VM 入口 查看这个函">
+<meta property="og:type" content="article">
+<meta property="og:title" content="S1mpleVM">
+<meta property="og:url" content="http://example.com/2024/11/17/S1mpleVM/index.html">
+<meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
+<meta property="og:description" content="S1mpleVM12345if ( (unsigned int)sub_140001D30(v30, v8) )&#123;  sub_1400011B0(&quot;Ultimate secret box is not only the name muahahaha&quot;);  return 0;&#125;  可以找到最关键的函数 sub_140001D30 就是 VM 入口 查看这个函">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/image-20251107213047428.png">
+<meta property="article:published_time" content="2024-11-17T14:05:32.000Z">
+<meta property="article:modified_time" content="2025-11-17T14:06:46.885Z">
+<meta property="article:author" content="xrivendell7">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image-20251107213047428.png">
+  
+    <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xrivendell7&#39;s ctf blog（佩奇小屋）</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-S1mpleVM" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/11/17/S1mpleVM/" class="article-date">
+  <time class="dt-published" datetime="2024-11-17T14:05:32.000Z" itemprop="datePublished">2024-11-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      S1mpleVM
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="S1mpleVM"><a href="#S1mpleVM" class="headerlink" title="S1mpleVM"></a>S1mpleVM</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if ( (unsigned int)sub_140001D30(v30, v8) )</span><br><span class="line">&#123;</span><br><span class="line">  sub_1400011B0(&quot;Ultimate secret box is not only the name muahahaha&quot;);</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以找到最关键的函数 <code>sub_140001D30</code> 就是 VM 入口</p>
+<p>查看这个函数有很明显的 vm_handler</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall vmrun(char *input, char *vmcode)</span><br><span class="line">&#123;</span><br><span class="line">  //some defs for local variable</span><br><span class="line">  v2 = 0LL;</span><br><span class="line">  v3 = *vmcode - 16;</span><br><span class="line">  v5 = v48;</span><br><span class="line">  v6 = vmcode + 1;</span><br><span class="line">  while ( 2 )</span><br><span class="line">  &#123;</span><br><span class="line">    switch ( v3 )</span><br><span class="line">    &#123;</span><br><span class="line">      case 0u:</span><br><span class="line">        if ( v2 )</span><br><span class="line">        &#123;</span><br><span class="line">          v9 = v2;</span><br><span class="line">          v2 = (signed int *)*((_QWORD *)v2 + 1);</span><br><span class="line">          v7 = *v9;</span><br><span class="line">          free(v9);</span><br><span class="line">          if ( v2 )</span><br><span class="line">          &#123;</span><br><span class="line">            v10 = v2;</span><br><span class="line">            v2 = (signed int *)*((_QWORD *)v2 + 1);</span><br><span class="line">            v8 = *v10;</span><br><span class="line">            free(v10);</span><br><span class="line">          &#125;</span><br><span class="line">          else</span><br><span class="line">          &#123;</span><br><span class="line">            v8 = 0x80000000;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">          v7 = 0x80000000;</span><br><span class="line">          v8 = 0x80000000;</span><br><span class="line">        &#125;</span><br><span class="line">        v11 = (signed int *)j__malloc_base(0x10uLL);</span><br><span class="line">        *v11 = v7 % v8;</span><br><span class="line">        goto LABEL_53;</span><br><span class="line">      case 1u:</span><br><span class="line">        //...</span><br><span class="line">LABEL_53:</span><br><span class="line">      *((_QWORD *)v11 + 1) = v2;</span><br><span class="line">      v2 = v11;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>恢复结构体之后这个 vm 还是很一目了然的，下面解释一下各个 opcode 的作用。</p>
+<ul>
+<li>0：取模操作（先弹出的值在运算符左侧）</li>
+<li>1：push 操作</li>
+<li>2：pop 操作</li>
+<li>3：乘法操作</li>
+<li>4：加法操作</li>
+<li>5：输出</li>
+<li>6：取输入指针</li>
+<li>7：右移位后取最低位（先弹出的值在运算符右侧）</li>
+<li>8：异或操作</li>
+<li>9：输入指针+1</li>
+<li>10：返回</li>
+<li>11：减法操作（先弹出的值在运算符左侧）</li>
+<li>12：除法操作（先弹出的值在运算符左侧）</li>
+</ul>
+<p>运行根据程序写的cpp文件，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">g++ test.cpp -o test</span><br><span class="line">./test</span><br><span class="line">./test &gt; output.txt</span><br></pre></td></tr></table></figure>
+
+<p>节选一段log：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">get 1 input</span><br><span class="line">push val 102</span><br><span class="line">push val 0</span><br><span class="line">calc (102&gt;&gt;0)&amp;1=0</span><br><span class="line">push val 0</span><br><span class="line">push val 2</span><br><span class="line">calc 2*0=0</span><br><span class="line">push val 0</span><br><span class="line">get 1 input</span><br><span class="line">push val 102</span><br><span class="line">push val 1</span><br><span class="line">calc (102&gt;&gt;1)&amp;1=1</span><br><span class="line">push val 1</span><br><span class="line">push val 3</span><br><span class="line">calc 3*1=3</span><br><span class="line">push val 3</span><br><span class="line">get 1 input</span><br><span class="line">push val 102</span><br><span class="line">push val 2</span><br><span class="line">calc (102&gt;&gt;2)&amp;1=1</span><br><span class="line">push val 1</span><br><span class="line">push val 67</span><br><span class="line">calc 67*1=67</span><br><span class="line">push val 67</span><br><span class="line">get 1 input</span><br><span class="line">push val 102</span><br><span class="line">push val 3</span><br><span class="line">calc (102&gt;&gt;3)&amp;1=0</span><br><span class="line">push val 0</span><br><span class="line">push val 37</span><br><span class="line">calc 37*0=0</span><br><span class="line">push val 0</span><br><span class="line">get 1 input</span><br><span class="line">push val 102</span><br><span class="line">push val 4</span><br><span class="line">calc (102&gt;&gt;4)&amp;1=0</span><br><span class="line">push val 0</span><br><span class="line">push val 41</span><br><span class="line">calc 41*0=0</span><br><span class="line">push val 0</span><br><span class="line">get 1 input</span><br><span class="line">push val 102</span><br><span class="line">push val 5</span><br><span class="line">calc (102&gt;&gt;5)&amp;1=1</span><br><span class="line">push val 1</span><br><span class="line">push val 11</span><br><span class="line">calc 11*1=11</span><br><span class="line">push val 11</span><br><span class="line">get 1 input</span><br><span class="line">push val 102</span><br><span class="line">push val 6</span><br><span class="line">calc (102&gt;&gt;6)&amp;1=1</span><br><span class="line">push val 1</span><br><span class="line">push val 13</span><br><span class="line">calc 13*1=13</span><br><span class="line">push val 13</span><br><span class="line">get 1 input</span><br><span class="line">push val 102</span><br><span class="line">push val 7</span><br><span class="line">calc (102&gt;&gt;7)&amp;1=0</span><br><span class="line">push val 0</span><br><span class="line">push val 89</span><br><span class="line">calc 89*0=0</span><br><span class="line">push val 0</span><br><span class="line">calc 0+13=13</span><br><span class="line">push val 13</span><br><span class="line">calc 13+11=24</span><br><span class="line">push val 24</span><br><span class="line">calc 24+0=24</span><br><span class="line">push val 24</span><br><span class="line">calc 24+0=24</span><br><span class="line">push val 24</span><br><span class="line">calc 24+67=91</span><br><span class="line">push val 91</span><br><span class="line">calc 91+3=94</span><br><span class="line">push val 94</span><br><span class="line">calc 94+0=94</span><br><span class="line">push val 94</span><br><span class="line">push val 70</span><br><span class="line">calc 70^94=24</span><br><span class="line">push val 24</span><br><span class="line">get 2 input</span><br><span class="line">push val 108</span><br><span class="line">push val 0</span><br><span class="line">calc (108&gt;&gt;0)&amp;1=0</span><br></pre></td></tr></table></figure>
+
+<p>最前面输出了一句话：Thank for providing passcode, my ultimate secret box is checking…</p>
+<p>跳过之后，发现它在频繁的取输入字符并做 <code>(x&gt;&gt;y)&amp;1</code> 的运算，y 从 <code>0~7</code>。这是在一个一个取出输入字节的每一位，每一位都对应了一个权值。第一个字节可以看出来，从低位到高位权值分别为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2 3 67 37 41 11 13 89</span><br></pre></td></tr></table></figure>
+
+<p>得到权值的方法：在 <code>*</code> 运算中加入 <code>fprintf(stderr,&quot;%d,&quot;,reg2);</code></p>
+<p>最后，它将所有权值相加，得到的结果和 70 做异或运算得到 24，将该值存入栈底。</p>
+<p>得到异或目标值：在异或的 opcode 中加入 <code>fprintf(stderr,&quot;%d,&quot;,reg2);</code></p>
+<p>看log的最后</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">calc 137+71=208</span><br><span class="line">push val 208</span><br><span class="line">calc 208+39=247</span><br><span class="line">push val 247</span><br><span class="line">calc 247+120=367</span><br><span class="line">push val 367</span><br><span class="line">calc 367+22=389</span><br><span class="line">push val 389</span><br><span class="line">calc 389+119=508</span><br><span class="line">push val 508</span><br><span class="line">calc 508+89=597</span><br><span class="line">push val 597</span><br><span class="line">calc 597+22=619</span><br><span class="line">push val 619</span><br><span class="line">calc 619+218=837</span><br><span class="line">push val 837</span><br><span class="line">calc 837+203=1040</span><br><span class="line">push val 1040</span><br><span class="line">calc 1040+125=1165</span><br><span class="line">push val 1165</span><br><span class="line">calc 1165+125=1290</span><br><span class="line">push val 1290</span><br><span class="line">calc 1290+5=1295</span><br><span class="line">push val 1295</span><br><span class="line">calc 1295+118=1413</span><br><span class="line">push val 1413</span><br><span class="line">calc 1413+30=1443</span><br><span class="line">push val 1443</span><br><span class="line">calc 1443+59=1502</span><br><span class="line">push val 1502</span><br><span class="line">calc 1502+89=1591</span><br><span class="line">push val 1591</span><br><span class="line">calc 1591+213=1804</span><br><span class="line">push val 1804</span><br><span class="line">calc 1804+114=1918</span><br><span class="line">push val 1918</span><br><span class="line">calc 1918+35=1953</span><br><span class="line">push val 1953</span><br><span class="line">calc 1953+18=1971</span><br><span class="line">push val 1971</span><br><span class="line">calc 1971+18=1989</span><br><span class="line">push val 1989</span><br><span class="line">calc 1989+121=2110</span><br><span class="line">push val 2110</span><br><span class="line">calc 2110+65=2175</span><br><span class="line">push val 2175</span><br><span class="line">calc 2175+32=2207</span><br><span class="line">push val 2207</span><br><span class="line">calc 2207+221=2428</span><br><span class="line">push val 2428</span><br><span class="line">calc 2428+253=2681</span><br><span class="line">push val 2681</span><br><span class="line">calc 2681+348=3029</span><br><span class="line">push val 3029</span><br><span class="line">calc 3029+130=3159</span><br><span class="line">push val 3159</span><br><span class="line">calc 3159+92=3251</span><br><span class="line">push val 3251</span><br><span class="line">calc 3251+140=3391</span><br><span class="line">push val 3391</span><br><span class="line">calc 3391+24=3415</span><br><span class="line">push val 3415</span><br><span class="line">pop 3415 to reg1</span><br><span class="line">retval=3415</span><br></pre></td></tr></table></figure>
+
+<p>计算的第一个异或值，在最后被加起来返回了。</p>
+<p>最终根据逻辑，写出还原 passcode 的逻辑。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">char v[]=&#123;</span><br><span class="line">2,3,67,37,41,11,13,89,2,3,67,5,7,47,61,29,2,67,37,7,43,11,13,31,97,3,41,73,11,13,53,29,97,67,3,11,43,13,47,83,67,5,37,71,7,11,89,29,2,3,5,11,13,83,53,61,2,3,7,71,43,83,29,31,7,73,11,13,53,89,29,31,2,3,5,37,7,43,13,61,2,5,7,43,11,13,53,89,5,7,73,43,11,13,59,31,3,5,73,41,43,13,83,89,2,7,71,11,43,13,29,61,2,5,7,11,13,79,47,83,3,67,37,5,73,11,13,61,2,67,5,7,71,11,13,61,67,3,5,37,43,11,13,61,2,3,37,7,71,41,11,29,3,5,41,11,43,47,53,29,2,3,7,71,43,13,47,79,2,3,5,37,11,43,13,79,97,67,5,37,7,41,11,61,3,71,7,43,11,79,53,61,2,3,71,73,11,13,61,31,97,2,3,67,5,11,13,83,2,3,5,37,7,41,11,53,2,3,73,43,11,13,53,61,2,67,3,37,7,11,47,59,2,37,5,73,13,47,53,59,2,67,71,73,41,11,13,89,2,3,67,37,73,11,43,59,&#125;;</span><br><span class="line">char target[]=&#123;70,56,70,77,74,90,87,82,60,67,86,95,64,94,85,66,33,69,64,98,67,71,94,93,90,32,65,82,68,65,93,96,&#125;;</span><br><span class="line">int checkval(int i,int pos)&#123;</span><br><span class="line">	int sum=0;</span><br><span class="line">	for(int j=0;j&lt;8;j++)&#123;</span><br><span class="line">		sum+=((i&gt;&gt;j)&amp;1)*v[j+pos*8];</span><br><span class="line">	&#125;</span><br><span class="line">	return sum;</span><br><span class="line">&#125;</span><br><span class="line">int main()&#123;</span><br><span class="line">	for(size_t i=0;i&lt;sizeof(target);i++)&#123;</span><br><span class="line">		for(int j=0x20;j&lt;127;j++)&#123;</span><br><span class="line">			if(target[i]==checkval(j,i))&#123;</span><br><span class="line">				putchar(j);</span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">//s1mpl3_VM_us3s_link3d_l1st_st4ck</span><br></pre></td></tr></table></figure>
+
+<p><img src="/image-20251107213047428.png" alt="image-20251107213047428"></p>
+<p>输入得到flag</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2024/11/17/S1mpleVM/" data-id="cuidrYGxsG84V-ZbXrAA45G9N" data-title="S1mpleVM" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2024/12/28/printf/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          格式化字符串
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/11/17/hello/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">hello</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/10/25/qwb2025-pwn/">qwb2025-pwn flagmarket</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/10/junior/">n1ctf junior 2/2 web</a>
+          </li>
+        
+          <li>
+            <a href="/2025/09/16/n1ctf-pwn/">n1ctf2025_pwn</a>
+          </li>
+        
+          <li>
+            <a href="/2025/09/02/TFCCTF2025/">TFCCTF2025 web</a>
+          </li>
+        
+          <li>
+            <a href="/2025/08/10/justCTF2025/">justCTF2025 web</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 xrivendell7<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
