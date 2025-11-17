@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>justCTF2025 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="justCTF 2025positive_player前置知识–JS原型链污染原型链概念JavaScript 的每个对象拥有一个原型对象，以该原型为模板、继承方法和属性；原型对象也可能拥有原型，并从中继承方法和属性，以此类推。这种关系常被称为原型链 (prototype chain)。 任何对象的祖先原型都是 object.prototype。 相关属性一、proto_ 属性 每个对象实例都有的一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="justCTF2025">
+<meta property="og:url" content="http://example.com/2025/10/08/justCTF2025/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="justCTF 2025positive_player前置知识–JS原型链污染原型链概念JavaScript 的每个对象拥有一个原型对象，以该原型为模板、继承方法和属性；原型对象也可能拥有原型，并从中继承方法和属性，以此类推。这种关系常被称为原型链 (prototype chain)。 任何对象的祖先原型都是 object.prototype。 相关属性一、proto_ 属性 每个对象实例都有的一">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2025/web/web/images/n268d9Iwz0R2lINrdUdkWAAhVh6WIiD6dp5vufXtCtU.png">
+<meta property="og:image" content="http://example.com/2025/10/08/justCTF2025/image-20250812193235289-1762219779844-12.png">
+<meta property="og:image" content="http://example.com/2025/10/08/justCTF2025/image-20250812201006695.png">
+<meta property="og:image" content="http://example.com/2025/10/08/justCTF2025/image-20250812201644955.png">
+<meta property="og:image" content="http://example.com/2025/10/08/justCTF2025/image-20250812202547181-1762342243354-5.png">
+<meta property="og:image" content="http://example.com/2025/10/08/justCTF2025/image-20250812205418685.png">
+<meta property="og:image" content="http://example.com/web/web/assets/Hd0U6gDwOppaItG8v85p62TsUvOTyCdV61yk8ThxbYM.png">
+<meta property="og:image" content="http://example.com/2025/10/08/justCTF2025/gKArT-n1j8HpMhq69a5SQdMfXrSCd1B072R-nVOSWVA.png">
+<meta property="article:published_time" content="2025-10-08T10:20:25.000Z">
+<meta property="article:modified_time" content="2025-11-17T12:21:35.499Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2025/web/web/images/n268d9Iwz0R2lINrdUdkWAAhVh6WIiD6dp5vufXtCtU.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-justCTF2025" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/10/08/justCTF2025/" class="article-date">
+  <time class="dt-published" datetime="2025-10-08T10:20:25.000Z" itemprop="datePublished">2025-10-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      justCTF2025
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="justCTF-2025"><a href="#justCTF-2025" class="headerlink" title="justCTF 2025"></a>justCTF 2025</h2><h3 id="positive-player"><a href="#positive-player" class="headerlink" title="positive_player"></a>positive_player</h3><h4 id="前置知识–JS原型链污染"><a href="#前置知识–JS原型链污染" class="headerlink" title="前置知识–JS原型链污染"></a>前置知识–JS原型链污染</h4><h5 id="原型链概念"><a href="#原型链概念" class="headerlink" title="原型链概念"></a>原型链概念</h5><p>JavaScript 的每个对象拥有一个原型对象，以该原型为模板、继承方法和属性；原型对象也可能拥有原型，并从中继承方法和属性，以此类推。这种关系常被称为<strong>原型链</strong> (prototype chain)。</p>
+<p>任何对象的祖先原型都是 <code>object.prototype</code>。</p>
+<h6 id="相关属性"><a href="#相关属性" class="headerlink" title="相关属性"></a>相关属性</h6><p><strong>一、<em>proto</em>_ 属性</strong></p>
+<p>每个对象实例都有的一个内部属性，指向该对象的“原型对象”，即该对象从哪里继承属性和方法</p>
+<p>可通过 <code>__proto__</code> 访问其原型对象</p>
+<p><strong>二、prototype 属性</strong></p>
+<p>函数（包括构造函数）的一个属性</p>
+<p>本质上是一个模板对象，新实例会继承它上面的属性和方法</p>
+<p><strong>三、constructor 属性</strong></p>
+<p>默认存在于函数的 <code>prototype</code> 对象上。</p>
+<p>指向创建该 <code>prototype</code> 对象的构造函数本身。如 <code>A.prototype.constructor</code> 默认指向 <code>A</code>。</p>
+<h6 id="重要关系"><a href="#重要关系" class="headerlink" title="重要关系"></a>重要关系</h6><p>任意对象可通过属性 <code>__proto__</code> 访问其原型对象，即 <code>obj.__proto__ == Object.prototype</code></p>
+<p>实例对象可以通过原型链访问到 <code>constructor</code> 属性，即：<code>obj.constructor.prototype</code> &#x3D;&#x3D;&#x3D; <code>Object.prototype</code>。比如：</p>
+<h5 id="原型链污染"><a href="#原型链污染" class="headerlink" title="原型链污染"></a>原型链污染</h5><p>JavaScript类的所有属性都允许被公开的访问和修改，包括属性 <code>__proto__</code> ，<code>constructor</code>和<code>prototype</code>。</p>
+<p>原型污染指的是攻击者能够修改应用程序或库使用的对象原型（通常是 <code>Object.prototype</code>）的属性，且被所有经过该原型链的对象所继承，从而导致不可预期的行为，如拒绝服务攻击（通过触发JavaScript异常）或者远程代码执行等。</p>
+<p>原型链污染目的是在<code>Object.prototype</code>上造成污染，主要有两种场景：</p>
+<p>​	不安全的对象递归合并</p>
+<p>​	按路径定义属性</p>
+<h6 id="不安全的对象递归合并"><a href="#不安全的对象递归合并" class="headerlink" title="不安全的对象递归合并"></a>不安全的对象递归合并</h6><p>递归合并函数<code>merge()</code>的基本逻辑和代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 符合模式一：obj[a][b] = value</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">merge</span>(<span class="params">target, source</span>) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> source) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> target[key] === <span class="string">&#x27;object&#x27;</span> &amp;&amp; <span class="keyword">typeof</span> source[key] === <span class="string">&#x27;object&#x27;</span>) &#123;</span><br><span class="line">      <span class="title function_">merge</span>(target[key], source[key]);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      target[key] = source[key];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>若 <code>source</code> 包含<strong>可枚举</strong>属性 <code>__proto__</code>， 则可以新增&#x2F;修改 <code>tagret[__proto__]</code> 属性</p>
+<p>以下代码存在原型链污染漏洞：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123;&#125;;</span><br><span class="line"><span class="title function_">merge</span>(obj, <span class="title class_">JSON</span>.<span class="title function_">parse</span>(<span class="string">&#x27;&#123;&quot;__proto__&quot;: &#123;&quot;isAdmin&quot;: true&#125;&#125;&#x27;</span>));</span><br><span class="line"><span class="comment">// 此时 obj.__proto__.isAdmin = true</span></span><br><span class="line"><span class="comment">// 而 obj.__proto__ 就是 Object.prototype（因为 obj 是 &#123;&#125;）</span></span><br><span class="line"><span class="comment">// 所以 Object.prototype.isAdmin = true</span></span><br><span class="line"><span class="keyword">let</span> user = &#123;&#125;;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user.<span class="property">isAdmin</span>); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<p>即使 <code>user</code> 是新对象，也“自动”获得了 <code>isAdmin: true</code>。</p>
+<h6 id="按路径定义属性"><a href="#按路径定义属性" class="headerlink" title="按路径定义属性"></a>按路径定义属性</h6><p>有些JavaScript库的函数支持根据指定的路径修改或定义对象的属性值。如以下的函数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将对象object的指定路径path的属性值修改为value</span></span><br><span class="line"><span class="title function_">theFunction</span>(object, path, value)</span><br></pre></td></tr></table></figure>
+
+<p>如果攻击者可以控制路径<code>path</code>的值，那么将路径设置为<code>_proto_.value</code>，运行theFunction函数后就有可能将<code>value</code>属性注入到object的原型中</p>
+<p>如joint.js中的代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> setByPath = <span class="keyword">function</span>(<span class="params">obj, path, value, delimiter</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> keys = <span class="title class_">Array</span>.<span class="title function_">isArray</span>(path) ? path : path.<span class="title function_">split</span>(delimiter || <span class="string">&#x27;/&#x27;</span>);</span><br><span class="line">    <span class="keyword">const</span> last = keys.<span class="property">length</span> - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">let</span> diver = obj;</span><br><span class="line">    <span class="keyword">let</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (; i &lt; last; i++) &#123;</span><br><span class="line">        <span class="keyword">const</span> key = keys[i];</span><br><span class="line">        <span class="keyword">const</span> value = diver[key];</span><br><span class="line">        <span class="comment">// diver creates an empty object if there is no nested object under such a key.</span></span><br><span class="line">        <span class="comment">// This means that one can populate an empty nested object with setByPath().</span></span><br><span class="line">        diver = value || (diver[key] = &#123;&#125;); <span class="comment">//自动创建中间层级：如果路径中的某层不存在，自动创建为&#123;&#125;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    diver[keys[last]] = value;</span><br><span class="line">    <span class="keyword">return</span> obj;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>setByPath</code>函数在对象 <code>obj</code> 中，将 <code>path</code> 路径对应的属性设置为 <code>value</code></p>
+<p>输入以下的路径，那就会造成原型污染：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> jointjs = <span class="built_in">require</span>(<span class="string">&quot;jointjs&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> obj = &#123;&#125;;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Before : &quot;</span> + obj.<span class="property">polluted</span>);</span><br><span class="line">jointjs.<span class="property">util</span>.<span class="title function_">setByPath</span>(&#123; &#125;, <span class="string">&#x27;__proto__/polluted&#x27;</span>, <span class="string">&quot;yes&quot;</span>, <span class="string">&#x27;/&#x27;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;After : &quot;</span> + obj.<span class="property">polluted</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="漏洞危害"><a href="#漏洞危害" class="headerlink" title="漏洞危害"></a>漏洞危害</h5><h6 id="权限提升"><a href="#权限提升" class="headerlink" title="权限提升"></a>权限提升</h6><p>假设后端检查权限，通过污染让所有对象都有 <code>isAdmin: true</code> → 直接获得管理员权限</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (user.<span class="property">isAdmin</span>) <span class="title function_">grantAdminAccess</span>();</span><br></pre></td></tr></table></figure>
+
+<h6 id="绕过属性检查"><a href="#绕过属性检查" class="headerlink" title="绕过属性检查"></a>绕过属性检查</h6><p>如果污染了 <code>Object.prototype.hasOwnProperty</code>，就可以绕过检查</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> obj) &#123;</span><br><span class="line">  <span class="keyword">if</span> (obj.<span class="title function_">hasOwnProperty</span>(key)) &#123;</span><br><span class="line">    <span class="comment">// 以为安全</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="远程代码执行"><a href="#远程代码执行" class="headerlink" title="远程代码执行"></a>远程代码执行</h6><p>通常发生在代码程序执行了对象上的一个特殊属性。如</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span>(someobject.<span class="property">someattr</span>)</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，如果攻击者污染了 <code>Object.prototype.someattr</code> ，那么就可能导致远程代码执行。</p>
+<h6 id="DOS"><a href="#DOS" class="headerlink" title="DOS"></a>DOS</h6><p>通常发生在 <code>Object</code> 对象持有的一些方法被隐式调用（如<code>toString</code> 和 <code>valueOf</code>）。</p>
+<p>攻击者可以污染 <code>Object.prototype.someattr</code> 并改变为一个程序非预期的值，如<code>Int</code> 或 <code>Object</code>，可能导致程序无法正常工作，从而造成DoS。</p>
+<h5 id="原型污染防范"><a href="#原型污染防范" class="headerlink" title="原型污染防范"></a>原型污染防范</h5><ol>
+<li><p>过滤关键字： <code>__proto__</code> 、 <code>prototype</code>和 <code>constructor</code> 属性</p>
+</li>
+<li><p>避免使用不规范的递归。即使使用也要严格检查<code>key</code>，不能是<code>__proto__</code>和<code>constructor</code>。</p>
+</li>
+<li><p>考虑使用不带原型的对象，从而打断原型链。如<code>Object.create(null)</code>。</p>
+</li>
+<li><p>使用<code>Map</code>替换<code>Object</code>。</p>
+</li>
+</ol>
+<h4 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h4><p>由 Gemini 生成的 Express 应用，包括用户注册、登录功能和自定义主题等功能。</p>
+<p>注册用户 user1&#x2F;123 ，登录之后可看到的页面如右图</p>
+<img src="../../../web/web/images/n268d9Iwz0R2lINrdUdkWAAhVh6WIiD6dp5vufXtCtU.png" alt="image" style="zoom:67%;" />
+
+<h4 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h4><p><strong>一、定位关键字 <code>flag</code></strong></p>
+<p>分析源码，搜索关键字 <code>flag</code> ，发现如下代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 15. Define the `/flag` endpoint (protected)</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/flag&#x27;</span>, isAuthenticated, <span class="function">(<span class="params">req, res, next</span>)=&gt;</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(users[req.<span class="property">session</span>.<span class="property">userId</span>].<span class="property">isAdmin</span> == <span class="literal">true</span>)&#123; </span><br><span class="line">    <span class="keyword">return</span> res.<span class="title function_">end</span>(<span class="variable constant_">FLAG</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> res.<span class="title function_">end</span>(<span class="string">&quot;Not admin :(&quot;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>代码逻辑如下：</p>
+<p>1）用户访问 &#x2F;flag 页面时触发该处理器</p>
+<p>2）首先验证用户是否成功登录</p>
+<p>3）若成功登录，判断是否具备管理员权限；若具备则返回FLAG，反之返回 Not admin</p>
+<p>结合上述分析，需要一个具备管理员权限的用户，登录成功后访问 &#x2F;flag 路径即可获得FLAG。</p>
+<p><strong>二、定位危险函数 <code>deepMerge</code></strong> </p>
+<p>分析源码发现，定义了递归合并函数 <code>deepMerge</code> ，代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 6. A function to recursively merge objects</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">deepMerge</span> = (<span class="params">target, source</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">in</span> source) &#123;</span><br><span class="line">    <span class="keyword">if</span> (source[key] <span class="keyword">instanceof</span> <span class="title class_">Object</span> &amp;&amp; key <span class="keyword">in</span> target) &#123;</span><br><span class="line">      <span class="title class_">Object</span>.<span class="title function_">assign</span>(source[key], <span class="title function_">deepMerge</span>(target[key], source[key]));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title class_">Object</span>.<span class="title function_">assign</span>(target || &#123;&#125;, source);</span><br><span class="line">  <span class="keyword">return</span> target;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>函数作用是将 <code>source</code> 对象的所有可枚举属性地复制到 <code>target</code>（有可能为{}）上。</p>
+<p>存在递归合并函数时，考虑原型链污染漏洞。</p>
+<p><strong>三、分析原型链污染的可能性</strong></p>
+<p>查找函数调用链，发现 <code>app.get(&#39;theme&#39;,....)</code> 调用 <code>deepMerge</code> ，部分代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 15. Define the `/theme` endpoint (protected)</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/theme&#x27;</span>, isAuthenticated, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  ......</span><br><span class="line">  <span class="comment">// 解析请求参数，过滤关键字 __proto__，prototype，constructor等</span></span><br><span class="line">  <span class="keyword">const</span> parsedUpdates = <span class="title function_">parseQueryParams</span>(queryString);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="title class_">Object</span>.<span class="title function_">keys</span>(parsedUpdates).<span class="property">length</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// 调用deepMerge</span></span><br><span class="line">    user.<span class="property">themeConfig</span> = <span class="title function_">deepMerge</span>(user.<span class="property">themeConfig</span>, parsedUpdates);</span><br><span class="line">  &#125;</span><br><span class="line">  ......</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>但是在调用 <code>parseQueryParams</code> 函数之前，先调用<code>parseQueryParams</code>函数解析请求参数，过滤了 <code>[&#39;__proto__&#39;, &#39;prototype&#39;, &#39;constructor&#39;]</code> 等关键字。代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 7. A function to parse a query string with dot-notation keys.</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">parseQueryParams</span> = (<span class="params">queryString</span>) =&gt; &#123;</span><br><span class="line">  .....</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> [key, value] <span class="keyword">of</span> params.<span class="title function_">entries</span>()) &#123;</span><br><span class="line">    <span class="keyword">const</span> path = key.<span class="title function_">split</span>(<span class="string">&#x27;.&#x27;</span>);</span><br><span class="line">    .....</span><br><span class="line">      <span class="comment">// 过滤关键字</span></span><br><span class="line">      <span class="keyword">if</span>([<span class="string">&#x27;__proto__&#x27;</span>, <span class="string">&#x27;prototype&#x27;</span>, <span class="string">&#x27;constructor&#x27;</span>].<span class="title function_">includes</span>(part))&#123;</span><br><span class="line">        part = <span class="string">&#x27;__unsafe$&#x27;</span> + part;</span><br><span class="line">      &#125;</span><br><span class="line">      ......</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>故直接污染 <code>object.prototype.isAdmin</code>的思路行不通</p>
+<p><strong>四、原型链污染扩展</strong></p>
+<p>再次查看获取 <code>flag</code> 的相关代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 15. Define the `/flag` endpoint (protected)</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/flag&#x27;</span>, isAuthenticated, <span class="function">(<span class="params">req, res, next</span>)=&gt;</span>&#123;</span><br><span class="line">  <span class="comment">// 关键判断</span></span><br><span class="line">  <span class="keyword">if</span>(users[req.<span class="property">session</span>.<span class="property">userId</span>].<span class="property">isAdmin</span> == <span class="literal">true</span>)&#123; </span><br><span class="line">    <span class="keyword">return</span> res.<span class="title function_">end</span>(<span class="variable constant_">FLAG</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> res.<span class="title function_">end</span>(<span class="string">&quot;Not admin :(&quot;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>关键代码是 <code>users[req.session.userId].isAdmin == true</code> ，其中：</p>
+<p>​	<code>req.session.userId</code> 在用户登录认证通过后赋值为 <code>username</code> </p>
+<p>​	<code>users</code> 初始化为 {} ，在用户注册成功后存入数据 <code>&#123; username: &#123; password, userThemeConfig, isAdmin &#125; &#125;</code></p>
+<p>可知<code>users.__proto__</code> 就是 <code>Object.prototype</code> ，如下：</p>
+<style>.msrgddjsentt{zoom: 67%;}</style><img src="/2025/10/08/justCTF2025/image-20250812193235289-1762219779844-12.png" class="msrgddjsentt" alt="image-20250812193235289-1762219779844-12">
+
+<p>故<code>users</code> 除了自身的属性：<code>user1</code> 之外；还有继承自原型（即 <code>Object</code>）的属性，如 <code>constructor</code>，<code>hasOwnProperty</code>，<code>isPrototypeOf</code> 和 <code>toString</code> 等</p>
+<p><code>users[req.session.userId]</code> 本质上是获取users的一个属性，所以 <code>req.session.userId</code> 不一定是合法的用户名（如 <code>user1</code>），也可以是 <code>users</code> 的其它属性（如 <code>constructor</code>，<code>hasOwnProperty</code>，<code>isPrototypeOf</code> 和 <code>toString</code> 等），只要保证<code>users[某属性]</code> 返回非空的结果即可</p>
+<p>然后确保 <code>users[某属性]</code> 的<code>.isAdmin</code> 值为 1，就可以使得 <code>if</code> 条件判断为真，进获取 <code>FLAG</code> 。</p>
+<p>综上所述，攻击思路如下：</p>
+<p>​	1）通过原型链污染原型Object的属性（如 <code>constructor</code>，<code>hasOwnProperty</code>和 <code>toString</code> 等），在该受污染属性上添加 <code>isAdmin</code> 、并将值设置为1 。</p>
+<p>​	2）尝试以该属性名称为 <code>username</code> 注册&#x2F;登录系统，则 <code>users[受污染属性].isAdmin</code>  值为1 ，然后访问 <code>/flag</code> 即可获取FLAG。</p>
+<p>第1步前面已讨论过，存在递归合并函数 <code>deepMerge</code> ，可以实现原型链污染。下面讨论第2步如何实现以特殊用户（属性名称）登录系统</p>
+<p><strong>五、登录认证绕过</strong></p>
+<p>尝试以原型Object的属性名称注册&#x2F;登录用户，以 <code>toString</code> 为例（使用其它继承自<code>Object</code>的属性，如 <code>constructor</code>，<code>hasOwnProperty</code>和 <code>toLocalString</code> 等都可以）。</p>
+<p>理想情况是先注册、再登录。但是在注册时提示用户已经存在：</p>
+<style>.ypkeveociwbd{zoom: 50%;}</style><img src="/2025/10/08/justCTF2025/image-20250812201006695.png" class="ypkeveociwbd" alt="image-20250812201006695">
+
+<p>查看注册相关的代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">post</span>(<span class="string">&#x27;/register&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; username, password &#125; = req.<span class="property">body</span>;</span><br><span class="line">  <span class="comment">// 判断用户名是否存在</span></span><br><span class="line">  <span class="keyword">if</span> (users[username]) &#123;</span><br><span class="line">    req.<span class="property">session</span>.<span class="property">errorMessage</span> = <span class="string">&#x27;User already exists!&#x27;</span>;</span><br><span class="line">    <span class="keyword">return</span> res.<span class="title function_">redirect</span>(<span class="string">&#x27;/register&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  ......</span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>如前所述，<code>users</code> 的原型为 <code>Object</code> 。当 <code>username</code> 为 <code>toString</code>时，因为<code>users</code>自身不包含 <code>toString</code> 属性，故<code>users[username]</code> 返回的是<code>users.__proto__.toString</code> 即<code>Object.toString</code> 方法。如下：</p>
+<style>.oakanotptrdh{zoom:67%;}</style><img src="/2025/10/08/justCTF2025/image-20250812201644955.png" class="oakanotptrdh" alt="image-20250812201644955">
+
+<p><code>users[username]</code>非空，返回用户已存在，所以没有办法再次注册。</p>
+<p>尝试 <code>toString/123</code> 直接登录，调试发现执行到304行验证用户名和密码时，关键变量的值如下：</p>
+<p><img src="/2025/10/08/justCTF2025/image-20250812202547181-1762342243354-5.png" alt="image-20250812202547181"></p>
+<p>​	<code>user</code> 值为 <code>Object.toString()</code> 方法，非空；</p>
+<p>​	<code>user.password</code> &#x3D;&#x3D; <code>toString().password</code> &#x3D;&#x3D; <code>undefined</code></p>
+<p>故要想通过304行的检查，将变量 <code>password</code> 的值设置为 <code>undefined</code> 即可。这样就可以绕过认证，以用户名 <code>toString</code> 成功登录系统。</p>
+<p><strong>六、攻击步骤</strong></p>
+<p>结合以上分析，可执行的攻击步骤如下：</p>
+<ol>
+<li>污染原型属性 <code>Object.toString</code></li>
+</ol>
+<p>原型链污染发生的函数为 <code>deepMerge</code>，其调用链为：</p>
+<p>​	 <code>app.get(&#39;/theme&#39;,isAuthenticated,...)</code>  –&gt;  <code>parseQueryParams</code>  –&gt;  <code>deepMerge</code> </p>
+<p>访问 &#x2F;theme 时需要用户已经登录，故先注册、登录普通用户 <code>user1</code> ，然后通过传递 <code>toString.isAdmin=1</code> 的查询参数，污染 <code>Object.prototype.toString</code>，在<code>toString</code>上添加 <code>isAdmin</code>、并将值置为 1 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 原型污染 url</span><br><span class="line">http://<span class="number">192.168</span><span class="number">.43</span><span class="number">.148</span>:<span class="number">3000</span>/theme?toString.isAdmin=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>访问过程中<code>parseQueryParams</code> 函数会生成对象：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">toString</span>: &#123; <span class="attr">isAdmin</span>: <span class="string">&quot;1&quot;</span> &#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>随后调用 <code>deepMerge</code> 函数合并对象时，会将 <code>&#123; isAdmin: &quot;1&quot; &#125;</code> 合并到 <code>Object.prototype.toString</code> 上，导致所有对象的 <code>toString.isAdmin</code> 被污染。下图是污染前后 的<code>toString</code> ，可以看到污染后的 <code>toString</code> 多了 <code>isAdmin</code> 属性，且值为1：</p>
+<style>.qhtdqmbmtage{zoom:67%;}</style><img src="/2025/10/08/justCTF2025/image-20250812205418685.png" class="qhtdqmbmtage" alt="image-20250812205418685">
+
+
+
+<ol start="2">
+<li>登录为 <code>toString</code> 用户</li>
+</ol>
+<p>污染成功后，使用 <code>toString</code>用户名登录，<code>password</code>处随便填写，使用bp抓包后删除<code>password</code>字段后发送</p>
+<p><img src="/../../../web/web/assets/Hd0U6gDwOppaItG8v85p62TsUvOTyCdV61yk8ThxbYM.png" alt="Hd0U6gDwOppaItG8v85p62TsUvOTyCdV61yk8ThxbYM"></p>
+<p>页面跳转后说明登录成功，然后访问 &#x2F;flag 成功</p>
+<p><img src="/2025/10/08/justCTF2025/gKArT-n1j8HpMhq69a5SQdMfXrSCd1B072R-nVOSWVA.png" alt="gKArT-n1j8HpMhq69a5SQdMfXrSCd1B072R-nVOSWVA"></p>
+<h4 id="题目总结"><a href="#题目总结" class="headerlink" title="题目总结"></a>题目总结</h4><h5 id="考察点"><a href="#考察点" class="headerlink" title="考察点"></a>考察点</h5><ol>
+<li>JS原型链污染漏洞利用及扩展</li>
+<li>登录认证函数逻辑漏洞的识别与利用</li>
+</ol>
+<h5 id="关键技巧"><a href="#关键技巧" class="headerlink" title="关键技巧"></a>关键技巧</h5><ol>
+<li><strong>原型污染扩展</strong>：</li>
+</ol>
+<p>​	利用原生属性（如 <code>toString</code>）绕过对 <code>__proto__</code> 的过滤。</p>
+<p>​	通过 <code>deepMerge</code> 将污染扩散到原型链。</p>
+<ol start="2">
+<li><strong>认证函数逻辑漏洞</strong>：</li>
+</ol>
+<p>​	利用 <code>users</code> 对象继承 <code>Object.prototype</code> 的特性，使 <code>toString</code> 成为“已存在用户”。</p>
+<p>​	通过 <code>undefined === undefined</code> 绕过密码检查。</p>
+<p>参考链接：<a target="_blank" rel="noopener" href="https://gist.github.com/terjanq/fa6f19d46bcb85bb61c146747dec0758#positive-players--write-up-by-terjanq">https://gist.github.com/terjanq/fa6f19d46bcb85bb61c146747dec0758#positive-players--write-up-by-terjanq</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2025/10/08/justCTF2025/" data-id="cuidT5qwmRvaiqEwgrJT4VupB" data-title="justCTF2025" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/10/10/junior/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          junior ctf web
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/09/28/TFCCTF2025/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">TFCCTF2025 web</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/10/10/junior/">junior ctf web</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/08/justCTF2025/">justCTF2025</a>
+          </li>
+        
+          <li>
+            <a href="/2025/09/28/TFCCTF2025/">TFCCTF2025 web</a>
+          </li>
+        
+          <li>
+            <a href="/2023/11/17/hello/">hello</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
