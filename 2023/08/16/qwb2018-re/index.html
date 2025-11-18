@@ -4,33 +4,33 @@
   <meta charset="utf-8">
   
   
-  <title>qwb2018 | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
+  <title>qwb2018-re | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="simple checksimple的mainactivity.kt分析1234567package com.a.simplecheck;import android.os.Bundle;import android.support.v7.app.c;import android.view.View;import android.widget.EditText;import android.wid">
 <meta property="og:type" content="article">
-<meta property="og:title" content="qwb2018">
+<meta property="og:title" content="qwb2018-re">
 <meta property="og:url" content="http://example.com/2023/08/16/qwb2018-re/index.html">
 <meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
 <meta property="og:description" content="simple checksimple的mainactivity.kt分析1234567package com.a.simplecheck;import android.os.Bundle;import android.support.v7.app.c;import android.view.View;import android.widget.EditText;import android.wid">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/qwb2018/image-20250826215213134.png">
-<meta property="og:image" content="http://example.com/qwb2018/image-20250826215307964.png">
-<meta property="og:image" content="http://example.com/qwb2018/image-20250826215346430.png">
-<meta property="og:image" content="http://example.com/qwb2018/image-20250826215409020.png">
-<meta property="og:image" content="http://example.com/qwb2018/image-20250826215441073.png">
-<meta property="og:image" content="http://example.com/qwb2018/image-20250827095440764.png">
-<meta property="og:image" content="http://example.com/qwb2018/image-20250827100132266.png">
-<meta property="og:image" content="http://example.com/qwb2018/image-20250904101123407.png">
-<meta property="og:image" content="http://example.com/2023/08/16/qwb2018-re/qwb2018/flag.jpg">
-<meta property="og:image" content="http://example.com/qwb2018/image-20250911155632129.png">
-<meta property="og:image" content="http://example.com/qwb2018/image-20250911155911810.png">
-<meta property="og:image" content="http://example.com/qwb2018/image-20250911161638344.png">
-<meta property="og:image" content="http://example.com/qwb2018/image-20250911201625976.png">
-<meta property="article:published_time" content="2023-08-16T02:43:09.000Z">
-<meta property="article:modified_time" content="2025-11-18T02:44:31.794Z">
+<meta property="og:image" content="http://example.com/image-20250826215213134.png">
+<meta property="og:image" content="http://example.com/image-20250826215307964.png">
+<meta property="og:image" content="http://example.com/image-20250826215346430.png">
+<meta property="og:image" content="http://example.com/image-20250826215409020.png">
+<meta property="og:image" content="http://example.com/image-20250826215441073.png">
+<meta property="og:image" content="http://example.com/image-20250827095440764.png">
+<meta property="og:image" content="http://example.com/image-20250827100132266.png">
+<meta property="og:image" content="http://example.com/image-20250904101123407.png">
+<meta property="og:image" content="http://example.com/2023/08/16/qwb2018-re/flag.jpg">
+<meta property="og:image" content="http://example.com/image-20250911155632129.png">
+<meta property="og:image" content="http://example.com/image-20250911155911810.png">
+<meta property="og:image" content="http://example.com/image-20250911161638344.png">
+<meta property="og:image" content="http://example.com/image-20250911201625976.png">
+<meta property="article:published_time" content="2023-08-16T02:48:56.000Z">
+<meta property="article:modified_time" content="2025-11-18T02:49:29.765Z">
 <meta property="article:author" content="xrivendell7">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/qwb2018/image-20250826215213134.png">
+<meta name="twitter:image" content="http://example.com/image-20250826215213134.png">
   
     <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
   
@@ -90,7 +90,7 @@
         <section id="main"><article id="post-qwb2018-re" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/08/16/qwb2018-re/" class="article-date">
-  <time class="dt-published" datetime="2023-08-16T02:43:09.000Z" itemprop="datePublished">2023-08-16</time>
+  <time class="dt-published" datetime="2023-08-16T02:48:56.000Z" itemprop="datePublished">2023-08-16</time>
 </a>
     
   </div>
@@ -101,7 +101,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      qwb2018
+      qwb2018-re
     </h1>
   
 
@@ -170,15 +170,15 @@
 </ol>
 <p><strong>目标是将某个加密后的文件解密出来，flag 就在里面。</strong></p>
 <h3 id="mainactivity分析"><a href="#mainactivity分析" class="headerlink" title="mainactivity分析"></a>mainactivity分析</h3><p>直接找到点击事件ENCRYPT按钮绑定的OnClick()方法:</p>
-<p><img src="/qwb2018/image-20250826215213134.png" alt="image-20250826215213134"></p>
+<p><img src="/image-20250826215213134.png" alt="image-20250826215213134"></p>
 <p>可以看出，代码首先检查了文件读写的权限，然后打开了图片选择的界面，选择图片后，会调用方法onActivityResult()：</p>
-<p><img src="/qwb2018/image-20250826215307964.png" alt="image-20250826215307964"></p>
+<p><img src="/image-20250826215307964.png" alt="image-20250826215307964"></p>
 <p>可以看到这里有3个方法被调用了，分别是enc()，j()，i()。</p>
-<p><img src="/qwb2018/image-20250826215346430.png" alt="image-20250826215346430"></p>
+<p><img src="/image-20250826215346430.png" alt="image-20250826215346430"></p>
 <p>可以看出i()使用来显示文本框中的内容，对图片的处理没有影响</p>
-<p><img src="/qwb2018/image-20250826215409020.png" alt="image-20250826215409020"></p>
+<p><img src="/image-20250826215409020.png" alt="image-20250826215409020"></p>
 <p>j()用于获取apk签名的MD5值</p>
-<p><img src="/qwb2018/image-20250826215441073.png" alt="image-20250826215441073"></p>
+<p><img src="/image-20250826215441073.png" alt="image-20250826215441073"></p>
 <p>根据enc()方法的声明，可以知道，方法需要三个String类型的参数，这三个参数具体是什么，我们用动态调试的方法获取。</p>
 <hr>
 <h3 id="动态调试-so文件"><a href="#动态调试-so文件" class="headerlink" title="动态调试.so文件"></a>动态调试.so文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adb push &quot;%USERPROFILE%\Downloads\bootloader-bonito-b4s4-0.4-8048689.img&quot; /sdcard/Download/</span><br><span class="line">#查看文件列表</span><br><span class="line">adb shell ls -la /sdcard/Download/</span><br></pre></td></tr></table></figure>
@@ -189,15 +189,15 @@
 <p><strong>IDA PRO连接调试应用</strong><br>(1)在IDA Pro的安装路径dbgsrv目录下找到android_server，放入真机的&#x2F;data&#x2F;local&#x2F;tmp路径下并赋权，以root身份运行</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">adb push android_server /data/local/tmp </span><br><span class="line">adb shell</span><br><span class="line">su</span><br><span class="line">cd /data/local/tmp</span><br><span class="line">chmod 755 android_server64</span><br><span class="line">./android_server64</span><br></pre></td></tr></table></figure>
 
-<p><img src="/qwb2018/image-20250827095440764.png" alt="image-20250827095440764"></p>
+<p><img src="/image-20250827095440764.png" alt="image-20250827095440764"></p>
 <p>(2)转发窗口</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb forward tcp:23946 tcp:23946  </span><br></pre></td></tr></table></figure>
 
-<p><img src="/qwb2018/image-20250827100132266.png" alt="image-20250827100132266"></p>
+<p><img src="/image-20250827100132266.png" alt="image-20250827100132266"></p>
 <p>打开ida32位</p>
 <p>Deubugger-Attach-Remote ARM Linux&#x2F;Android debugger</p>
 <p>查看libnative.so是否已经运行，打开enc()函数。下断点。</p>
-<p><img src="/qwb2018/image-20250904101123407.png" alt="image-20250904101123407"></p>
+<p><img src="/image-20250904101123407.png" alt="image-20250904101123407"></p>
 <p>打开app-选择照片-手机黑屏-断到了</p>
 <hr>
 <h3 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a>静态分析</h3><p>静态看吧，主要就是这个enc()。native方法。</p>
@@ -266,7 +266,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env python</span><br><span class="line"></span><br><span class="line">import itertools</span><br><span class="line">from Crypto.Cipher import AES</span><br><span class="line"></span><br><span class="line">sig = b&#x27;f8c49056e4ccf9a11e090eaf471f418d&#x27;</span><br><span class="line"></span><br><span class="line">def decode_sig(payload):</span><br><span class="line">    ans = bytearray()  # 使用 bytearray 代替字符串</span><br><span class="line">    for i in range(len(payload)):</span><br><span class="line">        # 执行异或操作并直接追加字节</span><br><span class="line">        ans.append(payload[i] ^ sig[(16 + i) % 32])</span><br><span class="line">    return bytes(ans)  # 转换为不可变 bytes 类型</span><br><span class="line"></span><br><span class="line">def dec_aes():</span><br><span class="line">    with open(&#x27;flag.jpg.lock&#x27;, &#x27;rb&#x27;) as data_file:</span><br><span class="line">        data = data_file.read()</span><br><span class="line">    </span><br><span class="line">    with open(&#x27;flag.jpg&#x27;, &#x27;wb&#x27;) as f:  # 确保文件以二进制模式打开</span><br><span class="line">        idx = 0</span><br><span class="line">        i = 0</span><br><span class="line">        cipher1 = AES.new(sig[:0x10], AES.MODE_ECB)</span><br><span class="line">        cipher2 = AES.new(sig[0x10:], AES.MODE_ECB)</span><br><span class="line">        </span><br><span class="line">        while idx &lt; len(data):</span><br><span class="line">            read_len = sig[i % 32]</span><br><span class="line">            payload = data[idx:idx + read_len]</span><br><span class="line">            print(f&#x27;[+] Totally &#123;idx&#125; / &#123;len(data)&#125; bytes, sig index : &#123;i&#125;&#x27;)</span><br><span class="line"></span><br><span class="line">            if read_len % 2 == 0:</span><br><span class="line">                f.write(cipher1.decrypt(payload[:0x10]))</span><br><span class="line">            else:</span><br><span class="line">                f.write(cipher2.decrypt(payload[:0x10]))</span><br><span class="line">            </span><br><span class="line">            # 关键修改：decode_sig 现在返回 bytes，可直接写入二进制文件</span><br><span class="line">            f.write(decode_sig(payload[16:]))</span><br><span class="line">            f.flush()</span><br><span class="line">            idx += read_len</span><br><span class="line">            i += 1</span><br><span class="line">        print(&#x27;[+] Decoding done ...&#x27;)</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    dec_aes()</span><br></pre></td></tr></table></figure>
 
 <p>得到解密出来的flag.jpg</p>
-<img src="qwb2018/flag.jpg" alt="flag" style="zoom: 33%;" />
+<style>.sotarfjnlfev{zoom: 33%;}</style><img src="/2023/08/16/qwb2018-re/flag.jpg" class="sotarfjnlfev" alt="flag">
 
 <h3 id="补充知识点"><a href="#补充知识点" class="headerlink" title="补充知识点"></a><strong>补充知识点</strong></h3><p>smali</p>
 <p>smali是andriod虚拟机的反汇编语言</p>
@@ -290,13 +290,13 @@
 <p>然后就获得了完整的脱壳后的文件。</p>
 <p>静态分析</p>
 <p>将<code>hide_dump</code>载入ida，按下<code>Shift</code>+<code>F12</code>查看字符串列表并搜索<code>flag</code>:</p>
-<p><img src="/qwb2018/image-20250911155632129.png" alt="image-20250911155632129"></p>
+<p><img src="/image-20250911155632129.png" alt="image-20250911155632129"></p>
 <p>敏感字符串aYouAreRight，查看交叉引用：</p>
-<p><img src="/qwb2018/image-20250911155911810.png" alt="image-20250911155911810"></p>
+<p><img src="/image-20250911155911810.png" alt="image-20250911155911810"></p>
 <p>查看sub_4009EF函数：</p>
-<p><img src="/qwb2018/image-20250911161638344.png" alt="image-20250911161638344"></p>
+<p><img src="/image-20250911161638344.png" alt="image-20250911161638344"></p>
 <p>这肯定不对，看下一个函数：</p>
-<p><img src="/qwb2018/image-20250911201625976.png" alt="image-20250911201625976"></p>
+<p><img src="/image-20250911201625976.png" alt="image-20250911201625976"></p>
 <p>进入这个地址，发现ida没有将其识别称为一个函数，我们需要手动逆向分析。这通常发生在加壳、混淆或编译器优化过的代码中。</p>
 <h3 id="逆向工程中的手动分析操作"><a href="#逆向工程中的手动分析操作" class="headerlink" title="逆向工程中的手动分析操作"></a><strong>逆向工程中的手动分析操作</strong></h3><p>反编译之后跟题解不一样</p>
 <p>向上查看代码，寻找合适的函数起点</p>
@@ -320,7 +320,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/08/16/qwb2018-re/" data-id="cuidEac2FpQt1rlsf9j_KPAQj" data-title="qwb2018" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2023/08/16/qwb2018-re/" data-id="cuidEac2FpQt1rlsf9j_KPAQj" data-title="qwb2018-re" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -330,11 +330,11 @@
     
 <nav id="article-nav">
   
-    <a href="/2023/08/16/qwb2018/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2023/11/17/hello/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          qwb2018
+          hello
         
       </div>
     </a>
@@ -362,7 +362,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li></ul>
     </div>
   </div>
 
