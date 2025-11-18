@@ -71,6 +71,144 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-qwb2025-re" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/11/01/qwb2025-re/" class="article-date">
+  <time class="dt-published" datetime="2025-11-01T02:15:47.000Z" itemprop="datePublished">2025-11-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="trade"><a href="#trade" class="headerlink" title="trade"></a>trade</h2><p>docker desktop代理设置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;builder&quot;: &#123;</span><br><span class="line">    &quot;gc&quot;: &#123;</span><br><span class="line">      &quot;defaultKeepStorage&quot;: &quot;20GB&quot;,</span><br><span class="line">      &quot;enabled&quot;: true</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;experimental&quot;: false,</span><br><span class="line">  &quot;registry-mirrors&quot;: [</span><br><span class="line">    &quot;https://docker.1ms.run&quot;,</span><br><span class="line">    &quot;https://docker.1panel.live/&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>动态调试：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./tragre</span><br><span class="line">pgrep -fl tradre </span><br><span class="line">gdbserver :1234 --attach 8900 </span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="ABabyChal"><a href="#ABabyChal" class="headerlink" title="ABabyChal"></a>ABabyChal</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./ark_js_vm chal.abc</span><br></pre></td></tr></table></figure>
+
+<p>指的是运行 <strong>Ark 引擎 (Ark JavaScript VM)</strong> 来执行一个 <strong>编译好的字节码文件 <code>chal.abc</code></strong>。</p>
+<p><code>.abc</code> 文件是 <strong>Ark ByteCode</strong>（方舟字节码）文件。<br> 这是鸿蒙系统中由 <code>arkcompile</code> 或 <code>es2abc</code> 工具生成的中间格式。</p>
+<p>Disassembler是ArkTS反汇编工具。如果需要分析方舟字节码文件（*.abc）相关问题，开发者可以使用Disassembler将方舟字节码文件反编译为可读的汇编指令。</p>
+<p>工具随DevEco Studio SDK发布。以Windows平台为例，Disassembler工具位于DevEco Studio&#x2F;sdk&#x2F;default&#x2F;openharmony&#x2F;toolchains&#x2F;ark_disasm.exe。</p>
+<p>报错了，换一个工具：jadx-dev-all.jar，读取abc文件的jdax工具。</p>
+<p>方舟字节码文件格式：</p>
+<p>字节码文件起始于<a target="_blank" rel="noopener" href="https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/arkts-bytecode-file-format-V5#header">Header</a>结构。文件中的所有结构均可以从Header出发，直接或间接地访问到。字节码文件中所有的多字节值均采用小端字节序。</p>
+<p>Header：</p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>名称</strong></th>
+<th align="left"><strong>格式</strong></th>
+<th align="left"><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">magic</td>
+<td align="left">uint8_t[8]</td>
+<td align="left">文件头魔数，值必须是’P’ ‘A’ ‘N’ ‘D’ ‘A’ ‘\0’ ‘\0’ ‘\0’。</td>
+</tr>
+<tr>
+<td align="left">checksum</td>
+<td align="left">uint32_t</td>
+<td align="left">字节码文件除文件头魔数和本校验字段之外的内容的adler32校验和。</td>
+</tr>
+<tr>
+<td align="left">version</td>
+<td align="left">uint8_t[4]</td>
+<td align="left">字节码文件的版本号 (<a target="_blank" rel="noopener" href="https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/arkts-bytecode-file-format-V5#version">Version</a>) 。</td>
+</tr>
+</tbody></table>
+<p>执行abc文件：</p>
+<p><img src="/image-20251019011550085.png" alt="image-20251019011550085"></p>
+<p><code>v80</code> 是一个 <code>std::vector&lt;std::string&gt;</code> 的底层数组，存储分割后的 ABC 文件路径（或者入口函数信息）。</p>
+<p>循环调用：panda::JSNApi::Execute(EcmaVM, path, &amp;entry, 0, &amp;set)</p>
+<p><strong>参数解释：</strong></p>
+<ul>
+<li><code>EcmaVM</code>：VM 实例</li>
+<li><code>path</code>：ABC 文件路径</li>
+<li><code>entry</code>：入口函数名（可以是默认 <code>main</code> 或者用户指定）</li>
+<li><code>0</code>：执行选项</li>
+<li><code>&amp;set</code>：可能是执行上下文或返回值存储</li>
+</ul>
+<p><strong>作用：</strong> 把 <code>.abc</code> 文件加载到 VM 并执行。</p>
+<p>用jadx-dev-all.jar打开.abc文件有大量报错，猜测修改了字节码。搜索找到一份字节码表： <a target="_blank" rel="noopener" href="https://www.seaxiang.com/blog/JdVvVU#menu_7">harmony 鸿蒙Ark Bytecode Fundamentals</a></p>
+<p>或者搜索⼀圈后找到函数 panda::ecmascript::RuntimeStubs::DebugPrintInstruction </p>
+<p>尝试在libark_jsruntime.so中搜索一个字节码名称，还真能找到：  </p>
+<p><img src="/image-20251020140119923.png" alt="image-20251020140119923"></p>
+<p>根据这个字节码找到修改后的字节码表函数sub_1F73E90:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall sub_1F73E90(__int64 a1, unsigned __int8 **a2)</span><br><span class="line">&#123;</span><br><span class="line">  int v3; // eax</span><br><span class="line">  char *v4; // rsi</span><br><span class="line">  const char *v5; // rsi</span><br><span class="line">  const char *v6; // rsi</span><br><span class="line">  const char *v7; // rsi</span><br><span class="line">  const char *v8; // rsi</span><br><span class="line">  const char *v9; // rsi</span><br></pre></td></tr></table></figure>
+
+<p>根据这个函数修复.abc文件中的字节码，得到的out.abc可以使用刚才的工具反编译。</p>
+<p><code>validateChallenge</code> 的处理管线（正向）大致是：</p>
+<ol>
+<li>把用户输入当作 Base64 解码（<code>definefunc2</code>）。</li>
+<li>用一个替换表对字符做简单替换（createobjectwithbuffer）。</li>
+<li>对字母&#x2F;数字做逐位可变的 Caesar 位移（每位不同的偏移 <code>(i*17+23)%26</code>）。</li>
+<li>对每字节做按位循环左移（移位量依赖于状态机 i7&#x2F;i8）。</li>
+<li>将结果每 6 字节一组反转（reverse 每 6 字符块）。</li>
+<li>把字符串用 3 个不同的字节数组作为循环 key 做三轮 <code>xor</code>（每轮：<code>(byte ^ key[(i*11)%len(key)]) ^ ((i*3)&amp;255)</code>）。</li>
+<li>再按一个固定的索引置换（permutation array）抽取出最终的字节序列 <code>r42</code>，并对其做 Base64 编码后与常量字符串比较。</li>
+</ol>
+<p>得到的结果大部分正确，最后两字节有问题，根据题目提示md5爆⼀下即可。  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">s = b&#x27;flag&#123;4f9cc0d2b33f5d7e2b0955765bb33f0&#x27;</span><br><span class="line">from hashlib import md5</span><br><span class="line">for i in &#x27;0123456789abcdef&#x27;:</span><br><span class="line">	if md5(s + i.encode() + b&#x27;&#125;&#x27;).hexdigest() ==</span><br><span class="line">&#x27;7a2028696ca643a57ddeda6642f781ae&#x27;:</span><br><span class="line">	print(s + i.encode() + b&#x27;&#125;&#x27;)</span><br><span class="line"></span><br><span class="line"># flag&#123;4f9cc0d2b33f5d7e2b0955765bb33f0a&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="butterfly"><a href="#butterfly" class="headerlink" title="butterfly"></a>butterfly</h2><p>核心编码逻辑在MMX部分</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">v29 = _m_pxor(v28-&gt;m64_u64, v42[0]);        // XOR</span><br><span class="line">v30 = _m_por(_m_psrlwi(v29, 8u), _m_psllwi(v29, 8u));  // 字节交换</span><br><span class="line">v28-&gt;m64_u64 = _m_paddb(_m_por(_m_psllqi(v30, 1u), _m_psrlqi(v30, 0x3Fu)), v42[0]);  // 循环移位+加法</span><br></pre></td></tr></table></figure>
+
+<p>逆这个过程</p>
+<p>密钥信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v24 = _mm_loadu_si128((const __m128i *)&quot;MMXEncode2024&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>程序会生成：</p>
+<ul>
+<li>编码后的数据文件</li>
+<li>对应的<code>.key</code>密钥文件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">encoded.dat:8F A3 9C B7 70 8D 8F 98 9D BF 8C 99 8C 73 E5 90</span><br><span class="line">8D 8D 8C 85 88 79 85 7C 9D 9F 3C 53 16 15 19 12</span><br><span class="line">36 37 7D 0A</span><br><span class="line">encoded.dat.key:4D 4D 58 45 6E 63 6F 64 65 32 30 32 34 00 45 6E</span><br><span class="line">63 6F 64 69 6E 67 20 66 69 6C 65 3A 20 25 73 0A</span><br></pre></td></tr></table></figure>
+
+<p><strong>encoded.dat.key</strong>:<br>前13字节是密钥：<code>4D 4D 58 45 6E 63 6F 64 65 32 30 32 34</code> &#x3D; <code>&quot;MMXEncode2024&quot;</code></p>
+<p>从代码看，编码步骤是：</p>
+<ol>
+<li><code>_m_pxor</code> - XOR操作</li>
+<li><code>_m_por(_m_psrlwi(v29, 8u), _m_psllwi(v29, 8u))</code> - 字节交换</li>
+<li><code>_m_por(_m_psllqi(v30, 1u), _m_psrlqi(v30, 0x3Fu))</code> - 循环左移1位</li>
+<li><code>_m_paddb</code> - 字节加法</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">def mmx_decode_precise(encoded_data, key):</span><br><span class="line">    key_bytes = key.ljust(8, b&#x27;\x00&#x27;)[:8]  # 取前8字节作为XOR密钥</span><br><span class="line">    key_qword = int.from_bytes(key_bytes, &#x27;little&#x27;)</span><br><span class="line">    </span><br><span class="line">    decoded = bytearray()</span><br><span class="line">    </span><br><span class="line">    for i in range(0, len(encoded_data), 8):</span><br><span class="line">        chunk = encoded_data[i:i+8]</span><br><span class="line">        if len(chunk) &lt; 8:</span><br><span class="line">            chunk = chunk + b&#x27;\x00&#x27; * (8 - len(chunk))</span><br><span class="line">        </span><br><span class="line">        encrypted = int.from_bytes(chunk, &#x27;little&#x27;)</span><br><span class="line">        </span><br><span class="line">        # 逆向 _m_paddb</span><br><span class="line">        temp1 = encrypted</span><br><span class="line">        temp1_bytes = bytearray()</span><br><span class="line">        for j in range(8):</span><br><span class="line">            byte_val = (temp1 &gt;&gt; (j * 8)) &amp; 0xFF</span><br><span class="line">            # 减去key的对应字节</span><br><span class="line">            key_byte = (key_qword &gt;&gt; (j * 8)) &amp; 0xFF</span><br><span class="line">            temp1_bytes.append((byte_val - key_byte) &amp; 0xFF)</span><br><span class="line">        temp1 = int.from_bytes(temp1_bytes, &#x27;little&#x27;)</span><br><span class="line">        </span><br><span class="line">        # 逆向循环移位: 右移1位 (原先是左移1位)</span><br><span class="line">        temp2 = ((temp1 &gt;&gt; 1) | ((temp1 &amp; 1) &lt;&lt; 63)) &amp; 0xFFFFFFFFFFFFFFFF</span><br><span class="line">        </span><br><span class="line">        # 逆向字节交换 (16位字内交换字节)</span><br><span class="line">        temp3_bytes = bytearray()</span><br><span class="line">        temp2_bytes = temp2.to_bytes(8, &#x27;little&#x27;)</span><br><span class="line">        for j in range(0, 8, 2):</span><br><span class="line">            if j + 1 &lt; 8:</span><br><span class="line">                temp3_bytes.append(temp2_bytes[j + 1])</span><br><span class="line">                temp3_bytes.append(temp2_bytes[j])</span><br><span class="line">            else:</span><br><span class="line">                temp3_bytes.append(temp2_bytes[j])</span><br><span class="line">        temp3 = int.from_bytes(temp3_bytes, &#x27;little&#x27;)</span><br><span class="line">        </span><br><span class="line">        # XOR解密</span><br><span class="line">        decrypted = temp3 ^ key_qword</span><br><span class="line">        </span><br><span class="line">        decrypted_bytes = decrypted.to_bytes(8, &#x27;little&#x27;)</span><br><span class="line">        decoded.extend(decrypted_bytes[:min(8, len(encoded_data)-i)])</span><br><span class="line">    </span><br><span class="line">    return bytes(decoded)</span><br><span class="line"></span><br><span class="line"># 编码的数据</span><br><span class="line">encoded_hex = &quot;8F A3 9C B7 70 8D 8F 98 9D BF 8C 99 8C 73 E5 90 8D 8D 8C 85 88 79 85 7C 9D 9F 3C 53 16 15 19 12 36 37 7D 0A&quot;</span><br><span class="line">encoded_bytes = bytes.fromhex(encoded_hex.replace(&quot; &quot;, &quot;&quot;))</span><br><span class="line"></span><br><span class="line"># 密钥</span><br><span class="line">key = b&quot;MMXEncode2024&quot;</span><br><span class="line"></span><br><span class="line">print(f&quot;编码数据长度: &#123;len(encoded_bytes)&#125; 字节&quot;)</span><br><span class="line">print(f&quot;密钥: &#123;key&#125;&quot;)</span><br><span class="line"></span><br><span class="line"># 解码</span><br><span class="line">decoded_result = mmx_decode_precise(encoded_bytes, key)</span><br><span class="line">print(&quot;\n解码结果 (十六进制):&quot;, decoded_result.hex())</span><br><span class="line">print(&quot;解码结果 (原始字节):&quot;, decoded_result)</span><br><span class="line">print(&quot;\n可读文本:&quot;, decoded_result.decode(&#x27;utf-8&#x27;, errors=&#x27;ignore&#x27;))</span><br><span class="line"></span><br><span class="line"># 尝试不同的编码</span><br><span class="line">try:</span><br><span class="line">    print(&quot;作为ASCII:&quot;, decoded_result.decode(&#x27;ascii&#x27;, errors=&#x27;ignore&#x27;))</span><br><span class="line">except:</span><br><span class="line">    pass</span><br><span class="line"></span><br><span class="line"># 显示每个字节的值</span><br><span class="line">print(&quot;\n字节分析:&quot;)</span><br><span class="line">for i, byte in enumerate(decoded_result):</span><br><span class="line">    print(f&quot;字节[&#123;i:2d&#125;]: 0x&#123;byte:02X&#125; = &#123;byte:3d&#125; = &#x27;&#123;chr(byte) if 32 &lt;= byte &lt; 127 else &#x27;?&#x27;&#125;&#x27;&quot;)</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2025/11/01/qwb2025-re/" data-id="cuid0P0QLBFLn499T3dQ--ylw" data-title="qwb2025-re" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-qwb2025-pwn" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2025/10/25/qwb2025-pwn/" class="article-date">
@@ -938,7 +1076,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li></ul>
     </div>
   </div>
 
@@ -949,6 +1087,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
+          </li>
         
           <li>
             <a href="/2025/10/25/qwb2025-pwn/">qwb2025-pwn flagmarket</a>
@@ -964,10 +1106,6 @@
         
           <li>
             <a href="/2025/09/02/TFCCTF2025/">TFCCTF2025 web</a>
-          </li>
-        
-          <li>
-            <a href="/2025/08/10/justCTF2025/">justCTF2025 web</a>
           </li>
         
       </ul>
