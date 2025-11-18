@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>picoctf2022 | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="include-web在script.js和style.css中藏了两部分的flag 1234567&#x2F;* style.css *&#x2F;body &#123;  background-color: lightblue;&#125;&#x2F;*  picoCTF&#123;1nclu51v17y_1of2_  *&#x2F;  script.js 1234567function greetings()&#123;  ale">
+<meta property="og:type" content="article">
+<meta property="og:title" content="picoctf2022">
+<meta property="og:url" content="http://example.com/2022/04/09/2022picoctfctf/index.html">
+<meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
+<meta property="og:description" content="include-web在script.js和style.css中藏了两部分的flag 1234567&#x2F;* style.css *&#x2F;body &#123;  background-color: lightblue;&#125;&#x2F;*  picoCTF&#123;1nclu51v17y_1of2_  *&#x2F;  script.js 1234567function greetings()&#123;  ale">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-04-09T03:07:10.000Z">
+<meta property="article:modified_time" content="2025-11-18T07:47:27.786Z">
+<meta property="article:author" content="xrivendell7">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xrivendell7&#39;s ctf blog（佩奇小屋）</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2022picoctfctf" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/04/09/2022picoctfctf/" class="article-date">
+  <time class="dt-published" datetime="2022-04-09T03:07:10.000Z" itemprop="datePublished">2022-04-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      picoctf2022
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="include-web"><a href="#include-web" class="headerlink" title="include-web"></a>include-web</h2><p>在script.js和style.css中藏了两部分的flag</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* style.css */</span></span><br><span class="line"><span class="selector-tag">body</span> &#123;</span><br><span class="line">  <span class="attribute">background-color</span>: lightblue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*  picoCTF&#123;1nclu51v17y_1of2_  */</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>script.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">greetings</span>(<span class="params"></span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="title function_">alert</span>(<span class="string">&quot;This code is in a separate file!&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//  f7w_2of2_f4593d9d&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>拼起来：<code>picoCTF{1nclu51v17y_1of2_f7w_2of2_f4593d9d}</code></p>
+<h2 id="inspect-HTML-web"><a href="#inspect-HTML-web" class="headerlink" title="inspect HTML-web"></a>inspect HTML-web</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.21.6</span><br><span class="line">Date: Thu, 07 Apr 2022 12:42:58 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 916</span><br><span class="line">Last-Modified: Tue, 15 Mar 2022 07:17:06 GMT</span><br><span class="line">Connection: close</span><br><span class="line">ETag: &quot;62303d72-394&quot;</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="attr">content</span>=<span class="string">&quot;ie=edge&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>On Histiaeus<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>On Histiaeus<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>However, according to Herodotus, Histiaeus was unhappy having to stay in</span><br><span class="line">       Susa, and made plans to return to his position as King of Miletus by </span><br><span class="line">       instigating a revolt in Ionia. In 499 BC, he shaved the head of his </span><br><span class="line">       most trusted slave, tattooed a message on his head, and then waited for </span><br><span class="line">       his hair to grow back. The slave was then sent to Aristagoras, who was </span><br><span class="line">       instructed to shave the slave&#x27;s head again and read the message, which </span><br><span class="line">       told him to revolt against the Persians.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span> Source: Wikipedia on Histiaeus <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--picoCTF&#123;1n5p3t0r_0f_h7ml_dd513514&#125;--&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>直接藏在http的返回respone里面</p>
+<p><code>picoCTF{1n5p3t0r_0f_h7ml_dd513514}</code></p>
+<h2 id="Local-Authority-web"><a href="#Local-Authority-web" class="headerlink" title="Local Authority-web"></a>Local Authority-web</h2><p>输入<code>username</code>和<code>password</code></p>
+<p>输入错误的请求在respone中有secure.js内容如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">checkPassword</span>(<span class="params">username, password</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>( username === <span class="string">&#x27;admin&#x27;</span> &amp;&amp; password === <span class="string">&#x27;strongPassword098765&#x27;</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以输入admin 和 strongPassword098765</p>
+<p>得到flag <code>picoCTF{j5_15_7r4n5p4r3n7_6309e949}</code></p>
+<h2 id="Search-source-web"><a href="#Search-source-web" class="headerlink" title="Search source-web"></a>Search source-web</h2><p>藏在style.css中</p>
+<p><code>picoCTF{1nsp3ti0n_0f_w3bpag3s_227d64bd}</code></p>
+<h2 id="Forbidden-Paths-web"><a href="#Forbidden-Paths-web" class="headerlink" title="Forbidden Paths-web"></a>Forbidden Paths-web</h2><p>相对路径读 <code>../../../../flag.txt</code></p>
+<p>直接读到flag <code>picoCTF{7h3_p47h_70_5ucc355_26b22ab3}</code></p>
+<h2 id="Powercookie-web"><a href="#Powercookie-web" class="headerlink" title="Powercookie-web"></a>Powercookie-web</h2><p>在cookie中有这样一条</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Domain</th>
+<th>Path</th>
+<th>Expires&#x2F;Max Age</th>
+<th>Size</th>
+<th>HttpOnly</th>
+<th>Secure</th>
+<th>SameSite</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>isAdmin</td>
+<td>0</td>
+<td>saturn.picoctf.net</td>
+<td>1</td>
+<td>Session</td>
+<td>8</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Medium</td>
+</tr>
+</tbody></table>
+<p>把isAdmin修改为1即可顺利登陆得到flag</p>
+<p><code>picoCTF{gr4d3_A_c00k13_dcb9f091}</code></p>
+<h2 id="Roboto-Sans-web"><a href="#Roboto-Sans-web" class="headerlink" title="Roboto Sans-web"></a>Roboto Sans-web</h2><p>robots.txt</p>
+<p><strong>robots协议也叫robots.txt</strong>（统一小写）是一种存放于网站根目录下的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/ASCII">ASCII</a>编码的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6">文本文件</a>，它通常告诉网络<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E">搜索引擎</a>的漫游器（又称<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%BD%91%E7%BB%9C%E8%9C%98%E8%9B%9B">网络蜘蛛</a>），此网站中的哪些内容是不应被搜索引擎的漫游器获取的，哪些是可以被漫游器获取的。因为一些系统中的URL是大小写敏感的，所以robots.txt的文件名应统一为小写。robots.txt应放置于网站的根目录下。如果想单独定义搜索引擎的漫游器访问子目录时的行为，那么可以将自定的设置合并到根目录下的robots.txt，或者使用robots<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%85%83%E6%95%B0%E6%8D%AE">元数据</a>（Metadata，又称元数据）。</p>
+<p>robots协议并不是一个规范，而只是约定俗成的，所以并不能保证网站的隐私。</p>
+<p>访问robots.txt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">User-agent *</span><br><span class="line">Disallow: /cgi-bin/</span><br><span class="line">Think you have seen your flag or want to keep looking.</span><br><span class="line"></span><br><span class="line">ZmxhZzEudHh0;anMvbXlmaW</span><br><span class="line">anMvbXlmaWxlLnR4dA==</span><br><span class="line">svssshjweuiwl;oiho.bsvdaslejg</span><br><span class="line">Disallow: /wp-admin/</span><br></pre></td></tr></table></figure>
+
+<p>anMvbXlmaWxlLnR4dA&#x3D;&#x3D;</p>
+<p>js&#x2F;myfile.txt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">picoCTF&#123;Who_D03sN7_L1k5_90B0T5_a4f5cc70&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="secrets-web"><a href="#secrets-web" class="headerlink" title="secrets-web"></a>secrets-web</h2><p>访问</p>
+<p>&#96;&#96;</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;hidden/file.css&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>Finally. You almost found me. you are doing well<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;https://media1.tenor.com/images/0a6aff9f825af62c05adfbd75039cc7b/tenor.gif?itemid=4648337&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;Something Like That GIF - Andy Parksandrecreation Wtf GIFs&quot;</span> <span class="attr">style</span>=<span class="string">&quot;max-width: 833px; background-color: rgb(151, 121, 85);&quot;</span> <span class="attr">width</span>=<span class="string">&quot;833&quot;</span> <span class="attr">height</span>=<span class="string">&quot;937.125&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>里面有一个<code>hiddlen/file.css</code>，访问一下得到css里面还有一个套娃</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>LOGIN<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- css --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">&quot;superhidden/login.css&quot;</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;container&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;&quot;</span> <span class="attr">action</span>=<span class="string">&quot;/secret/assets/popup.js&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;row&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">h2</span> <span class="attr">style</span>=<span class="string">&quot;text-align: center&quot;</span>&gt;</span></span><br><span class="line">              Login with Social Media or Manually</span><br><span class="line">            <span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;vl&quot;</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;vl-innertext&quot;</span>&gt;</span>or<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;col&quot;</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;#&quot;</span> <span class="attr">class</span>=<span class="string">&quot;fb btn&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">&quot;fa fa-facebook fa-fw&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span> Login with Facebook</span><br><span class="line">              <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;#&quot;</span> <span class="attr">class</span>=<span class="string">&quot;twitter btn&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">&quot;fa fa-twitter fa-fw&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span> Login with Twitter</span><br><span class="line">              <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;#&quot;</span> <span class="attr">class</span>=<span class="string">&quot;google btn&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">&quot;fa fa-google fa-fw&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span> Login with Google+</span><br><span class="line">              <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;col&quot;</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;hide-md-lg&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">p</span>&gt;</span>Or sign in manually:<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">              <span class="tag">&lt;<span class="name">input</span></span></span><br><span class="line"><span class="tag">                <span class="attr">type</span>=<span class="string">&quot;text&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">name</span>=<span class="string">&quot;username&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">placeholder</span>=<span class="string">&quot;Username&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">required</span></span></span><br><span class="line"><span class="tag">              /&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">input</span></span></span><br><span class="line"><span class="tag">                <span class="attr">type</span>=<span class="string">&quot;password&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">name</span>=<span class="string">&quot;password&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">placeholder</span>=<span class="string">&quot;Password&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">required</span></span></span><br><span class="line"><span class="tag">              /&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;db&quot;</span> <span class="attr">value</span>=<span class="string">&quot;superhidden/xdfgwd.html&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">              <span class="tag">&lt;<span class="name">input</span></span></span><br><span class="line"><span class="tag">                <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">value</span>=<span class="string">&quot;Login&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">onclick</span>=<span class="string">&quot;alert(&#x27;Thank you for the attempt but oops! try harder. better luck next time&#x27;)&quot;</span></span></span><br><span class="line"><span class="tag">              /&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">      <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;bottom-container&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;row&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;col&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;#&quot;</span> <span class="attr">style</span>=<span class="string">&quot;color: white&quot;</span> <span class="attr">class</span>=<span class="string">&quot;btn&quot;</span>&gt;</span>Sign up<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;col&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;#&quot;</span> <span class="attr">style</span>=<span class="string">&quot;color: white&quot;</span> <span class="attr">class</span>=<span class="string">&quot;btn&quot;</span>&gt;</span>Forgot password?<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>最后访问一下<code>http://saturn.picoctf.net:50167/secret/hidden/superhidden/</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">  &lt;head&gt;</span><br><span class="line">    &lt;title&gt;&lt;/title&gt;</span><br><span class="line">    &lt;link rel=&quot;stylesheet&quot; href=&quot;mycss.css&quot; /&gt;</span><br><span class="line">  &lt;/head&gt;</span><br><span class="line"></span><br><span class="line">  &lt;body&gt;</span><br><span class="line">    &lt;h1&gt;Finally. You found me. But can you see me&lt;/h1&gt;</span><br><span class="line">    &lt;h3 class=&quot;flag&quot;&gt;picoCTF&#123;succ3ss_@h3n1c@10n_51b260fe&#125;&lt;/h3&gt;</span><br><span class="line">  &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="SQL-Direct-web"><a href="#SQL-Direct-web" class="headerlink" title="SQL Direct-web"></a>SQL Direct-web</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">~ wsl@Conjuring</span><br><span class="line">&lt;2&gt;&gt;&gt; proxychains psql -h saturn.picoctf.net -p 53019 -U postgres pico</span><br><span class="line">[proxychains] config file found: /etc/proxychains.conf</span><br><span class="line">[proxychains] preloading /usr/lib/x86_64-linux-gnu/libproxychains.so.4</span><br><span class="line">[proxychains] DLL init: proxychains-ng 4.14</span><br><span class="line">[proxychains] DLL init: proxychains-ng 4.14</span><br><span class="line">[proxychains] DLL init: proxychains-ng 4.14</span><br><span class="line">[proxychains] Strict chain  ...  192.168.10.3:49010  ...  saturn.picoctf.net:53019  ...  OK</span><br><span class="line">Password for user postgres:</span><br><span class="line">[proxychains] Strict chain  ...  192.168.10.3:49010  ...  saturn.picoctf.net:53019  ...  OK</span><br><span class="line">psql (12.9 (Ubuntu 12.9-0ubuntu0.20.04.1), server 14.2 (Debian 14.2-1.pgdg110+1))</span><br><span class="line">WARNING: psql major version 12, server major version 14.</span><br><span class="line">         Some psql features might not work.</span><br><span class="line">Type &quot;help&quot; for help.</span><br><span class="line"></span><br><span class="line">pico=# help</span><br><span class="line">You are using psql, the command-line interface to PostgreSQL.</span><br><span class="line">Type:  \copyright for distribution terms</span><br><span class="line">       \h for help with SQL commands</span><br><span class="line">       \? for help with psql commands</span><br><span class="line">       \g or terminate with semicolon to execute query</span><br><span class="line">       \q to quit</span><br><span class="line">pico=# \list</span><br><span class="line">                                 List of databases</span><br><span class="line">   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges</span><br><span class="line">-----------+----------+----------+------------+------------+-----------------------</span><br><span class="line"> pico      | postgres | UTF8     | en_US.utf8 | en_US.utf8 |</span><br><span class="line"> postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 |</span><br><span class="line"> template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +</span><br><span class="line">           |          |          |            |            | postgres=CTc/postgres</span><br><span class="line"> template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +</span><br><span class="line">           |          |          |            |            | postgres=CTc/postgres</span><br><span class="line">(4 rows)</span><br><span class="line">pico=# \list</span><br><span class="line">                                 List of databases</span><br><span class="line">   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges</span><br><span class="line">-----------+----------+----------+------------+------------+-----------------------</span><br><span class="line"> pico      | postgres | UTF8     | en_US.utf8 | en_US.utf8 |</span><br><span class="line"> postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 |</span><br><span class="line"> template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +</span><br><span class="line">           |          |          |            |            | postgres=CTc/postgres</span><br><span class="line"> template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +</span><br><span class="line">           |          |          |            |            | postgres=CTc/postgres</span><br><span class="line">(4 rows)</span><br><span class="line"></span><br><span class="line">pico=# \d</span><br><span class="line">         List of relations</span><br><span class="line"> Schema | Name  | Type  |  Owner</span><br><span class="line">--------+-------+-------+----------</span><br><span class="line"> public | flags | table | postgres</span><br><span class="line">(1 row)</span><br><span class="line"></span><br><span class="line">pico=# select * from flags</span><br><span class="line">pico-# ;</span><br><span class="line"> id | firstname | lastname  |                address</span><br><span class="line">----+-----------+-----------+----------------------------------------</span><br><span class="line">  1 | Luke      | Skywalker | picoCTF&#123;L3arN_S0m3_5qL_t0d4Y_0414477f&#125;</span><br><span class="line">  2 | Leia      | Organa    | Alderaan</span><br><span class="line">  3 | Han       | Solo      | Corellia</span><br><span class="line">(3 rows)</span><br></pre></td></tr></table></figure>
+
+<h2 id="sqlilite-web"><a href="#sqlilite-web" class="headerlink" title="sqlilite-web"></a>sqlilite-web</h2><p>输入错误的admin和password</p>
+<p>提示：Login failed.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">username: admin</span><br><span class="line">password: admin</span><br><span class="line">SQL query: SELECT * FROM users WHERE name=&#x27;admin&#x27; AND password=&#x27;admin&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>看到是通过sql查询的，应该可以sql注入</p>
+<p>注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM users WHERE name=&#x27;admin&#x27; AND password=&#x27;&#x27; or `1=`1`</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/04/09/2022picoctfctf/" data-id="cuidLuPQt13YhQ8KMt-yzTD-9" data-title="picoctf2022" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/17/vsctf2022/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          2022 vsCTF
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/11/02/2021hackluctf/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hacklu CTF 2021</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/11/18/n1ctfjunior-re/">n1ctfjunior-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/25/qwb2025-pwn/">qwb2025-pwn flagmarket</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/18/train0927/">train0927</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/10/junior/">n1ctf junior 2/2 web</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 xrivendell7<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

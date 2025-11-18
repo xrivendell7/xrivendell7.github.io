@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>SWPUCTF2024 | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="基本信息 题目名称：[SWPUCTF 2024 秋季新生赛] 动态调试  题目链接：https:&#x2F;&#x2F;www.nssctf.cn&#x2F;problem&#x2F;5985 考点清单：动态调试，RC4 工具清单：IDA Pro，Die，dbg  4.1 看到什么题目关键信息列表： 下载附件后发现是rc4.exe文件 4.2 解题思路根据文件名，能想到涉及到RC4加密算法，所以先了解RC4加密算法才能做出来. 常见的r">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SWPUCTF2024">
+<meta property="og:url" content="http://example.com/2024/11/26/SWPUCTF2024/index.html">
+<meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
+<meta property="og:description" content="基本信息 题目名称：[SWPUCTF 2024 秋季新生赛] 动态调试  题目链接：https:&#x2F;&#x2F;www.nssctf.cn&#x2F;problem&#x2F;5985 考点清单：动态调试，RC4 工具清单：IDA Pro，Die，dbg  4.1 看到什么题目关键信息列表： 下载附件后发现是rc4.exe文件 4.2 解题思路根据文件名，能想到涉及到RC4加密算法，所以先了解RC4加密算法才能做出来. 常见的r">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-11-26T08:07:31.000Z">
+<meta property="article:modified_time" content="2025-11-18T08:09:36.561Z">
+<meta property="article:author" content="xrivendell7">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xrivendell7&#39;s ctf blog（佩奇小屋）</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-SWPUCTF2024" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/11/26/SWPUCTF2024/" class="article-date">
+  <time class="dt-published" datetime="2024-11-26T08:07:31.000Z" itemprop="datePublished">2024-11-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      SWPUCTF2024
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h3><ul>
+<li>题目名称：[SWPUCTF 2024 秋季新生赛] 动态调试 </li>
+<li>题目链接：<a target="_blank" rel="noopener" href="https://www.nssctf.cn/problem/5985">https://www.nssctf.cn/problem/5985</a></li>
+<li>考点清单：动态调试，RC4</li>
+<li>工具清单：IDA Pro，Die，dbg</li>
+</ul>
+<h3 id="4-1-看到什么"><a href="#4-1-看到什么" class="headerlink" title="4.1 看到什么"></a>4.1 看到什么</h3><p><em><strong>题目关键信息列表：</strong></em></p>
+<p>下载附件后发现是rc4.exe文件</p>
+<h3 id="4-2-解题思路"><a href="#4-2-解题思路" class="headerlink" title="4.2 解题思路"></a>4.2 解题思路</h3><p>根据文件名，能想到涉及到RC4加密算法，所以先了解RC4加密算法才能做出来.</p>
+<p>常见的rc4流程：</p>
+<ol>
+<li>初始化密钥流</li>
+<li>使用伪随机算法处理密钥流</li>
+<li>将明文与密钥流逐字节异或，输出密文</li>
+</ol>
+<p>接下来就是查壳，有壳脱，无壳直接丢进IDA进行静态调试分析，分析不出就用动态调试，再写脚本得出flag。<del>（简单粗暴）</del></p>
+<p>这个题其实只用静态调试就能做出来，我第一遍就是这样，但是多少有些不尊重题目名字，于是用动态又做了一遍，发现动态简单许多，别有一番风味。</p>
+<h3 id="4-3-✅-尝试过程和结果记录"><a href="#4-3-✅-尝试过程和结果记录" class="headerlink" title="4.3 ✅ 尝试过程和结果记录"></a>4.3 ✅ 尝试过程和结果记录</h3><ol>
+<li><p>查壳，发现64位无壳</p>
+<style>.tvayxpqmmhpc{zoom:67%;}</style>
+</li>
+<li><p>丢进IDA，按下F5之后，观察和分析函数</p>
+<style>.ibxpmetzhsqr{zoom:67%;}</style>
+
+<p>首先将用户输入存在V2中，v3是密钥key的长度， <code>rc4_init(s, key, v3)</code>就是初始化密钥的函数</p>
+<p><code>puts(&quot;....&quot;)/puts(&quot;..........&quot;)/.../puts(&quot;........................&quot;)</code>夹杂 <code>Sleep(500)</code> ，这部分是模拟正在处理（没有什么用，<del>没开会员的某度网盘估计就有一堆sleep</del>）</p>
+<p> <code>rc4_crypt(s, v2, len)</code>便是加密函数，最后将处理后的V2和V1进行比较，全都相同就是正确的flag，那么思路就是V1反方向进行RC4解密即可，于是有两种做法。</p>
+<h4 id="静态："><a href="#静态：" class="headerlink" title="静态："></a>静态：</h4><ol>
+<li><p>首先得知道，如果要只凭静态调试得出flag，我们需要知道V1和key，还有详细的 <code>rc4_init(s, key, v3)</code>和 <code>rc4_crypt(s, v2, len)</code>流程，才能写出逆向脚本求得flag，所以我们一个个去寻找和分析。</p>
+</li>
+<li><p>待解密的V1和密钥key如下：</p>
+<style>.vzorgqceuvsi{zoom:67%;}</style>
+
+<style>.scybeyfgynwr{zoom:67%;}</style>
+
+<p>我一般喜欢看16进制的界面（方便复制写脚本），如下：</p>
+<style>.uphphbfmvccx{zoom:67%;}</style>
+
+<style>.xfyuscgifvjb{zoom:67%;}</style>
+
+<p>所以</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">V1=[</span><br><span class="line">    0xCF, 0xA0, 0xC7, 0x24, 0x93, 0xEC, 0x51, 0xFB, 0x5E, 0xA5, 0xEE, 0xC5,</span><br><span class="line">    0xE7, 0xEA, 0xBB, 0x4A, 0xE0, 0x6E, 0x16, 0x63, 0xF0, 0x1A, 0x91, 0x04,</span><br><span class="line">    0xC1, 0x7E, 0x3F, 0x2B, 0x4F, 0x53, 0xB0, 0x62, 0xA3, 0xA1, 0xCF, 0xC1,</span><br><span class="line">    0x73, 0x85, 0x5F, 0xEC, 0x14, 0xD8, 0xD4, 0xE2, 0x00</span><br><span class="line">]</span><br><span class="line">key = b&quot;ysyy_114514&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接下来便是 <code>rc4_init</code>和 <code>rc4_crypt</code>函数</p>
+<p><code>rc4_init</code>如下：</p>
+<style>.bhhksoejwuil{zoom:67%;}</style>
+
+<p>显然，这是RC4 加密算法中标准的<strong>密钥调度算法KSA</strong>，总结就是<code>s</code> 是一个被打乱的 0~255 的排列，它的顺序取决于提供的 <code>key</code>。这个数组 <code>s</code> 就是后续 RC4 加密&#x2F;解密过程中使用的密钥流的前身，也就是基础。</p>
+<p><code>rc4_crypt</code>如下：</p>
+<style>.nsikyzhdxnvt{zoom:67%;}</style>
+
+<p>这部分就是RC4的加密函数，但是和标准的RC4有区别，新增了 <code>+ key[k % strlen(key)]</code> 这部分，说明出题人偷偷加了点自己的东西，但不多，影响不大。</p>
+<p>流程是：</p>
+<ol>
+<li>每处理一个字节时，更新索引 <code>i</code> 和 <code>j</code>。</li>
+<li>交换 <code>s[i]</code> 和 <code>s[j]</code>。</li>
+<li>生成一个密钥字节：<code>s[(s[i] + s[j]) % 256]</code>。</li>
+<li>用偏移后的密钥字节和明文异或：<code>Data[k] ^= key_byte+偏移值</code>，偏移值就是**<code>key[k % strlen(key)]</code>**，标准RC4是没有的。</li>
+</ol>
+</li>
+<li><p>那么都齐全了，就可以写出逆向脚本了，我写的如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">key = b&quot;ysyy_114514&quot;</span><br><span class="line"></span><br><span class="line">v1 = bytes([</span><br><span class="line">    0xCF, 0xA0, 0xC7, 0x24, 0x93, 0xEC, 0x51, 0xFB, 0x5E, 0xA5, 0xEE, 0xC5,</span><br><span class="line">    0xE7, 0xEA, 0xBB, 0x4A, 0xE0, 0x6E, 0x16, 0x63, 0xF0, 0x1A, 0x91, 0x04,</span><br><span class="line">    0xC1, 0x7E, 0x3F, 0x2B, 0x4F, 0x53, 0xB0, 0x62, 0xA3, 0xA1, 0xCF, 0xC1,</span><br><span class="line">    0x73, 0x85, 0x5F, 0xEC, 0x14, 0xD8, 0xD4, 0xE2, 0x00</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">def rc4_init(key: bytes):</span><br><span class="line">    # 初始化状态 S 和辅助数组 K</span><br><span class="line">    S = list(range(256))</span><br><span class="line">    K = [key[i % len(key)] for i in range(256)]</span><br><span class="line">    j = 0</span><br><span class="line">    for i in range(256):</span><br><span class="line">        j = (j + S[i] + K[i]) &amp; 0xFF</span><br><span class="line">        S[i], S[j] = S[j], S[i]</span><br><span class="line">    return S</span><br><span class="line"></span><br><span class="line">def rc4_crote(S: list, data: bytearray, key: bytes):</span><br><span class="line">    i = 0</span><br><span class="line">    j = 0</span><br><span class="line">    for idx in range(len(data)):</span><br><span class="line">        i = (i + 1) &amp; 0xFF</span><br><span class="line">        j = (j + S[i]) &amp; 0xFF</span><br><span class="line">        S[i], S[j] = S[j], S[i]</span><br><span class="line">        ks = S[(S[i] + S[j] + 1) &amp; 0xFF]</span><br><span class="line">        data[idx] = ((key[idx % len(key)] + ks) &amp; 0xFF) ^ data[idx]</span><br><span class="line"></span><br><span class="line">S = rc4_init(key)</span><br><span class="line"># 用 bytearray 可原地修改</span><br><span class="line">buf = bytearray(v1)</span><br><span class="line">rc4_crote(S, buf, key)</span><br><span class="line"># 以 0x00 为结束符，打印前面的所有字符</span><br><span class="line">flag = buf.split(b&#x27;\x00&#x27;, 1)[0].decode(&#x27;utf-8&#x27;, errors=&#x27;ignore&#x27;)</span><br><span class="line">print(&quot;flag =&quot;, flag)</span><br></pre></td></tr></table></figure>
+
+<p>运行即可得到flag：<code>NSSCTF&#123;0d6f90ac-4b5e-4efb-8502-6349cf798f2e&#125;</code></p>
+</li>
+</ol>
+<h4 id="动态："><a href="#动态：" class="headerlink" title="动态："></a>动态：</h4><ol>
+<li>动态调试的工具，常见的就有：dbg，OD（Ollydbg），GDB（ELF文件）等等。这里当然IDA也是具备一定的动态调试能力，所以这道也可以试试IDA的动态调试</li>
+<li>首先我们都知道RC4是对称加密算法，那么我们可以将原来代码中把 <code>v2</code> 内容直接改成 <code>v1</code> 的内容（密文），把 <code>len</code> 改为 <code>v1</code> 的长度</li>
+</ol>
+<p>那么接下来调用的 <code>rc4_crypt</code> 实际是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">明文 = 密文 ⊕ keystream</span><br></pre></td></tr></table></figure>
+
+<p>那么利用程序本身就可以得出flag，，不需要自己去编写脚本了！</p>
+<ol start="3">
+<li><p>那么开始吧（来自师傅llc43212）：</p>
+</li>
+<li><p>在<code>rc4_crypt</code> 按下F2设置断点，同时IDA进入调试模式</p>
+<style>.enoinpndcngy{zoom:67%;}</style>
+</li>
+<li><p>然后随便输入字符串，断点在<code>rc4_crypt</code> </p>
+<style>.xsuliwstilnq{zoom:67%;}</style>
+</li>
+<li><p>然后一步步到 4019E8 停下. 接下来修改寄存器的值,</p>
+<p>首先是传入的 Len 变量, 我们把它修改成密文一样的长度44</p>
+<style>.bneyacytsurr{zoom:67%;}</style>
+</li>
+<li><p>右键 <strong>R8</strong> 寄存器然后选择 <strong>Modify Value,</strong> 输入 <strong>2C</strong></p>
+<p>接下来我们返回源码窗口，找到 v1 的地址<br>然后将%rdx 修改为 v1 的地址</p>
+<style>.gewlllyrbjgy{zoom:67%;}</style>
+
+<p>然后返回源码窗口一步步调试. 再次进入 v1</p>
+<style>.egiunhebgymh{zoom:67%;}</style>
+
+<p>它的值已经被修改成flag，转成字符即可。</p>
+</li>
+</ol>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2024/11/26/SWPUCTF2024/" data-id="cuideJrVPxhBRLxIjXzfMIf94" data-title="SWPUCTF2024" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/08/10/justCTF2025/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          justCTF2025 web
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2024/11/17/S1mpleVM/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">S1mpleVM</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/11/18/n1ctfjunior-re/">n1ctfjunior-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/25/qwb2025-pwn/">qwb2025-pwn flagmarket</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/18/train0927/">train0927</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/10/junior/">n1ctf junior 2/2 web</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 xrivendell7<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

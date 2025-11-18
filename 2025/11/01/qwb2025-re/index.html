@@ -13,13 +13,13 @@
 <meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
 <meta property="og:description" content="tradedocker desktop代理设置 12345678910111213&#123;  &quot;builder&quot;: &#123;    &quot;gc&quot;: &#123;      &quot;defaultKeepStorage&quot;: &quot;20GB&quot;,      &quot;enabled&quot;: true    &#125;">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/image-20251019011550085.png">
-<meta property="og:image" content="http://example.com/image-20251020140119923.png">
+<meta property="og:image" content="http://example.com/2025/11/01/qwb2025-re/image-20251019011550085.png">
+<meta property="og:image" content="http://example.com/2025/11/01/qwb2025-re/image-20251020140119923.png">
 <meta property="article:published_time" content="2025-11-01T02:15:47.000Z">
-<meta property="article:modified_time" content="2025-11-18T02:31:43.549Z">
+<meta property="article:modified_time" content="2025-11-18T06:36:39.644Z">
 <meta property="article:author" content="xrivendell7">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/image-20251019011550085.png">
+<meta name="twitter:image" content="http://example.com/2025/11/01/qwb2025-re/image-20251019011550085.png">
   
     <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
   
@@ -141,7 +141,8 @@
 </tr>
 </tbody></table>
 <p>执行abc文件：</p>
-<p><img src="/image-20251019011550085.png" alt="image-20251019011550085"></p>
+<style>.rffpqlpmdret{zoom: 80%;}</style><img src="/2025/11/01/qwb2025-re/image-20251019011550085.png" class="rffpqlpmdret" alt="image-20251019011550085">
+
 <p><code>v80</code> 是一个 <code>std::vector&lt;std::string&gt;</code> 的底层数组，存储分割后的 ABC 文件路径（或者入口函数信息）。</p>
 <p>循环调用：panda::JSNApi::Execute(EcmaVM, path, &amp;entry, 0, &amp;set)</p>
 <p><strong>参数解释：</strong></p>
@@ -156,7 +157,8 @@
 <p>用jadx-dev-all.jar打开.abc文件有大量报错，猜测修改了字节码。搜索找到一份字节码表： <a target="_blank" rel="noopener" href="https://www.seaxiang.com/blog/JdVvVU#menu_7">harmony 鸿蒙Ark Bytecode Fundamentals</a></p>
 <p>或者搜索⼀圈后找到函数 panda::ecmascript::RuntimeStubs::DebugPrintInstruction </p>
 <p>尝试在libark_jsruntime.so中搜索一个字节码名称，还真能找到：  </p>
-<p><img src="/image-20251020140119923.png" alt="image-20251020140119923"></p>
+<style>.llpbsfgwkqtm{zoom:80%;}</style><img src="/2025/11/01/qwb2025-re/image-20251020140119923.png" class="llpbsfgwkqtm" alt="image-20251020140119923">
+
 <p>根据这个字节码找到修改后的字节码表函数sub_1F73E90:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall sub_1F73E90(__int64 a1, unsigned __int8 **a2)</span><br><span class="line">&#123;</span><br><span class="line">  int v3; // eax</span><br><span class="line">  char *v4; // rsi</span><br><span class="line">  const char *v5; // rsi</span><br><span class="line">  const char *v6; // rsi</span><br><span class="line">  const char *v7; // rsi</span><br><span class="line">  const char *v8; // rsi</span><br><span class="line">  const char *v9; // rsi</span><br></pre></td></tr></table></figure>
 
@@ -249,7 +251,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
     </div>
   </div>
 
@@ -274,7 +276,7 @@
           </li>
         
           <li>
-            <a href="/2025/10/17/train0927/">train0927</a>
+            <a href="/2025/10/18/train0927/">train0927</a>
           </li>
         
           <li>

