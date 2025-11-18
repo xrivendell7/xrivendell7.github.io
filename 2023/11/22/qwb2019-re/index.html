@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>qwb2019-re | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="2019 re 强网先锋一个简单的base64，签到题  解码即可：flag{mafakuailaiqiandaob} 2019 re 设备固件题目给了一个完整的文件系统镜像和一个elf文件，根据readme中所述使用以下命令模拟运行： 1sudo qemu-system-mipsel -M malta -hda openwrt-malta-le-root.ext4 -kernel openwrt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="qwb2019-re">
+<meta property="og:url" content="http://example.com/2023/11/22/qwb2019-re/index.html">
+<meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
+<meta property="og:description" content="2019 re 强网先锋一个简单的base64，签到题  解码即可：flag{mafakuailaiqiandaob} 2019 re 设备固件题目给了一个完整的文件系统镜像和一个elf文件，根据readme中所述使用以下命令模拟运行： 1sudo qemu-system-mipsel -M malta -hda openwrt-malta-le-root.ext4 -kernel openwrt">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/1763433999333-27.png">
+<meta property="og:image" content="http://example.com/1763433999325-1.png">
+<meta property="og:image" content="http://example.com/1763433999325-2.png">
+<meta property="og:image" content="http://example.com/1763433999325-3.png">
+<meta property="og:image" content="http://example.com/1763433999325-4.png">
+<meta property="og:image" content="http://example.com/1763433999325-5.png">
+<meta property="og:image" content="http://example.com/1763433999325-6.png">
+<meta property="og:image" content="http://example.com/1763433999325-7.png">
+<meta property="og:image" content="http://example.com/1763433999325-8.png">
+<meta property="og:image" content="http://example.com/1763433999325-9.png">
+<meta property="og:image" content="http://example.com/1763433999325-10.png">
+<meta property="og:image" content="http://example.com/1763433999325-11.png">
+<meta property="og:image" content="http://example.com/1763433999325-12.png">
+<meta property="og:image" content="http://example.com/1763433999325-13.png">
+<meta property="og:image" content="http://example.com/1763433999325-14.png">
+<meta property="og:image" content="http://example.com/1763433999325-15.png">
+<meta property="og:image" content="http://example.com/1763433999325-16.png">
+<meta property="og:image" content="http://example.com/1763433999325-17.png">
+<meta property="og:image" content="http://example.com/1763433999325-18.png">
+<meta property="og:image" content="http://example.com/1763433999325-19.png">
+<meta property="og:image" content="http://example.com/1763433999325-20.png">
+<meta property="og:image" content="http://example.com/1763433999325-21.png">
+<meta property="og:image" content="http://example.com/1763433999325-22.png">
+<meta property="og:image" content="http://example.com/1763433999325-23.png">
+<meta property="og:image" content="http://example.com/1763433999325-24.png">
+<meta property="og:image" content="http://example.com/1763433999325-25.png">
+<meta property="og:image" content="http://example.com/1763433999325-26.png">
+<meta property="article:published_time" content="2023-11-22T02:46:12.000Z">
+<meta property="article:modified_time" content="2025-11-18T02:46:43.510Z">
+<meta property="article:author" content="xrivendell7">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/1763433999333-27.png">
+  
+    <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xrivendell7&#39;s ctf blog（佩奇小屋）</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-qwb2019-re" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/11/22/qwb2019-re/" class="article-date">
+  <time class="dt-published" datetime="2023-11-22T02:46:12.000Z" itemprop="datePublished">2023-11-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      qwb2019-re
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="2019-re-强网先锋"><a href="#2019-re-强网先锋" class="headerlink" title="2019 re 强网先锋"></a>2019 re 强网先锋</h1><p>一个简单的base64，签到题</p>
+<p><img src="/1763433999333-27.png" alt="img"></p>
+<p>解码即可：flag{mafakuailaiqiandaob}</p>
+<h1 id="2019-re-设备固件"><a href="#2019-re-设备固件" class="headerlink" title="2019 re 设备固件"></a>2019 re 设备固件</h1><p>题目给了一个完整的文件系统镜像和一个elf文件，根据readme中所述使用以下命令模拟运行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo qemu-system-mipsel -M malta -hda openwrt-malta-le-root.ext4 -kernel openwrt-malta-le-vmlinux.elf -nographic -append &quot;root=/dev/sda console=tty50&quot; </span><br></pre></td></tr></table></figure>
+
+<p>而后在&#x2F;bin中找到目标二进制文件hello：</p>
+<p><img src="/1763433999325-1.png" alt="img"></p>
+<p>运行：</p>
+<p><img src="/1763433999325-2.png" alt="img"></p>
+<p>但是这个二进制文件在系统里面，没办法拿出来用ida查看，先想想办法把hello文件提取出来</p>
+<p>采用在宿主机上挂载 ext4 镜像的方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 1. 创建一个目录作为挂载点sudo mkdir /mnt/openwrt-root</span><br><span class="line"></span><br><span class="line"># 2. 使用 loop 设备挂载 ext4 镜像文件sudo mount -o loop openwrt-malta-le-root.ext4 /mnt/openwrt-root</span><br></pre></td></tr></table></figure>
+
+<p>而后镜像文件的所有内容都暴露在 <code>/mnt/openwrt-root</code> 目录下</p>
+<p><img src="/1763433999325-3.png" alt="img"></p>
+<p>找到hello文件完成提取</p>
+<p><img src="/1763433999325-4.png" alt="img"></p>
+<p>首先使用file命令分析：</p>
+<p><img src="/1763433999325-5.png" alt="img"></p>
+<p>32位mips架构</p>
+<p>放入ida内分析：</p>
+<p><img src="/1763433999325-6.png" alt="img"></p>
+<p>可以看到首先将输入的用户名放入v7的前40个字节中，密码放入后40个字节中，而后进入函数sub_400D48进行判断，该函数主要有两个部分，分别是函数sub_400C6C有用于验证用户名是否正确，函数sub_400CC4用于验证密码是否正确</p>
+<p><img src="/1763433999325-7.png" alt="img"></p>
+<p>先看函数sub_400C6C</p>
+<p><img src="/1763433999325-8.png" alt="img"></p>
+<p>很容易看出来该用户名就是直接确定了<code>dd772</code></p>
+<p>只有<code>dd772</code>才能令最终v1&#x3D;&#x3D;0</p>
+<p>而后看函数sub_400CC4：</p>
+<p><img src="/1763433999325-9.png" alt="img"></p>
+<p>主要逻辑在sub_400800，该函数主要是模拟虚拟机执行，有以下操作：</p>
+<table>
+<thead>
+<tr>
+<th>操作码</th>
+<th>符号</th>
+<th>num1</th>
+<th>num2</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x01</td>
+<td>add</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1+&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x02</td>
+<td>sub</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1-&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x03</td>
+<td>cmp</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>ZF&#x3D;(num1&#x3D;&#x3D;num2?1:2)</td>
+</tr>
+<tr>
+<td>0x04</td>
+<td>jmp</td>
+<td>立即数</td>
+<td>-</td>
+<td>IP+&#x3D;num1</td>
+</tr>
+<tr>
+<td>0x05</td>
+<td>mov</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x06</td>
+<td>-</td>
+<td>寄存器</td>
+<td>-</td>
+<td>num1&#x3D;IP</td>
+</tr>
+<tr>
+<td>0x07</td>
+<td>-</td>
+<td>寄存器</td>
+<td>-</td>
+<td>IP&#x3D;num1</td>
+</tr>
+<tr>
+<td>0x08</td>
+<td>-</td>
+<td>寄存器</td>
+<td>立即数</td>
+<td>num1&#x3D;nmu2</td>
+</tr>
+<tr>
+<td>0x09</td>
+<td>ret</td>
+<td>-</td>
+<td>-</td>
+<td>返回 0</td>
+</tr>
+<tr>
+<td>0x0A</td>
+<td>load</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&#x3D;tran_pass[num2]</td>
+</tr>
+<tr>
+<td>0x0B</td>
+<td>load</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&#x3D;const_ARR[num2]</td>
+</tr>
+<tr>
+<td>0x0C</td>
+<td>xor</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1^&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x0D</td>
+<td>imul</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1*&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x0E</td>
+<td>DIV</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&#x2F;&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x0F</td>
+<td>shl</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&lt;&lt;&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x10</td>
+<td>shr</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&gt;&gt;&#x3D;num2</td>
+</tr>
+<tr>
+<td>0xFF</td>
+<td>ret</td>
+<td>-</td>
+<td>-</td>
+<td>返回 1</td>
+</tr>
+</tbody></table>
+<p>然后指令就是地址4110c0 所指向的内容：</p>
+<p><img src="/1763433999325-10.png" alt="img"></p>
+<p>即：</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>数据</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>004110c0</td>
+<td>08 00 00 00 20 00</td>
+<td>mov R0, 0x20</td>
+</tr>
+<tr>
+<td>004110c6</td>
+<td>08 00 01 00 00 00</td>
+<td>mov R1, 0x00</td>
+</tr>
+<tr>
+<td>004110cc</td>
+<td>08 00 02 00 01 00</td>
+<td>mov R2, 0x01</td>
+</tr>
+<tr>
+<td>004110d2</td>
+<td>03 00 01 00 00 00</td>
+<td>cmp R1, R0</td>
+</tr>
+<tr>
+<td>004110d8</td>
+<td>04 01 16 00 00 00</td>
+<td>jz +0x16</td>
+</tr>
+<tr>
+<td>004110de</td>
+<td>08 00 0b 00 00 00</td>
+<td>mov RB, 0x00</td>
+</tr>
+<tr>
+<td>004110e4</td>
+<td>08 00 0c 00 00 00</td>
+<td>mov RC, 0x00</td>
+</tr>
+<tr>
+<td>004110ea</td>
+<td>01 00 0c 00 0b 00</td>
+<td>add RC, RB</td>
+</tr>
+<tr>
+<td>004110f0</td>
+<td>03 00 0b 00 01 00</td>
+<td>cmp RB, R1</td>
+</tr>
+<tr>
+<td>004110f6</td>
+<td>01 00 0b 00 02 00</td>
+<td>add RB, R2</td>
+</tr>
+<tr>
+<td>004110fc</td>
+<td>04 02 fc ff 00 00</td>
+<td>jnz -0x04</td>
+</tr>
+<tr>
+<td>00411102</td>
+<td>08 00 03 00 08 00</td>
+<td>mov R3, 0x08</td>
+</tr>
+<tr>
+<td>00411108</td>
+<td>08 00 04 00 06 00</td>
+<td>mov R4, 0x06</td>
+</tr>
+<tr>
+<td>0041110e</td>
+<td>08 00 09 00 10 00</td>
+<td>mov R9, 0x10</td>
+</tr>
+<tr>
+<td>411114</td>
+<td>0f 00 09 00 03 00</td>
+<td>shl R9, R3</td>
+</tr>
+<tr>
+<td>0041111a</td>
+<td>08 00 0a 00 24 00</td>
+<td>mov Ra, 0x24</td>
+</tr>
+<tr>
+<td>411120</td>
+<td>01 00 09 00 0a 00</td>
+<td>add R9, Ra</td>
+</tr>
+<tr>
+<td>411126</td>
+<td>01 00 09 00 0c 00</td>
+<td>add R9, RB</td>
+</tr>
+<tr>
+<td>0041112c</td>
+<td>0a 00 05 00 01 00</td>
+<td>LOAD R5, R1 &#x2F;&#x2F;_pass</td>
+</tr>
+<tr>
+<td>411132</td>
+<td>0d 00 05 00 09 00</td>
+<td>imul R5, R9</td>
+</tr>
+<tr>
+<td>411138</td>
+<td>05 00 06 00 05 00</td>
+<td>mov R6, R5</td>
+</tr>
+<tr>
+<td>0041113e</td>
+<td>10 00 06 00 04 00</td>
+<td>shr R6, R4</td>
+</tr>
+<tr>
+<td>411144</td>
+<td>0b 00 07 00 01 00</td>
+<td>LOAD R7, R1 &#x2F;&#x2F;_const</td>
+</tr>
+<tr>
+<td>0041114a</td>
+<td>03 00 06 00 07 00</td>
+<td>cmp R6, R7</td>
+</tr>
+<tr>
+<td>411150</td>
+<td>01 00 01 00 02 00</td>
+<td>add R1, R2</td>
+</tr>
+<tr>
+<td>411156</td>
+<td>04 01 e9 ff 00 00</td>
+<td>jz -0x17</td>
+</tr>
+<tr>
+<td>0041115c</td>
+<td>04 02 01 00 00 00</td>
+<td>jnz +1</td>
+</tr>
+<tr>
+<td>411162</td>
+<td>ff 00 00 00 00 00</td>
+<td>ret 1</td>
+</tr>
+<tr>
+<td>411168</td>
+<td>09 00 00 00 00 00</td>
+<td>ret 0</td>
+</tr>
+<tr>
+<td>0041116e</td>
+<td>ff 00 00 00 00 00</td>
+<td>ret 1</td>
+</tr>
+</tbody></table>
+<p>最后推出算式<code>const_ARR[i]=(((0x10&lt;&lt;8)+0x24+ (i) )*tran_pass[i])&gt;&gt;6</code></p>
+<p>但是这种直接分析太麻烦，也可以使用动态调试（推荐使用）</p>
+<p>很容易就能看出算法为<code>const_ARR[i] = (input[i] * out) &gt;&gt; 6,其中out的初值为0x1024，out += 1+i</code></p>
+<p>爆破一下password：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">flagenc = [<span class="number">0x00000C5B</span>, <span class="number">0x00000CDD</span>, <span class="number">0x00000D1F</span>, <span class="number">0x000018C0</span>, <span class="number">0x000018C6</span>, <span class="number">0x00000C26</span>, <span class="number">0x00000E72</span>, <span class="number">0x00000DF7</span>, <span class="number">0x000019B1</span>, <span class="number">0x00000D41</span>, <span class="number">0x00000D08</span>, <span class="number">0x0000191C</span>, <span class="number">0x00000CD9</span>, <span class="number">0x00000EB1</span>, <span class="number">0x00000CEE</span>, <span class="number">0x00001A78</span>, <span class="number">0x00000D8B</span>, <span class="number">0x00000D99</span>, <span class="number">0x00000D64</span>, <span class="number">0x00000CED</span>, <span class="number">0x000019F8</span>, <span class="number">0x00000E61</span>, <span class="number">0x00001A7F</span>, <span class="number">0x00001AE7</span>, <span class="number">0x00000F26</span>, <span class="number">0x00001B34</span>, <span class="number">0x00001AD0</span>, <span class="number">0x00000D7C</span>, <span class="number">0x00000FC9</span>, <span class="number">0x00000E7E</span>, <span class="number">0x00001C0E</span>, <span class="number">0x00001BAE</span>]</span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">out = <span class="number">0x1024</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(flagenc)):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">33</span>,<span class="number">127</span>):</span><br><span class="line">                <span class="keyword">if</span>(((j * out) &gt;&gt; <span class="number">6</span>) == flagenc[i]):</span><br><span class="line">                        flag += <span class="built_in">chr</span>(j)</span><br><span class="line">                        <span class="built_in">print</span>(flag)</span><br><span class="line">        out += (i + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(flag)</span><br><span class="line"><span class="comment">#134bb097e43b292f4431b6cd8db194db</span></span><br></pre></td></tr></table></figure>
+
+<p>所以用户名就是dd772,密码就是134bb097e43b292f4431b6cd8db194db</p>
+<p>得到flag</p>
+<p><img src="/1763433999325-11.png" alt="img"></p>
+<h1 id="2019-re-Justre"><a href="#2019-re-Justre" class="headerlink" title="2019 re Justre"></a>2019 re Justre</h1><p>A1BAAAAAAAAAAAAAAAAAAAAAAA</p>
+<p>前8个A1BAAAAA为一组  xmm5中有4个</p>
+<p>第二个8个，先判断是否为数字，不是的话判断是否为大写字母，是数字下面的标点以及大写字母的话v14&#x3D;16*（该字符-7），   是大写字母下面的字符的话把v14&#x3D;0，是数字前面的符号的话v14&#x3D;16*该字符</p>
+<p>可能是两个字节两个字节取，如果第二个是数字则将v10&#x3D;v14+该数字，如果是大写字母v10&#x3D;v14+该字符-55</p>
+<p>然后还有很长的一段的运算两种情况都需要进行</p>
+<p>AA 复制16份然后每八个一份放入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">.rdata:00404340 xmmword_404340 xmmword 3000000020000000100000000h</span><br><span class="line">.rdata:00404340                                         ; DATA XREF: sub_401610+151↑r</span><br><span class="line">.rdata:00404350 xmmword_404350 xmmword 4000000040000000400000004h</span><br><span class="line">.rdata:00404350                                         ; DATA XREF: sub_401610+190↑r</span><br><span class="line">.rdata:00404360 xmmword_404360 xmmword 8000000080000000800000008h</span><br><span class="line">.rdata:00404360                                         ; DATA XREF: sub_401610+1B8↑r</span><br><span class="line">.rdata:00404370 xmmword_404370 xmmword 0C0000000C0000000C0000000Ch</span><br><span class="line">.rdata:00404370                                         ; DATA XREF: sub_401610+1DA↑r</span><br><span class="line">.rdata:00404380 xmmword_404380 xmmword 1010101010101010101010101010101h</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.data:00405018 xmmword_405018 xmmword 3D5E1084FD0E0A2CE98FBCC77AB29357h</span><br><span class="line">.data:00405018                                         ; DATA XREF: sub_401610+166↑r</span><br><span class="line">.data:00405018                                         ; sub_401610+189↑w</span><br><span class="line">.data:00405018                                         ; sub_401610:loc_401814↑r</span><br><span class="line">.data:00405018                                         ; sub_401610+212↑w</span><br><span class="line">.data:00405018                                         ; sub_401610:loc_401831↑r</span><br><span class="line">.data:00405018                                         ; sub_401610+259↑o</span><br><span class="line">.data:00405028 xmmword_405028 xmmword 3D4F7424ED150C28FB39F0A384C9FB26h</span><br><span class="line">.data:00405028                                         ; DATA XREF: sub_401610+17B↑r</span><br><span class="line">.data:00405028                                         ; sub_401610+1B1↑w</span><br><span class="line">.data:00405038 xmmword_405038 xmmword 5715BAFE28EA503D065C0BEB3CCE6C2Ah</span><br><span class="line">.data:00405038                                         ; DATA XREF: sub_401610+19B↑r</span><br><span class="line">.data:00405038                                         ; sub_401610+1ED↑w</span><br><span class="line">.data:00405048 xmmword_405048 xmmword 63184D41064DEFECAF152E2F3D4F842Bh</span><br></pre></td></tr></table></figure>
+
+<p>AA 先被扩展为AAAAAAAA 然后再被扩展为相同的四个整数，然后每个再*01010101</p>
+<p>xmm4 &#x3D; (AA*4)*01010101</p>
+<p>xmm5 &#x3D; A1BAAAAA*4</p>
+<p>状态变量1 0x405018 更新：</p>
+<p>xmm1&#x3D;(xmm4 + 0x405018)</p>
+<p>xmm2 &#x3D; (xmm5 + 0x404340)</p>
+<p> 0x405018 &#x3D; xmm2 ^ xmm1</p>
+<p>状态变量2 0x405028更新：</p>
+<p>xmm1 &#x3D; (xmm4 + 0x405028)</p>
+<p>xmm2 &#x3D; (0x404340 + 0x404350 + xmm5)</p>
+<p>0x405028 &#x3D; xmm2 ^ xmm1</p>
+<p>状态变量3 0x405038更新：</p>
+<p>xmm1 &#x3D; (xmm4 + 0x405038)</p>
+<p>xmm2 &#x3D; (0x404340 + 0x404360 + xmm5)</p>
+<p>0x405038 &#x3D; xmm2 ^ xmm1</p>
+<p>状态变量4 0x405048更新：</p>
+<p>xmm4 &#x3D; xmm4 + 0x405048</p>
+<p>xmm1 &#x3D; (0x404340 + 0x404370 + xmm5)</p>
+<p>0x405048 &#x3D; xmm4 ^ xmm1</p>
+<p>v2 &#x3D; A1BAAAAA v10 &#x3D; AA</p>
+<p>v19&#x3D;16</p>
+<p>while（v19&lt;24）{</p>
+<p>*（ 0x405018 + v19 ）&#x3D; （v19 + v2）^ (16843009 * v10 + *（ 0x405018 + v19 ）);</p>
+<p>++v19;</p>
+<p>}</p>
+<p>实际上就是input[i] &#x3D; (flag1+i) ^ (flag2 + input[i])</p>
+<p><img src="/1763433999325-12.png" alt="img"></p>
+<p>但是最后比较的步骤只需要关注第一个32位的部分就行了，所以除状态一外都不需要分析，因为只有两个未知量，所以用三个式子就能爆破出来。</p>
+<p>最后对比的字节为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x83EC8B55, 0xEC81F0E4, 0x00000278</span><br></pre></td></tr></table></figure>
+
+<p>所以爆破就行了：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> i0 = <span class="number">0x7AB29357</span>; <span class="type">int</span> o0 = <span class="number">0x83EC8B55</span>;</span><br><span class="line">    <span class="type">int</span> i1 = <span class="number">0xE98FBCC7</span>; <span class="type">int</span> o1 = <span class="number">0xEC81F0E4</span>;</span><br><span class="line">    <span class="type">int</span> i2 = <span class="number">0xFD0E0A2C</span>; <span class="type">int</span> o2 = <span class="number">0x00000278</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">-128</span>; j != <span class="number">128</span>; j++) &#123;</span><br><span class="line">        <span class="type">int</span> flag = o0 ^ ((<span class="number">0x01010101</span> * j) + i0);</span><br><span class="line">        <span class="keyword">if</span> (o1 == ((flag + <span class="number">1</span>) ^ (<span class="number">0x01010101</span> * j + i1))</span><br><span class="line">            &amp;&amp; o2 == ((flag + <span class="number">2</span>) ^ (<span class="number">0x01010101</span> * j + i2)))</span><br><span class="line">            &#123;cout &lt;&lt; flag &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; j &lt;&lt; endl;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%X%X\n&quot;</span>, flag, j);&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 前十个字符就是：1324223816</span></span><br></pre></td></tr></table></figure>
+
+<p>然后就是后16个字符，这里的检验函数4018A0用了SMC，需要解密一下，来到4018A0使用OD将其dump出来</p>
+<p>用ida打开，即可查看逻辑</p>
+<p><img src="/1763433999325-13.png" alt="img"></p>
+<p>查看逻辑，这里sub_401250明显是des算法，调用三次，分别是加密、解密、加密，即3DES算法</p>
+<p><img src="/1763433999325-14.png" alt="img"></p>
+<p>到底是不是，找个网站解密试试就知道了，发现可以解出来：</p>
+<p><img src="/1763433999325-15.png" alt="img"></p>
+<p>最后放入程序验证，成功得到flag</p>
+<p><img src="/1763433999325-16.png" alt="img"></p>
+<p>flag{13242238160dcc509a6f75849b}</p>
+<h1 id="2019-re-webAssemble"><a href="#2019-re-webAssemble" class="headerlink" title="2019 re webAssemble"></a>2019 re webAssemble</h1><p>.wasm文件逆向管用套路：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~/tools/wasm2c  webassembly.wasm -o web.c</span><br><span class="line">gcc -c web.c -o web.o</span><br></pre></td></tr></table></figure>
+
+<p>然后ida分析</p>
+<p><img src="/1763433999325-17.png" alt="img"></p>
+<p>main函数主要加密函数就这俩，f54有点复杂，先瞅瞅f15</p>
+<p><img src="/1763433999325-18.png" alt="img"></p>
+<p><img src="/1763433999325-19.png" alt="img"></p>
+<p>观察到魔数<code>9E3779B9</code>，然后循环了32次，应该是一个循环32次的XTEA算法</p>
+<p>该算法被调用了4次，四次算法密钥均为0</p>
+<p>那这样的话就找找后续的对比操作，找最后需对比的字符串</p>
+<p><img src="/1763433999325-20.png" alt="img"></p>
+<p>可以看到后面一堆赋值操作</p>
+<p>是用加密后的每一位分别异或一个值，然后取低8位，最后和前面一次算出来的值迭代相加。</p>
+<p><img src="/1763433999325-21.png" alt="img"></p>
+<p>然后最后判断是否相等</p>
+<p>那就假设每个式子的结果为0，那么所有式子就都成立，也就是说最后经算法加密后的值为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">0x4e,0x6e,0xc7,0xea,</span><br><span class="line">0x8a,0x9d,0x70,0x89,//第1次xtea</span><br><span class="line"> </span><br><span class="line">0xeb,0xe2,0x45,0xd3,</span><br><span class="line">0xb8,0x4a,0xc0,0x73,//第2次xtea</span><br><span class="line"> </span><br><span class="line">0xb0,0x4a,0x40,0x71,</span><br><span class="line">0x37,0x34,0x88,0x42,//第3次xtea</span><br><span class="line"> </span><br><span class="line">0x32,0x88,0x80,0xd0,</span><br><span class="line">0x89,0xdb,0xa1,0x1e,//第4次xtea</span><br><span class="line"> </span><br><span class="line">0x35,0x38,0x39,0x31,</span><br><span class="line">0x33,0x7d//没有加密</span><br></pre></td></tr></table></figure>
+
+<p>先找个现成的算法解密一下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="comment">/* take 64 bits of data in v[0] and v[1] and 128 bits of key[0] - key[3] */</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">encipher</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> num_rounds, <span class="type">uint32_t</span> v[<span class="number">2</span>], <span class="type">uint32_t</span> <span class="type">const</span> key[<span class="number">4</span>])</span> </span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> i;</span><br><span class="line">    <span class="type">uint32_t</span> v0=v[<span class="number">0</span>], v1=v[<span class="number">1</span>], sum=<span class="number">0</span>, delta=<span class="number">0x9E3779B9</span>;</span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>; i &lt; num_rounds; i++) &#123;</span><br><span class="line">        v0 += (((v1 &lt;&lt; <span class="number">4</span>) ^ (v1 &gt;&gt; <span class="number">5</span>)) + v1) ^ (sum + key[sum &amp; <span class="number">3</span>]);</span><br><span class="line">        sum += delta;</span><br><span class="line">        v1 += (((v0 &lt;&lt; <span class="number">4</span>) ^ (v0 &gt;&gt; <span class="number">5</span>)) + v0) ^ (sum + key[(sum&gt;&gt;<span class="number">11</span>) &amp; <span class="number">3</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>]=v0; v[<span class="number">1</span>]=v1;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">decipher</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> num_rounds, <span class="type">uint32_t</span> v[<span class="number">2</span>], <span class="type">uint32_t</span> <span class="type">const</span> key[<span class="number">4</span>])</span> </span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> i;</span><br><span class="line">    <span class="type">uint32_t</span> v0=v[<span class="number">0</span>], v1=v[<span class="number">1</span>], delta=<span class="number">0x9E3779B9</span>, sum=delta*num_rounds;</span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>; i &lt; num_rounds; i++) &#123;</span><br><span class="line">        v1 -= (((v0 &lt;&lt; <span class="number">4</span>) ^ (v0 &gt;&gt; <span class="number">5</span>)) + v0) ^ (sum + key[(sum&gt;&gt;<span class="number">11</span>) &amp; <span class="number">3</span>]);</span><br><span class="line">        sum -= delta;</span><br><span class="line">        v0 -= (((v1 &lt;&lt; <span class="number">4</span>) ^ (v1 &gt;&gt; <span class="number">5</span>)) + v1) ^ (sum + key[sum &amp; <span class="number">3</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>]=v0; v[<span class="number">1</span>]=v1;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> key[<span class="number">4</span>]=&#123;<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span> data[]=&#123;</span><br><span class="line">        <span class="number">0x4e</span>,<span class="number">0x6e</span>,<span class="number">0xc7</span>,<span class="number">0xea</span>,</span><br><span class="line">        <span class="number">0x8a</span>,<span class="number">0x9d</span>,<span class="number">0x70</span>,<span class="number">0x89</span>,<span class="comment">//第1次xtea</span></span><br><span class="line">        </span><br><span class="line">        <span class="number">0xeb</span>,<span class="number">0xe2</span>,<span class="number">0x45</span>,<span class="number">0xd3</span>,</span><br><span class="line">        <span class="number">0xb8</span>,<span class="number">0x4a</span>,<span class="number">0xc0</span>,<span class="number">0x73</span>,<span class="comment">//第2次xtea</span></span><br><span class="line">        </span><br><span class="line">        <span class="number">0xb0</span>,<span class="number">0x4a</span>,<span class="number">0x40</span>,<span class="number">0x71</span>,</span><br><span class="line">        <span class="number">0x37</span>,<span class="number">0x34</span>,<span class="number">0x88</span>,<span class="number">0x42</span>,<span class="comment">//第3次xtea</span></span><br><span class="line">        </span><br><span class="line">        <span class="number">0x32</span>,<span class="number">0x88</span>,<span class="number">0x80</span>,<span class="number">0xd0</span>,</span><br><span class="line">        <span class="number">0x89</span>,<span class="number">0xdb</span>,<span class="number">0xa1</span>,<span class="number">0x1e</span>,<span class="comment">//第4次xtea</span></span><br><span class="line">        </span><br><span class="line">        <span class="number">0x35</span>,<span class="number">0x38</span>,<span class="number">0x39</span>,<span class="number">0x31</span>,</span><br><span class="line">        <span class="number">0x33</span>,<span class="number">0x7d</span><span class="comment">//没有加密</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">4</span>;i++)</span><br><span class="line">        <span class="built_in">decipher</span>(<span class="number">32</span>,(<span class="type">unsigned</span> <span class="type">int</span>*)(data+i*<span class="number">8</span>),key);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>,data);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//flag&#123;38fd643cc2c5200cc769b31ae7e58913&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>运行发现直接跑出来flag了：</p>
+<p><img src="/1763433999325-22.png" alt="img"></p>
+<p><img src="/1763433999325-23.png" alt="img"></p>
+<p><img src="/1763433999325-24.png" alt="img"></p>
+<p>并且验证成功</p>
+<p>那就不需要再继续分析f54了，证明该函数和flag验证流程没关系</p>
+<h1 id="2019-re-BoringCrypto"><a href="#2019-re-BoringCrypto" class="headerlink" title="2019 re BoringCrypto"></a>2019 re BoringCrypto</h1><p>安卓native类型逆向，首先分析java中main函数，可知check函数使用的是jni的静态注册方法，因此应该比较容易找到，那么就找到native.so然后用ida打开：</p>
+<p><img src="/1763433999325-25.png" alt="img"></p>
+<p><img src="/1763433999325-26.png" alt="img"></p>
+<p>这个函数反汇编之后都有将近5000行，太复杂，看不太懂qaq</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/11/22/qwb2019-re/" data-id="cuid5Qx_8civHNxywAYbGQ9N5" data-title="qwb2019-re" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2024/11/17/S1mpleVM/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          S1mpleVM
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/11/17/hello/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">hello</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/25/qwb2025-pwn/">qwb2025-pwn flagmarket</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/10/junior/">n1ctf junior 2/2 web</a>
+          </li>
+        
+          <li>
+            <a href="/2025/09/16/n1ctf-pwn/">n1ctf2025_pwn</a>
+          </li>
+        
+          <li>
+            <a href="/2025/09/02/TFCCTF2025/">TFCCTF2025 web</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 xrivendell7<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

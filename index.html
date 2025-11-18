@@ -1006,6 +1006,461 @@
 
 
   
+    <article id="post-qwb2019-re" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/11/22/qwb2019-re/" class="article-date">
+  <time class="dt-published" datetime="2023-11-22T02:46:12.000Z" itemprop="datePublished">2023-11-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/11/22/qwb2019-re/">qwb2019-re</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="2019-re-强网先锋"><a href="#2019-re-强网先锋" class="headerlink" title="2019 re 强网先锋"></a>2019 re 强网先锋</h1><p>一个简单的base64，签到题</p>
+<p><img src="/1763433999333-27.png" alt="img"></p>
+<p>解码即可：flag{mafakuailaiqiandaob}</p>
+<h1 id="2019-re-设备固件"><a href="#2019-re-设备固件" class="headerlink" title="2019 re 设备固件"></a>2019 re 设备固件</h1><p>题目给了一个完整的文件系统镜像和一个elf文件，根据readme中所述使用以下命令模拟运行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo qemu-system-mipsel -M malta -hda openwrt-malta-le-root.ext4 -kernel openwrt-malta-le-vmlinux.elf -nographic -append &quot;root=/dev/sda console=tty50&quot; </span><br></pre></td></tr></table></figure>
+
+<p>而后在&#x2F;bin中找到目标二进制文件hello：</p>
+<p><img src="/1763433999325-1.png" alt="img"></p>
+<p>运行：</p>
+<p><img src="/1763433999325-2.png" alt="img"></p>
+<p>但是这个二进制文件在系统里面，没办法拿出来用ida查看，先想想办法把hello文件提取出来</p>
+<p>采用在宿主机上挂载 ext4 镜像的方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 1. 创建一个目录作为挂载点sudo mkdir /mnt/openwrt-root</span><br><span class="line"></span><br><span class="line"># 2. 使用 loop 设备挂载 ext4 镜像文件sudo mount -o loop openwrt-malta-le-root.ext4 /mnt/openwrt-root</span><br></pre></td></tr></table></figure>
+
+<p>而后镜像文件的所有内容都暴露在 <code>/mnt/openwrt-root</code> 目录下</p>
+<p><img src="/1763433999325-3.png" alt="img"></p>
+<p>找到hello文件完成提取</p>
+<p><img src="/1763433999325-4.png" alt="img"></p>
+<p>首先使用file命令分析：</p>
+<p><img src="/1763433999325-5.png" alt="img"></p>
+<p>32位mips架构</p>
+<p>放入ida内分析：</p>
+<p><img src="/1763433999325-6.png" alt="img"></p>
+<p>可以看到首先将输入的用户名放入v7的前40个字节中，密码放入后40个字节中，而后进入函数sub_400D48进行判断，该函数主要有两个部分，分别是函数sub_400C6C有用于验证用户名是否正确，函数sub_400CC4用于验证密码是否正确</p>
+<p><img src="/1763433999325-7.png" alt="img"></p>
+<p>先看函数sub_400C6C</p>
+<p><img src="/1763433999325-8.png" alt="img"></p>
+<p>很容易看出来该用户名就是直接确定了<code>dd772</code></p>
+<p>只有<code>dd772</code>才能令最终v1&#x3D;&#x3D;0</p>
+<p>而后看函数sub_400CC4：</p>
+<p><img src="/1763433999325-9.png" alt="img"></p>
+<p>主要逻辑在sub_400800，该函数主要是模拟虚拟机执行，有以下操作：</p>
+<table>
+<thead>
+<tr>
+<th>操作码</th>
+<th>符号</th>
+<th>num1</th>
+<th>num2</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x01</td>
+<td>add</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1+&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x02</td>
+<td>sub</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1-&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x03</td>
+<td>cmp</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>ZF&#x3D;(num1&#x3D;&#x3D;num2?1:2)</td>
+</tr>
+<tr>
+<td>0x04</td>
+<td>jmp</td>
+<td>立即数</td>
+<td>-</td>
+<td>IP+&#x3D;num1</td>
+</tr>
+<tr>
+<td>0x05</td>
+<td>mov</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x06</td>
+<td>-</td>
+<td>寄存器</td>
+<td>-</td>
+<td>num1&#x3D;IP</td>
+</tr>
+<tr>
+<td>0x07</td>
+<td>-</td>
+<td>寄存器</td>
+<td>-</td>
+<td>IP&#x3D;num1</td>
+</tr>
+<tr>
+<td>0x08</td>
+<td>-</td>
+<td>寄存器</td>
+<td>立即数</td>
+<td>num1&#x3D;nmu2</td>
+</tr>
+<tr>
+<td>0x09</td>
+<td>ret</td>
+<td>-</td>
+<td>-</td>
+<td>返回 0</td>
+</tr>
+<tr>
+<td>0x0A</td>
+<td>load</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&#x3D;tran_pass[num2]</td>
+</tr>
+<tr>
+<td>0x0B</td>
+<td>load</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&#x3D;const_ARR[num2]</td>
+</tr>
+<tr>
+<td>0x0C</td>
+<td>xor</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1^&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x0D</td>
+<td>imul</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1*&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x0E</td>
+<td>DIV</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&#x2F;&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x0F</td>
+<td>shl</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&lt;&lt;&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x10</td>
+<td>shr</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&gt;&gt;&#x3D;num2</td>
+</tr>
+<tr>
+<td>0xFF</td>
+<td>ret</td>
+<td>-</td>
+<td>-</td>
+<td>返回 1</td>
+</tr>
+</tbody></table>
+<p>然后指令就是地址4110c0 所指向的内容：</p>
+<p><img src="/1763433999325-10.png" alt="img"></p>
+<p>即：</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>数据</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>004110c0</td>
+<td>08 00 00 00 20 00</td>
+<td>mov R0, 0x20</td>
+</tr>
+<tr>
+<td>004110c6</td>
+<td>08 00 01 00 00 00</td>
+<td>mov R1, 0x00</td>
+</tr>
+<tr>
+<td>004110cc</td>
+<td>08 00 02 00 01 00</td>
+<td>mov R2, 0x01</td>
+</tr>
+<tr>
+<td>004110d2</td>
+<td>03 00 01 00 00 00</td>
+<td>cmp R1, R0</td>
+</tr>
+<tr>
+<td>004110d8</td>
+<td>04 01 16 00 00 00</td>
+<td>jz +0x16</td>
+</tr>
+<tr>
+<td>004110de</td>
+<td>08 00 0b 00 00 00</td>
+<td>mov RB, 0x00</td>
+</tr>
+<tr>
+<td>004110e4</td>
+<td>08 00 0c 00 00 00</td>
+<td>mov RC, 0x00</td>
+</tr>
+<tr>
+<td>004110ea</td>
+<td>01 00 0c 00 0b 00</td>
+<td>add RC, RB</td>
+</tr>
+<tr>
+<td>004110f0</td>
+<td>03 00 0b 00 01 00</td>
+<td>cmp RB, R1</td>
+</tr>
+<tr>
+<td>004110f6</td>
+<td>01 00 0b 00 02 00</td>
+<td>add RB, R2</td>
+</tr>
+<tr>
+<td>004110fc</td>
+<td>04 02 fc ff 00 00</td>
+<td>jnz -0x04</td>
+</tr>
+<tr>
+<td>00411102</td>
+<td>08 00 03 00 08 00</td>
+<td>mov R3, 0x08</td>
+</tr>
+<tr>
+<td>00411108</td>
+<td>08 00 04 00 06 00</td>
+<td>mov R4, 0x06</td>
+</tr>
+<tr>
+<td>0041110e</td>
+<td>08 00 09 00 10 00</td>
+<td>mov R9, 0x10</td>
+</tr>
+<tr>
+<td>411114</td>
+<td>0f 00 09 00 03 00</td>
+<td>shl R9, R3</td>
+</tr>
+<tr>
+<td>0041111a</td>
+<td>08 00 0a 00 24 00</td>
+<td>mov Ra, 0x24</td>
+</tr>
+<tr>
+<td>411120</td>
+<td>01 00 09 00 0a 00</td>
+<td>add R9, Ra</td>
+</tr>
+<tr>
+<td>411126</td>
+<td>01 00 09 00 0c 00</td>
+<td>add R9, RB</td>
+</tr>
+<tr>
+<td>0041112c</td>
+<td>0a 00 05 00 01 00</td>
+<td>LOAD R5, R1 &#x2F;&#x2F;_pass</td>
+</tr>
+<tr>
+<td>411132</td>
+<td>0d 00 05 00 09 00</td>
+<td>imul R5, R9</td>
+</tr>
+<tr>
+<td>411138</td>
+<td>05 00 06 00 05 00</td>
+<td>mov R6, R5</td>
+</tr>
+<tr>
+<td>0041113e</td>
+<td>10 00 06 00 04 00</td>
+<td>shr R6, R4</td>
+</tr>
+<tr>
+<td>411144</td>
+<td>0b 00 07 00 01 00</td>
+<td>LOAD R7, R1 &#x2F;&#x2F;_const</td>
+</tr>
+<tr>
+<td>0041114a</td>
+<td>03 00 06 00 07 00</td>
+<td>cmp R6, R7</td>
+</tr>
+<tr>
+<td>411150</td>
+<td>01 00 01 00 02 00</td>
+<td>add R1, R2</td>
+</tr>
+<tr>
+<td>411156</td>
+<td>04 01 e9 ff 00 00</td>
+<td>jz -0x17</td>
+</tr>
+<tr>
+<td>0041115c</td>
+<td>04 02 01 00 00 00</td>
+<td>jnz +1</td>
+</tr>
+<tr>
+<td>411162</td>
+<td>ff 00 00 00 00 00</td>
+<td>ret 1</td>
+</tr>
+<tr>
+<td>411168</td>
+<td>09 00 00 00 00 00</td>
+<td>ret 0</td>
+</tr>
+<tr>
+<td>0041116e</td>
+<td>ff 00 00 00 00 00</td>
+<td>ret 1</td>
+</tr>
+</tbody></table>
+<p>最后推出算式<code>const_ARR[i]=(((0x10&lt;&lt;8)+0x24+ (i) )*tran_pass[i])&gt;&gt;6</code></p>
+<p>但是这种直接分析太麻烦，也可以使用动态调试（推荐使用）</p>
+<p>很容易就能看出算法为<code>const_ARR[i] = (input[i] * out) &gt;&gt; 6,其中out的初值为0x1024，out += 1+i</code></p>
+<p>爆破一下password：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">flagenc = [<span class="number">0x00000C5B</span>, <span class="number">0x00000CDD</span>, <span class="number">0x00000D1F</span>, <span class="number">0x000018C0</span>, <span class="number">0x000018C6</span>, <span class="number">0x00000C26</span>, <span class="number">0x00000E72</span>, <span class="number">0x00000DF7</span>, <span class="number">0x000019B1</span>, <span class="number">0x00000D41</span>, <span class="number">0x00000D08</span>, <span class="number">0x0000191C</span>, <span class="number">0x00000CD9</span>, <span class="number">0x00000EB1</span>, <span class="number">0x00000CEE</span>, <span class="number">0x00001A78</span>, <span class="number">0x00000D8B</span>, <span class="number">0x00000D99</span>, <span class="number">0x00000D64</span>, <span class="number">0x00000CED</span>, <span class="number">0x000019F8</span>, <span class="number">0x00000E61</span>, <span class="number">0x00001A7F</span>, <span class="number">0x00001AE7</span>, <span class="number">0x00000F26</span>, <span class="number">0x00001B34</span>, <span class="number">0x00001AD0</span>, <span class="number">0x00000D7C</span>, <span class="number">0x00000FC9</span>, <span class="number">0x00000E7E</span>, <span class="number">0x00001C0E</span>, <span class="number">0x00001BAE</span>]</span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">out = <span class="number">0x1024</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(flagenc)):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">33</span>,<span class="number">127</span>):</span><br><span class="line">                <span class="keyword">if</span>(((j * out) &gt;&gt; <span class="number">6</span>) == flagenc[i]):</span><br><span class="line">                        flag += <span class="built_in">chr</span>(j)</span><br><span class="line">                        <span class="built_in">print</span>(flag)</span><br><span class="line">        out += (i + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(flag)</span><br><span class="line"><span class="comment">#134bb097e43b292f4431b6cd8db194db</span></span><br></pre></td></tr></table></figure>
+
+<p>所以用户名就是dd772,密码就是134bb097e43b292f4431b6cd8db194db</p>
+<p>得到flag</p>
+<p><img src="/1763433999325-11.png" alt="img"></p>
+<h1 id="2019-re-Justre"><a href="#2019-re-Justre" class="headerlink" title="2019 re Justre"></a>2019 re Justre</h1><p>A1BAAAAAAAAAAAAAAAAAAAAAAA</p>
+<p>前8个A1BAAAAA为一组  xmm5中有4个</p>
+<p>第二个8个，先判断是否为数字，不是的话判断是否为大写字母，是数字下面的标点以及大写字母的话v14&#x3D;16*（该字符-7），   是大写字母下面的字符的话把v14&#x3D;0，是数字前面的符号的话v14&#x3D;16*该字符</p>
+<p>可能是两个字节两个字节取，如果第二个是数字则将v10&#x3D;v14+该数字，如果是大写字母v10&#x3D;v14+该字符-55</p>
+<p>然后还有很长的一段的运算两种情况都需要进行</p>
+<p>AA 复制16份然后每八个一份放入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">.rdata:00404340 xmmword_404340 xmmword 3000000020000000100000000h</span><br><span class="line">.rdata:00404340                                         ; DATA XREF: sub_401610+151↑r</span><br><span class="line">.rdata:00404350 xmmword_404350 xmmword 4000000040000000400000004h</span><br><span class="line">.rdata:00404350                                         ; DATA XREF: sub_401610+190↑r</span><br><span class="line">.rdata:00404360 xmmword_404360 xmmword 8000000080000000800000008h</span><br><span class="line">.rdata:00404360                                         ; DATA XREF: sub_401610+1B8↑r</span><br><span class="line">.rdata:00404370 xmmword_404370 xmmword 0C0000000C0000000C0000000Ch</span><br><span class="line">.rdata:00404370                                         ; DATA XREF: sub_401610+1DA↑r</span><br><span class="line">.rdata:00404380 xmmword_404380 xmmword 1010101010101010101010101010101h</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.data:00405018 xmmword_405018 xmmword 3D5E1084FD0E0A2CE98FBCC77AB29357h</span><br><span class="line">.data:00405018                                         ; DATA XREF: sub_401610+166↑r</span><br><span class="line">.data:00405018                                         ; sub_401610+189↑w</span><br><span class="line">.data:00405018                                         ; sub_401610:loc_401814↑r</span><br><span class="line">.data:00405018                                         ; sub_401610+212↑w</span><br><span class="line">.data:00405018                                         ; sub_401610:loc_401831↑r</span><br><span class="line">.data:00405018                                         ; sub_401610+259↑o</span><br><span class="line">.data:00405028 xmmword_405028 xmmword 3D4F7424ED150C28FB39F0A384C9FB26h</span><br><span class="line">.data:00405028                                         ; DATA XREF: sub_401610+17B↑r</span><br><span class="line">.data:00405028                                         ; sub_401610+1B1↑w</span><br><span class="line">.data:00405038 xmmword_405038 xmmword 5715BAFE28EA503D065C0BEB3CCE6C2Ah</span><br><span class="line">.data:00405038                                         ; DATA XREF: sub_401610+19B↑r</span><br><span class="line">.data:00405038                                         ; sub_401610+1ED↑w</span><br><span class="line">.data:00405048 xmmword_405048 xmmword 63184D41064DEFECAF152E2F3D4F842Bh</span><br></pre></td></tr></table></figure>
+
+<p>AA 先被扩展为AAAAAAAA 然后再被扩展为相同的四个整数，然后每个再*01010101</p>
+<p>xmm4 &#x3D; (AA*4)*01010101</p>
+<p>xmm5 &#x3D; A1BAAAAA*4</p>
+<p>状态变量1 0x405018 更新：</p>
+<p>xmm1&#x3D;(xmm4 + 0x405018)</p>
+<p>xmm2 &#x3D; (xmm5 + 0x404340)</p>
+<p> 0x405018 &#x3D; xmm2 ^ xmm1</p>
+<p>状态变量2 0x405028更新：</p>
+<p>xmm1 &#x3D; (xmm4 + 0x405028)</p>
+<p>xmm2 &#x3D; (0x404340 + 0x404350 + xmm5)</p>
+<p>0x405028 &#x3D; xmm2 ^ xmm1</p>
+<p>状态变量3 0x405038更新：</p>
+<p>xmm1 &#x3D; (xmm4 + 0x405038)</p>
+<p>xmm2 &#x3D; (0x404340 + 0x404360 + xmm5)</p>
+<p>0x405038 &#x3D; xmm2 ^ xmm1</p>
+<p>状态变量4 0x405048更新：</p>
+<p>xmm4 &#x3D; xmm4 + 0x405048</p>
+<p>xmm1 &#x3D; (0x404340 + 0x404370 + xmm5)</p>
+<p>0x405048 &#x3D; xmm4 ^ xmm1</p>
+<p>v2 &#x3D; A1BAAAAA v10 &#x3D; AA</p>
+<p>v19&#x3D;16</p>
+<p>while（v19&lt;24）{</p>
+<p>*（ 0x405018 + v19 ）&#x3D; （v19 + v2）^ (16843009 * v10 + *（ 0x405018 + v19 ）);</p>
+<p>++v19;</p>
+<p>}</p>
+<p>实际上就是input[i] &#x3D; (flag1+i) ^ (flag2 + input[i])</p>
+<p><img src="/1763433999325-12.png" alt="img"></p>
+<p>但是最后比较的步骤只需要关注第一个32位的部分就行了，所以除状态一外都不需要分析，因为只有两个未知量，所以用三个式子就能爆破出来。</p>
+<p>最后对比的字节为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x83EC8B55, 0xEC81F0E4, 0x00000278</span><br></pre></td></tr></table></figure>
+
+<p>所以爆破就行了：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> i0 = <span class="number">0x7AB29357</span>; <span class="type">int</span> o0 = <span class="number">0x83EC8B55</span>;</span><br><span class="line">    <span class="type">int</span> i1 = <span class="number">0xE98FBCC7</span>; <span class="type">int</span> o1 = <span class="number">0xEC81F0E4</span>;</span><br><span class="line">    <span class="type">int</span> i2 = <span class="number">0xFD0E0A2C</span>; <span class="type">int</span> o2 = <span class="number">0x00000278</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">-128</span>; j != <span class="number">128</span>; j++) &#123;</span><br><span class="line">        <span class="type">int</span> flag = o0 ^ ((<span class="number">0x01010101</span> * j) + i0);</span><br><span class="line">        <span class="keyword">if</span> (o1 == ((flag + <span class="number">1</span>) ^ (<span class="number">0x01010101</span> * j + i1))</span><br><span class="line">            &amp;&amp; o2 == ((flag + <span class="number">2</span>) ^ (<span class="number">0x01010101</span> * j + i2)))</span><br><span class="line">            &#123;cout &lt;&lt; flag &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; j &lt;&lt; endl;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%X%X\n&quot;</span>, flag, j);&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 前十个字符就是：1324223816</span></span><br></pre></td></tr></table></figure>
+
+<p>然后就是后16个字符，这里的检验函数4018A0用了SMC，需要解密一下，来到4018A0使用OD将其dump出来</p>
+<p>用ida打开，即可查看逻辑</p>
+<p><img src="/1763433999325-13.png" alt="img"></p>
+<p>查看逻辑，这里sub_401250明显是des算法，调用三次，分别是加密、解密、加密，即3DES算法</p>
+<p><img src="/1763433999325-14.png" alt="img"></p>
+<p>到底是不是，找个网站解密试试就知道了，发现可以解出来：</p>
+<p><img src="/1763433999325-15.png" alt="img"></p>
+<p>最后放入程序验证，成功得到flag</p>
+<p><img src="/1763433999325-16.png" alt="img"></p>
+<p>flag{13242238160dcc509a6f75849b}</p>
+<h1 id="2019-re-webAssemble"><a href="#2019-re-webAssemble" class="headerlink" title="2019 re webAssemble"></a>2019 re webAssemble</h1><p>.wasm文件逆向管用套路：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~/tools/wasm2c  webassembly.wasm -o web.c</span><br><span class="line">gcc -c web.c -o web.o</span><br></pre></td></tr></table></figure>
+
+<p>然后ida分析</p>
+<p><img src="/1763433999325-17.png" alt="img"></p>
+<p>main函数主要加密函数就这俩，f54有点复杂，先瞅瞅f15</p>
+<p><img src="/1763433999325-18.png" alt="img"></p>
+<p><img src="/1763433999325-19.png" alt="img"></p>
+<p>观察到魔数<code>9E3779B9</code>，然后循环了32次，应该是一个循环32次的XTEA算法</p>
+<p>该算法被调用了4次，四次算法密钥均为0</p>
+<p>那这样的话就找找后续的对比操作，找最后需对比的字符串</p>
+<p><img src="/1763433999325-20.png" alt="img"></p>
+<p>可以看到后面一堆赋值操作</p>
+<p>是用加密后的每一位分别异或一个值，然后取低8位，最后和前面一次算出来的值迭代相加。</p>
+<p><img src="/1763433999325-21.png" alt="img"></p>
+<p>然后最后判断是否相等</p>
+<p>那就假设每个式子的结果为0，那么所有式子就都成立，也就是说最后经算法加密后的值为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">0x4e,0x6e,0xc7,0xea,</span><br><span class="line">0x8a,0x9d,0x70,0x89,//第1次xtea</span><br><span class="line"> </span><br><span class="line">0xeb,0xe2,0x45,0xd3,</span><br><span class="line">0xb8,0x4a,0xc0,0x73,//第2次xtea</span><br><span class="line"> </span><br><span class="line">0xb0,0x4a,0x40,0x71,</span><br><span class="line">0x37,0x34,0x88,0x42,//第3次xtea</span><br><span class="line"> </span><br><span class="line">0x32,0x88,0x80,0xd0,</span><br><span class="line">0x89,0xdb,0xa1,0x1e,//第4次xtea</span><br><span class="line"> </span><br><span class="line">0x35,0x38,0x39,0x31,</span><br><span class="line">0x33,0x7d//没有加密</span><br></pre></td></tr></table></figure>
+
+<p>先找个现成的算法解密一下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="comment">/* take 64 bits of data in v[0] and v[1] and 128 bits of key[0] - key[3] */</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">encipher</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> num_rounds, <span class="type">uint32_t</span> v[<span class="number">2</span>], <span class="type">uint32_t</span> <span class="type">const</span> key[<span class="number">4</span>])</span> </span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> i;</span><br><span class="line">    <span class="type">uint32_t</span> v0=v[<span class="number">0</span>], v1=v[<span class="number">1</span>], sum=<span class="number">0</span>, delta=<span class="number">0x9E3779B9</span>;</span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>; i &lt; num_rounds; i++) &#123;</span><br><span class="line">        v0 += (((v1 &lt;&lt; <span class="number">4</span>) ^ (v1 &gt;&gt; <span class="number">5</span>)) + v1) ^ (sum + key[sum &amp; <span class="number">3</span>]);</span><br><span class="line">        sum += delta;</span><br><span class="line">        v1 += (((v0 &lt;&lt; <span class="number">4</span>) ^ (v0 &gt;&gt; <span class="number">5</span>)) + v0) ^ (sum + key[(sum&gt;&gt;<span class="number">11</span>) &amp; <span class="number">3</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>]=v0; v[<span class="number">1</span>]=v1;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">decipher</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> num_rounds, <span class="type">uint32_t</span> v[<span class="number">2</span>], <span class="type">uint32_t</span> <span class="type">const</span> key[<span class="number">4</span>])</span> </span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> i;</span><br><span class="line">    <span class="type">uint32_t</span> v0=v[<span class="number">0</span>], v1=v[<span class="number">1</span>], delta=<span class="number">0x9E3779B9</span>, sum=delta*num_rounds;</span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>; i &lt; num_rounds; i++) &#123;</span><br><span class="line">        v1 -= (((v0 &lt;&lt; <span class="number">4</span>) ^ (v0 &gt;&gt; <span class="number">5</span>)) + v0) ^ (sum + key[(sum&gt;&gt;<span class="number">11</span>) &amp; <span class="number">3</span>]);</span><br><span class="line">        sum -= delta;</span><br><span class="line">        v0 -= (((v1 &lt;&lt; <span class="number">4</span>) ^ (v1 &gt;&gt; <span class="number">5</span>)) + v1) ^ (sum + key[sum &amp; <span class="number">3</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>]=v0; v[<span class="number">1</span>]=v1;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> key[<span class="number">4</span>]=&#123;<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span> data[]=&#123;</span><br><span class="line">        <span class="number">0x4e</span>,<span class="number">0x6e</span>,<span class="number">0xc7</span>,<span class="number">0xea</span>,</span><br><span class="line">        <span class="number">0x8a</span>,<span class="number">0x9d</span>,<span class="number">0x70</span>,<span class="number">0x89</span>,<span class="comment">//第1次xtea</span></span><br><span class="line">        </span><br><span class="line">        <span class="number">0xeb</span>,<span class="number">0xe2</span>,<span class="number">0x45</span>,<span class="number">0xd3</span>,</span><br><span class="line">        <span class="number">0xb8</span>,<span class="number">0x4a</span>,<span class="number">0xc0</span>,<span class="number">0x73</span>,<span class="comment">//第2次xtea</span></span><br><span class="line">        </span><br><span class="line">        <span class="number">0xb0</span>,<span class="number">0x4a</span>,<span class="number">0x40</span>,<span class="number">0x71</span>,</span><br><span class="line">        <span class="number">0x37</span>,<span class="number">0x34</span>,<span class="number">0x88</span>,<span class="number">0x42</span>,<span class="comment">//第3次xtea</span></span><br><span class="line">        </span><br><span class="line">        <span class="number">0x32</span>,<span class="number">0x88</span>,<span class="number">0x80</span>,<span class="number">0xd0</span>,</span><br><span class="line">        <span class="number">0x89</span>,<span class="number">0xdb</span>,<span class="number">0xa1</span>,<span class="number">0x1e</span>,<span class="comment">//第4次xtea</span></span><br><span class="line">        </span><br><span class="line">        <span class="number">0x35</span>,<span class="number">0x38</span>,<span class="number">0x39</span>,<span class="number">0x31</span>,</span><br><span class="line">        <span class="number">0x33</span>,<span class="number">0x7d</span><span class="comment">//没有加密</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">4</span>;i++)</span><br><span class="line">        <span class="built_in">decipher</span>(<span class="number">32</span>,(<span class="type">unsigned</span> <span class="type">int</span>*)(data+i*<span class="number">8</span>),key);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>,data);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//flag&#123;38fd643cc2c5200cc769b31ae7e58913&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>运行发现直接跑出来flag了：</p>
+<p><img src="/1763433999325-22.png" alt="img"></p>
+<p><img src="/1763433999325-23.png" alt="img"></p>
+<p><img src="/1763433999325-24.png" alt="img"></p>
+<p>并且验证成功</p>
+<p>那就不需要再继续分析f54了，证明该函数和flag验证流程没关系</p>
+<h1 id="2019-re-BoringCrypto"><a href="#2019-re-BoringCrypto" class="headerlink" title="2019 re BoringCrypto"></a>2019 re BoringCrypto</h1><p>安卓native类型逆向，首先分析java中main函数，可知check函数使用的是jni的静态注册方法，因此应该比较容易找到，那么就找到native.so然后用ida打开：</p>
+<p><img src="/1763433999325-25.png" alt="img"></p>
+<p><img src="/1763433999325-26.png" alt="img"></p>
+<p>这个函数反汇编之后都有将近5000行，太复杂，看不太懂qaq</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/11/22/qwb2019-re/" data-id="cuid5Qx_8civHNxywAYbGQ9N5" data-title="qwb2019-re" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-hello" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/11/17/hello/" class="article-date">
@@ -1058,252 +1513,12 @@
 
 
   
-    <article id="post-qwb2018" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2023/08/16/qwb2018/" class="article-date">
-  <time class="dt-published" datetime="2023-08-16T02:43:09.000Z" itemprop="datePublished">2023-08-16</time>
-</a>
+
+
+  <nav id="page-nav">
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2023/08/16/qwb2018/">qwb2018</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="simple-check"><a href="#simple-check" class="headerlink" title="simple check"></a>simple check</h2><h3 id="simple的mainactivity-kt分析"><a href="#simple的mainactivity-kt分析" class="headerlink" title="simple的mainactivity.kt分析"></a>simple的mainactivity.kt分析</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package com.a.simplecheck;</span><br><span class="line"></span><br><span class="line">import android.os.Bundle;</span><br><span class="line">import android.support.v7.app.c;</span><br><span class="line">import android.view.View;</span><br><span class="line">import android.widget.EditText;</span><br><span class="line">import android.widget.Toast;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><strong>包名</strong>：<code>com.a.simplecheck</code>，表明这是一个简单的检查类应用</li>
-<li><strong>导入语句</strong>：使用了Android Support库（v7），说明这是一个较老的项目</li>
-</ul>
-<p>这是一个<strong>密码验证程序</strong>，其工作流程为：</p>
-<ol>
-<li>用户在一个文本输入框（EditText）中输入内容</li>
-<li>点击一个按钮进行验证</li>
-<li>程序调用<code>a.a(String)</code>方法对输入进行验证</li>
-<li>根据验证结果显示不同的Toast消息</li>
-</ol>
-<p>关键逆向分析点：</p>
-<ol>
-<li><strong>核心逻辑在类<code>a</code>的方法<code>a()</code>中</strong></li>
-<li><strong>验证算法</strong>：<code>a.a(String input)</code>是验证的核心方法</li>
-<li><strong>成功条件</strong>：当输入满足某种算法时返回<code>true</code></li>
-</ol>
-<h3 id="类a分析"><a href="#类a分析" class="headerlink" title="类a分析"></a>类a分析</h3><p>这个 <code>a</code> 类包含了验证flag的完整算法。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class a &#123;</span><br><span class="line">    private static int[] a = &#123;0, 146527998, 205327308, ... , 864054312&#125;;</span><br><span class="line">    private static int[] b = &#123;13710, 46393, 49151, ... , 37108&#125;;</span><br><span class="line">    private static int[] c = &#123;38129, 57355, 22538, ... , 64666&#125;;</span><br><span class="line">    private static int[] d = &#123;0, -341994984, -370404060, ... , 276158562&#125;;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>定义了4个静态数组，包含预计算的常数</li>
-<li>数组 <code>a</code> 有35个元素，<code>b</code>、<code>c</code>、<code>d</code> 各有34个元素</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public static boolean a(String str) &#123;</span><br><span class="line">    if (str.length() != b.length) &#123;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><strong>第一重检查</strong>：输入字符串长度必须等于数组 <code>b</code> 的长度（34个字符）</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">int[] iArr = new int[a.length];</span><br><span class="line">iArr[0] = 0;</span><br><span class="line">int i = 1;</span><br><span class="line">for (byte b2 : str.getBytes()) &#123;</span><br><span class="line">    iArr[i] = b2;</span><br><span class="line">    i++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>将输入字符串转换为ASCII码数组</li>
-<li><code>iArr[0]</code> 被设为0，然后依次填充输入字符串的每个字符的ASCII值</li>
-<li>最终 <code>iArr</code> 数组有35个元素（索引0到34）</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for (int i2 = 0; i2 &lt; c.length; i2++) &#123;</span><br><span class="line">    if (a[i2] != (b[i2] * iArr[i2] * iArr[i2]) + (c[i2] * iArr[i2]) + d[i2] </span><br><span class="line">        || a[i2 + 1] != (b[i2] * iArr[i2 + 1] * iArr[i2 + 1]) + (c[i2] * iArr[i2 + 1]) + d[i2]) &#123;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">return true;</span><br></pre></td></tr></table></figure>
-
-<p>遍历34次，检查二次方程约束</p>
-<p><strong>验证模型</strong></p>
-<p>对于i从0到33，必须满足以下两个方程其中之一：</p>
-<p>方程1：<br>$$<br>a[i] &#x3D; b[i] * (x_i)² + c[i] * x_i + d[i]<br>$$<br>方程2：<br>$$<br>a[i + 1] &#x3D; b[i] * (x_{i+1})² + c[i] * x_{i+1} + d[i]<br>$$</p>
-<h3 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h3><p>暴力破解就行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">a = [0, 146527998, 205327308, 94243885, 138810487, 408218567, 77866117, 71548549, 563255818, 559010506, 449018203, 576200653, 307283021, 467607947, 314806739, 341420795, 341420795, 469998524, 417733494, 342206934, 392460324, 382290309, 185532945, 364788505, 210058699, 198137551, 360748557, 440064477, 319861317, 676258995, 389214123, 829768461, 534844356, 427514172, 864054312]</span><br><span class="line">b = [13710, 46393, 49151, 36900, 59564, 35883, 3517, 52957, 1509, 61207, 63274, 27694, 20932, 37997, 22069, 8438, 33995, 53298, 16908, 30902, 64602, 64028, 29629, 26537, 12026, 31610, 48639, 19968, 45654, 51972, 64956, 45293, 64752, 37108]</span><br><span class="line">c = [38129, 57355, 22538, 47767, 8940, 4975, 27050, 56102, 21796, 41174, 63445, 53454, 28762, 59215, 16407, 64340, 37644, 59896, 41276, 25896, 27501, 38944, 37039, 38213, 61842, 43497, 9221, 9879, 14436, 60468, 19926, 47198, 8406, 64666]</span><br><span class="line">d = [0, -341994984, -370404060, -257581614, -494024809, -135267265, 54930974, -155841406, 540422378, -107286502, -128056922, 265261633, 275964257, 119059597, 202392013, 283676377, 126284124, -68971076, 261217574, 197555158, -12893337, -10293675, 93868075, 121661845, 167461231, 123220255, 221507, 258914772, 180963987, 107841171, 41609001, 276531381, 169983906, 276158562]</span><br><span class="line"></span><br><span class="line">result = [0]</span><br><span class="line"></span><br><span class="line">for i in range(34):</span><br><span class="line">    found = False</span><br><span class="line">    for char_code in range(32,127):</span><br><span class="line">        if a[i + 1] == b[i] * char_code * char_code + c[i] * char_code + d[i]:</span><br><span class="line">            result.append(char_code)</span><br><span class="line">            found = True</span><br><span class="line">            break</span><br><span class="line">        </span><br><span class="line">    if not found:</span><br><span class="line">        print(f&quot;在位置 &#123;i&#125; 找不到满足方程的字符&quot;)</span><br><span class="line">        break</span><br><span class="line">    </span><br><span class="line"># 将ASCII码转换为字符串</span><br><span class="line">flag = &#x27;&#x27;.join(chr(code) for code in result)</span><br><span class="line">print(&quot;Flag:&quot;, flag)</span><br><span class="line"></span><br><span class="line">#Flag: flag&#123;MAth_i&amp;_GOOd_DON7_90V_7hInK?&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>补充知识点</strong></p>
-<p><strong>什么是 Toast？</strong></p>
-<p><strong>Toast</strong> 是一个小的弹出消息框，它在屏幕底部短暂显示一段时间，然后自动消失。它用于向用户提供简单的反馈或提示信息。</p>
-<h2 id="picture-lock"><a href="#picture-lock" class="headerlink" title="picture_lock"></a>picture_lock</h2><p>这是一个<strong>图片加密锁应用</strong>，主要功能是：</p>
-<ol>
-<li>选择手机中的图片文件</li>
-<li>使用Native代码（C&#x2F;C++）对图片进行加密</li>
-<li>将加密后的文件保存为<code>.lock</code>格式</li>
-<li>显示已加密的文件列表</li>
-</ol>
-<p><strong>目标是将某个加密后的文件解密出来，flag 就在里面。</strong></p>
-<h3 id="mainactivity分析"><a href="#mainactivity分析" class="headerlink" title="mainactivity分析"></a>mainactivity分析</h3><p>直接找到点击事件ENCRYPT按钮绑定的OnClick()方法:</p>
-<p><img src="/image-20250826215213134.png" alt="image-20250826215213134"></p>
-<p>可以看出，代码首先检查了文件读写的权限，然后打开了图片选择的界面，选择图片后，会调用方法onActivityResult()：</p>
-<p><img src="/image-20250826215307964.png" alt="image-20250826215307964"></p>
-<p>可以看到这里有3个方法被调用了，分别是enc()，j()，i()。</p>
-<p><img src="/image-20250826215346430.png" alt="image-20250826215346430"></p>
-<p>可以看出i()使用来显示文本框中的内容，对图片的处理没有影响</p>
-<p><img src="/image-20250826215409020.png" alt="image-20250826215409020"></p>
-<p>j()用于获取apk签名的MD5值</p>
-<p><img src="/image-20250826215441073.png" alt="image-20250826215441073"></p>
-<p>根据enc()方法的声明，可以知道，方法需要三个String类型的参数，这三个参数具体是什么，我们用动态调试的方法获取。</p>
-<hr>
-<h3 id="动态调试-so文件"><a href="#动态调试-so文件" class="headerlink" title="动态调试.so文件"></a>动态调试.so文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adb push &quot;%USERPROFILE%\Downloads\bootloader-bonito-b4s4-0.4-8048689.img&quot; /sdcard/Download/</span><br><span class="line">#查看文件列表</span><br><span class="line">adb shell ls -la /sdcard/Download/</span><br></pre></td></tr></table></figure>
-
-<p>root： <a target="_blank" rel="noopener" href="https://sspai.com/post/76276">https://sspai.com/post/76276</a></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">LOAD:00000000 ; Options     : EF_ARM_SOFT_FLOAT</span><br><span class="line">LOAD:00000000 ; EABI version: 5</span><br><span class="line">LOAD:00000000 ;</span><br><span class="line">LOAD:00000000</span><br><span class="line">LOAD:00000000 ; Processor       : ARM</span><br><span class="line">LOAD:00000000 ; ARM architecture: ARMv7</span><br><span class="line">LOAD:00000000 ; Target assembler: Generic assembler for ARM</span><br><span class="line">LOAD:00000000 ; Byte sex        : Little endian</span><br><span class="line"></span><br><span class="line">LOAD:00000000 ; Segment type: Pure code</span><br><span class="line">LOAD:00000000                 AREA LOAD, CODE, ALIGN=12</span><br><span class="line">LOAD:00000000                 CODE32</span><br></pre></td></tr></table></figure>
-
-<p><strong>IDA PRO连接调试应用</strong><br>(1)在IDA Pro的安装路径dbgsrv目录下找到android_server，放入真机的&#x2F;data&#x2F;local&#x2F;tmp路径下并赋权，以root身份运行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">adb push android_server /data/local/tmp </span><br><span class="line">adb shell</span><br><span class="line">su</span><br><span class="line">cd /data/local/tmp</span><br><span class="line">chmod 755 android_server64</span><br><span class="line">./android_server64</span><br></pre></td></tr></table></figure>
-
-<p><img src="/image-20250827095440764.png" alt="image-20250827095440764"></p>
-<p>(2)转发窗口</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb forward tcp:23946 tcp:23946  </span><br></pre></td></tr></table></figure>
-
-<p><img src="/image-20250827100132266.png" alt="image-20250827100132266"></p>
-<p>打开ida32位</p>
-<p>Deubugger-Attach-Remote ARM Linux&#x2F;Android debugger</p>
-<p>查看libnative.so是否已经运行，打开enc()函数。下断点。</p>
-<p><img src="/image-20250904101123407.png" alt="image-20250904101123407"></p>
-<p>打开app-选择照片-手机黑屏-断到了</p>
-<hr>
-<h3 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a>静态分析</h3><p>静态看吧，主要就是这个enc()。native方法。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">int __fastcall Java_com_a_sample_picturelock_MainActivity_enc(int a1, int a2, int a3, int a4, int a5)</span><br><span class="line">&#123;</span><br><span class="line">  char *v8; // r4</span><br><span class="line">  int v9; // r6</span><br><span class="line">  const void *v10; // r11</span><br><span class="line"></span><br><span class="line">  v8 = (char *)(*(int (__fastcall **)(int, int, _DWORD))(*(_DWORD *)a1 + 676))(a1, a3, 0);</span><br><span class="line">  v9 = (*(int (__fastcall **)(int, int, _DWORD))(*(_DWORD *)a1 + 676))(a1, a4, 0);</span><br><span class="line">  if ( !dword_600C )</span><br><span class="line">  &#123;</span><br><span class="line">    dword_600C = (int)malloc(0x20u);</span><br><span class="line">    v10 = (const void *)(*(int (__fastcall **)(int, int, _DWORD))(*(_DWORD *)a1 + 676))(a1, a5, 0);</span><br><span class="line">    qmemcpy((void *)dword_600C, v10, 0x20u);</span><br><span class="line">    (*(void (__fastcall **)(int, int, const void *))(*(_DWORD *)a1 + 680))(a1, a5, v10);</span><br><span class="line">  &#125;</span><br><span class="line">  sub_1A48(v8);</span><br><span class="line">  (*(void (__fastcall **)(int, int, char *))(*(_DWORD *)a1 + 680))(a1, a3, v8);</span><br><span class="line">  return (*(int (__fastcall **)(int, int, int))(*(_DWORD *)a1 + 680))(a1, a4, v9);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>sub_1A48函数：一些加密算法</p>
-<p>此函数是一个典型的<strong>文件加解密&#x2F;转换工具</strong>的核心逻辑，主要功能为：</p>
-<ul>
-<li><strong>初始化阶段</strong>：首次调用时生成内部状态（疑似密钥调度或预处理）。</li>
-<li><strong>文件处理阶段</strong>：从输入文件 <code>filename</code> 读取数据 → 经复杂变换 → 写入输出文件 <code>a2</code></li>
-</ul>
-<p>基本流程：</p>
-<ol>
-<li>将传入的签名的 md5 字符串分为两半，生成两组密钥。</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">v5 = dword_600C;</span><br><span class="line">    for ( i = 0; i != 4; ++i )</span><br><span class="line">      v4[i] = _byteswap_ulong(*(_DWORD *)(v5 + i * 4));</span><br><span class="line">      </span><br><span class="line">v29 = &amp;dword_6008;</span><br><span class="line">if ( (v24 &amp; 1) == 0 )</span><br><span class="line">	v29 = &amp;dword_6004;</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>每次读入 md5sig[k &amp; 0x1F] 大小的内容</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v24 = *(_BYTE *)(dword_600C + (k &amp; 0x1F));</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>k &amp; 0x1F</code> 等价于 <code>k % 32</code>，即循环使用 <code>dword_600C</code> 的前 32 字节作为每轮读取长度表。</li>
-</ul>
-<p><code>fread(v20, 1u, v24, v21)</code> 按此长度读取数据。</p>
-<ol start="3">
-<li>根据读入的大小决定使用哪一组密钥</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if ((v24 &amp; 1) == 0) v29 = &amp;dword_6004;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>根据当前块长度 <code>v24</code> 的奇偶性选择 IV 基址（<code>dword_6004</code> 或 <code>dword_6008</code>）。</li>
-</ul>
-<ol start="4">
-<li>奇数使用第二组密钥，偶数使用第一组密钥</li>
-</ol>
-<ul>
-<li>当 <code>v24</code> 为奇数时，<code>(v24 &amp; 1) != 0</code>，默认使用 <code>dword_6008</code>；</li>
-<li>当 <code>v24</code> 为偶数时，强制切换为 <code>dword_6004</code>。</li>
-</ul>
-<ol start="5">
-<li>如果读入的大小不够 16 的话，就将后面填充为不够的大小（比如大小为 12 时，填充 4 个 0x4）</li>
-</ol>
-<ul>
-<li><code>if (v25 &lt;= 0xF)</code> 触发填充逻辑；</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">memset(v27, (unsigned __int8)v28, 16 - (v26 &amp; 0xF));</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>填充值为 <code>v28 = 16 - (v26 &amp; 0xF)</code>，即填充长度本身。</li>
-</ul>
-<ol start="6">
-<li>这时修改后的内容必然够 16 个字节，对前 16 个字节进行 AES 加密。对于后面的字节，将其与 md5sig[k &amp; 0x1F] 依次进行异或。</li>
-</ol>
-<ul>
-<li><strong>前 16 字节</strong>：经过复杂的多轮变换（<code>sub_132C</code>, <code>sub_13B0</code> 等），最终写入 <code>v22</code> 的前 16 字节。</li>
-<li><strong>后续字节</strong>：<code>if (v26 &gt;= 0x11)</code> 分支中，对超出 16 字节的部分执行 <code>v22[v31] = v20[v31] ^ (BYTE)(v32 + v31%32)</code>，即与 <code>dword_600C</code> 的循环值异或。</li>
-</ul>
-<p>使用keytool工具获取签名的 md5</p>
-<p>android中关于keytool 错误：java.lang.Exception：密钥库文件不存在: 解决步骤_keytool 错误: java.lang.exception: 密钥库文件不存在: debug.k-CSDN博客](<a target="_blank" rel="noopener" href="https://blog.csdn.net/y201314an/article/details/80994798">https://blog.csdn.net/y201314an/article/details/80994798</a>)</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#keytool -printcert -jarfile D:\CTF\2018reverse\picturelock\picturelock.apk</span><br><span class="line"></span><br><span class="line">签名者 #1:</span><br><span class="line"></span><br><span class="line">证书 #1：</span><br><span class="line">所有者: CN=a, OU=b, O=c, L=d, ST=e, C=ff</span><br><span class="line">发布者: CN=a, OU=b, O=c, L=d, ST=e, C=ff</span><br><span class="line">序列号: 5f4e6be1</span><br><span class="line">生效时间: Fri Sep 09 14:32:36 CST 2016, 失效时间: Tue Sep 03 14:32:36 CST 2041</span><br><span class="line">证书指纹:</span><br><span class="line">         SHA1: 48:E7:04:5E:E6:0D:9D:8A:25:7C:52:75:E3:65:06:09:A5:CC:A1:3E</span><br><span class="line">         SHA256: BA:12:C1:3F:D6:0E:0D:EF:17:AE:3A:EE:4E:6A:81:67:82:D0:36:7F:F0:2E:37:CC:AD:5D:6E:86:87:0C:8E:38</span><br><span class="line">签名算法名称: SHA256withRSA</span><br><span class="line">主体公共密钥算法: 2048 位 RSA 密钥</span><br><span class="line">版本: 3</span><br><span class="line"></span><br><span class="line">扩展:</span><br><span class="line"></span><br><span class="line">#1: ObjectId: 2.5.29.14 Criticality=false</span><br><span class="line">SubjectKeyIdentifier [</span><br><span class="line">KeyIdentifier [</span><br><span class="line">0000: 71 A3 2A FB D3 F4 A9 A9   2A 74 3F 29 8E 67 8A EA  q.*.....*t?).g..</span><br><span class="line">0010: 3B DD 30 E3                                        ;.0.</span><br><span class="line">]</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<p>获取md5需要openssl，太大了下不下来啊。</p>
-<p>反正MD5:  F8:C4:90:56:E4:CC:F9:A1:1E:09:0E:AF:47:1F:41:8D</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env python</span><br><span class="line"></span><br><span class="line">import itertools</span><br><span class="line">from Crypto.Cipher import AES</span><br><span class="line"></span><br><span class="line">sig = b&#x27;f8c49056e4ccf9a11e090eaf471f418d&#x27;</span><br><span class="line"></span><br><span class="line">def decode_sig(payload):</span><br><span class="line">    ans = bytearray()  # 使用 bytearray 代替字符串</span><br><span class="line">    for i in range(len(payload)):</span><br><span class="line">        # 执行异或操作并直接追加字节</span><br><span class="line">        ans.append(payload[i] ^ sig[(16 + i) % 32])</span><br><span class="line">    return bytes(ans)  # 转换为不可变 bytes 类型</span><br><span class="line"></span><br><span class="line">def dec_aes():</span><br><span class="line">    with open(&#x27;flag.jpg.lock&#x27;, &#x27;rb&#x27;) as data_file:</span><br><span class="line">        data = data_file.read()</span><br><span class="line">    </span><br><span class="line">    with open(&#x27;flag.jpg&#x27;, &#x27;wb&#x27;) as f:  # 确保文件以二进制模式打开</span><br><span class="line">        idx = 0</span><br><span class="line">        i = 0</span><br><span class="line">        cipher1 = AES.new(sig[:0x10], AES.MODE_ECB)</span><br><span class="line">        cipher2 = AES.new(sig[0x10:], AES.MODE_ECB)</span><br><span class="line">        </span><br><span class="line">        while idx &lt; len(data):</span><br><span class="line">            read_len = sig[i % 32]</span><br><span class="line">            payload = data[idx:idx + read_len]</span><br><span class="line">            print(f&#x27;[+] Totally &#123;idx&#125; / &#123;len(data)&#125; bytes, sig index : &#123;i&#125;&#x27;)</span><br><span class="line"></span><br><span class="line">            if read_len % 2 == 0:</span><br><span class="line">                f.write(cipher1.decrypt(payload[:0x10]))</span><br><span class="line">            else:</span><br><span class="line">                f.write(cipher2.decrypt(payload[:0x10]))</span><br><span class="line">            </span><br><span class="line">            # 关键修改：decode_sig 现在返回 bytes，可直接写入二进制文件</span><br><span class="line">            f.write(decode_sig(payload[16:]))</span><br><span class="line">            f.flush()</span><br><span class="line">            idx += read_len</span><br><span class="line">            i += 1</span><br><span class="line">        print(&#x27;[+] Decoding done ...&#x27;)</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    dec_aes()</span><br></pre></td></tr></table></figure>
-
-<p>得到解密出来的flag.jpg</p>
-<style>.lxoltktqhvgw{zoom: 33%;}</style><img src="/2023/08/16/qwb2018/flag.jpg" class="lxoltktqhvgw" alt="flag">
-
-<h3 id="补充知识点"><a href="#补充知识点" class="headerlink" title="补充知识点"></a><strong>补充知识点</strong></h3><p>smali</p>
-<p>smali是andriod虚拟机的反汇编语言</p>
-<p>openssl x509 -noout -modulus -in client.crt | openssl md5<br>openssl rsa -noout -modulus -in client.key | openssl md5</p>
-<h2 id="hide"><a href="#hide" class="headerlink" title="hide"></a>hide</h2><p>[<a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-251371.htm">原创]从2018强网杯hide题中学习手动脱壳与算法识别的思路-CTF对抗-看雪-安全社区|安全招聘|kanxue.com</a></p>
-<p>先查壳，稍微折腾了一下，PEiD查不到壳，选择使用strings命令。windows下没有strings，下载git，git也不能用，最终选择MSYS2。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pacman -Syu</span><br><span class="line">pacman -S mingw-w64-x86_64-binutils</span><br><span class="line">cd /d/CTF/2018reverse/hide</span><br><span class="line">strings hide | grep -i upx</span><br></pre></td></tr></table></figure>
-
-<p>查看结果</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ strings hide | grep -i upx</span><br><span class="line">UPX!</span><br><span class="line">$Info: This file is packed with the UPX executable packer http://upx.sf.net $</span><br><span class="line">$Id: UPX 3.91 Copyright (C) 1996-2013 the UPX Team. All Rights Reserved. $</span><br><span class="line">UPX!</span><br><span class="line">UPX!</span><br></pre></td></tr></table></figure>
-
-<p>这个文件 <strong><code>hide</code></strong> 使用了 <strong>UPX 3.91</strong> 版本进行加壳压缩。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PS D:\CTF\2018reverse\hide&gt; upx -d hide</span><br><span class="line">                       Ultimate Packer for eXecutables</span><br><span class="line">                          Copyright (C) 1996 - 2025</span><br><span class="line">UPX 5.0.2       Markus Oberhumer, Laszlo Molnar &amp; John Reiser   Jul 20th 2025</span><br><span class="line"></span><br><span class="line">        File size         Ratio      Format      Name</span><br><span class="line">   --------------------   ------   -----------   -----------</span><br><span class="line">upx: hide: CantUnpackException: unknown format 0</span><br><span class="line"></span><br><span class="line">Unpacked 0 files.</span><br></pre></td></tr></table></figure>
-
-<p>需要手动脱壳，使用file命令查看文件信息，是个Linux文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ file hide</span><br><span class="line">hide: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, no section header</span><br></pre></td></tr></table></figure>
-
-<p>具体做法是让程序先运行，然后等到数据自动解压&#x2F;解密出来后，再dump内存组成elf文件进行分析：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&gt;./hide</span><br><span class="line">&gt; pgrep -fl hide</span><br><span class="line">&gt; pmap -d 21895</span><br><span class="line">&gt; dd if=/proc/$(pidof hide)/mem of=hide_dump1 skip=4194304  bs=1c count=827392</span><br><span class="line"></span><br><span class="line">&gt; file hide_dump1</span><br><span class="line">hide_dump1: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, missing section headers at 840568</span><br><span class="line"></span><br><span class="line">&gt; dd if=/proc/$(pidof hide)/mem of=hide_dump2 skip=7110656 bs=1 count=20480</span><br><span class="line">&gt; cat hide_dump1 hide_dump2 &gt; hide_dump</span><br><span class="line"></span><br><span class="line">&gt; file hide_dump</span><br><span class="line">hide_dump: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, stripped</span><br></pre></td></tr></table></figure>
-
-<p>然后就获得了完整的脱壳后的文件。</p>
-<p>静态分析</p>
-<p>将<code>hide_dump</code>载入ida，按下<code>Shift</code>+<code>F12</code>查看字符串列表并搜索<code>flag</code>:</p>
-<p><img src="/image-20250911155632129.png" alt="image-20250911155632129"></p>
-<p>敏感字符串aYouAreRight，查看交叉引用：</p>
-<p><img src="/image-20250911155911810.png" alt="image-20250911155911810"></p>
-<p>查看sub_4009EF函数：</p>
-<p><img src="/image-20250911161638344.png" alt="image-20250911161638344"></p>
-<p>这肯定不对，看下一个函数：</p>
-<p><img src="/image-20250911201625976.png" alt="image-20250911201625976"></p>
-<p>进入这个地址，发现ida没有将其识别称为一个函数，我们需要手动逆向分析。这通常发生在加壳、混淆或编译器优化过的代码中。</p>
-<h3 id="逆向工程中的手动分析操作"><a href="#逆向工程中的手动分析操作" class="headerlink" title="逆向工程中的手动分析操作"></a><strong>逆向工程中的手动分析操作</strong></h3><p>反编译之后跟题解不一样</p>
-<p>向上查看代码，寻找合适的函数起点</p>
-<p><code>0x4C8EF4</code> 这个位置具有函数开头的典型特征（如ret或jmp后面基本就是一个函数的开头）</p>
-<p>使用 <strong>Create Function</strong> 功能强制 IDA 将该地址识别为函数开头</p>
-<p>这是个先验证后加密的函数：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">signed __int64 sub_4C8EF4()</span><br><span class="line">&#123;</span><br><span class="line">  char *v0; // rdi</span><br><span class="line">  __int64 *v1; // rsi</span><br><span class="line">  unsigned __int64 i; // rdx</span><br><span class="line"></span><br><span class="line">  if ( strlen(qword_6CCDB0) == 21  //验证</span><br><span class="line">    &amp;&amp; qword_6CCDB0[1] == &#x27;w&#x27;</span><br><span class="line">    &amp;&amp; qword_6CCDB0[2] == &#x27;b&#x27;</span><br><span class="line">    &amp;&amp; qword_6CCDB0[3] == &#x27;&#123;&#x27;</span><br><span class="line">    &amp;&amp; qword_6CCDB0[20] == &#x27;&#125;&#x27; )</span><br><span class="line">  &#123;</span><br><span class="line">    sub_4C8CC0((__int64)&amp;qword_6CCDB0[4]);</span><br><span class="line">    sub_4C8E50(&amp;qword_6CCDB0[4]);</span><br><span class="line">    sub_4C8CC0((__int64)&amp;qword_6CCDB0[4]);</span><br><span class="line">    sub_4C8E50(&amp;qword_6CCDB0[4]);</span><br><span class="line">    sub_4C8CC0((__int64)&amp;qword_6CCDB0[4]);</span><br><span class="line">    v0 = &amp;qword_6CCDB0[4];</span><br><span class="line">    sub_4C8E50(&amp;qword_6CCDB0[4]);</span><br><span class="line">    v1 = qword_4C8CB0;// 加载预存的标准答案</span><br><span class="line">    for ( i = 0LL; i &lt; 0x10 &amp;&amp; *v0 == *(_BYTE *)v1; ++i )//逐字节比对</span><br><span class="line">    &#123;</span><br><span class="line">      ++v0;</span><br><span class="line">      v1 = (__int64 *)((char *)v1 + 1);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  __asm &#123; syscall; LINUX - sys_write &#125;</span><br><span class="line">  return sys_exit(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>flag的格式为qwb{x*16}</p>
-<p>进入sub_4C8CC0，很像tea加密：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 __fastcall sub_4C8CC0(__int64 a1)</span><br><span class="line">&#123;</span><br><span class="line">  unsigned __int64 result; // rax</span><br><span class="line">  unsigned int v2; // [rsp+18h] [rbp-48h]</span><br><span class="line">  unsigned int v3; // [rsp+1Ch] [rbp-44h]</span><br><span class="line">  unsigned int v4; // [rsp+20h] [rbp-40h]</span><br><span class="line">  int i; // [rsp+24h] [rbp-3Ch]</span><br><span class="line">  int j; // [rsp+28h] [rbp-38h]</span><br><span class="line">  int v7[6]; // [rsp+40h] [rbp-20h] BYREF</span><br><span class="line">  unsigned __int64 v8; // [rsp+58h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v8 = __readfsqword(0x28u);</span><br><span class="line">  qmemcpy(v7, &quot;s1IpP3rEv3Ryd4Y3&quot;, 16);</span><br><span class="line">  for ( i = 0; i &lt;= 1; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    v4 = 0;</span><br><span class="line">    v2 = *(_DWORD *)(8 * i + a1);</span><br><span class="line">    v3 = *(_DWORD *)(a1 + 4 + 8 * i);</span><br><span class="line">    for ( j = 0; j &lt;= 7; ++j )</span><br><span class="line">    &#123;</span><br><span class="line">      v2 += (v7[v4 &amp; 3] + v4) ^ (((v3 &gt;&gt; 5) ^ (16 * v3)) + v3);</span><br><span class="line">      v4 += 0x676E696C;</span><br><span class="line">      v3 += (v7[(v4 &gt;&gt; 11) &amp; 3] + v4) ^ (((v2 &gt;&gt; 5) ^ (16 * v2)) + v2);</span><br><span class="line">    &#125;</span><br><span class="line">    *(_DWORD *)(a1 + 8 * i) = v2;</span><br><span class="line">    *(_DWORD *)(a1 + 4 + 8 * i) = v3;</span><br><span class="line">  &#125;</span><br><span class="line">  result = __readfsqword(0x28u) ^ v8;</span><br><span class="line">  if ( result )</span><br><span class="line">    return ((__int64 (*)(void))loc_4C8B9A)();</span><br><span class="line">  return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">_BYTE *__fastcall sub_4C8E50(__int64 a1)</span><br><span class="line">&#123;</span><br><span class="line">  _BYTE *result; // rax</span><br><span class="line">  int i; // [rsp+14h] [rbp-4h]</span><br><span class="line"></span><br><span class="line">  for ( i = 0; i &lt;= 15; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    result = (_BYTE *)(i + a1);</span><br><span class="line">    *result ^= i;</span><br><span class="line">  &#125;</span><br><span class="line">  return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>异或</p>
-<h3 id="解密exp"><a href="#解密exp" class="headerlink" title="解密exp"></a>解密exp</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line">keyPool = [1883844979, 1165112144, 2035430262, 861484132]</span><br><span class="line">array_car = [1735289196, 3470578392, 910900292, 2646189488, 86511388, 1821800584, 3557089780, 997411680]</span><br><span class="line">target = [0x7f13b852, 0x1bf28c35, 0xd28663f4, 0x311e4f73]</span><br><span class="line"></span><br><span class="line">def de_xor(enc):</span><br><span class="line">    for _i in range(4):</span><br><span class="line">        current = enc[_i]</span><br><span class="line">        a = current &amp; 0xFF</span><br><span class="line">        b = (current &amp; 0xFF00) &gt;&gt; 8</span><br><span class="line">        c = (current &amp; 0xFF0000) &gt;&gt; 16</span><br><span class="line">        d = (current &amp; 0xFF000000) &gt;&gt; 24</span><br><span class="line">        a ^= (_i * 4 + 0)</span><br><span class="line">        b ^= (_i * 4 + 1)</span><br><span class="line">        c ^= (_i * 4 + 2)</span><br><span class="line">        d ^= (_i * 4 + 3)</span><br><span class="line">        # 修正此处：添加缺失的位或运算符 |</span><br><span class="line">        enc[_i] = a | (b &lt;&lt; 8) | (c &lt;&lt; 16) | (d &lt;&lt; 24)</span><br><span class="line">    return enc</span><br><span class="line"></span><br><span class="line">def encrypt(i32_para1, i32_para2):</span><br><span class="line">    foo = i32_para1</span><br><span class="line">    bar = i32_para2</span><br><span class="line">    car = 0</span><br><span class="line">    for _i in range(8):</span><br><span class="line">        tmp_a = keyPool[(car &amp; 3)] + car</span><br><span class="line">        tmp_b = ((bar &gt;&gt; 5) ^ (bar &lt;&lt; 4)) + bar</span><br><span class="line">        foo += tmp_a ^ tmp_b</span><br><span class="line">        foo &amp;= 0xffffffff</span><br><span class="line">        car += 1735289196</span><br><span class="line">        car &amp;= 0xffffffff</span><br><span class="line">        tmp_a = keyPool[((car &gt;&gt; 11) &amp; 3)] + car</span><br><span class="line">        tmp_b = ((foo &gt;&gt; 5) ^ (16 * foo)) + foo</span><br><span class="line">        bar += tmp_a ^ tmp_b</span><br><span class="line">        bar &amp;= 0xffffffff</span><br><span class="line">    return foo, bar</span><br><span class="line"></span><br><span class="line">def solver(enc_foo, enc_bar):</span><br><span class="line">    foo = enc_foo</span><br><span class="line">    bar = enc_bar</span><br><span class="line">    car = array_car[7]</span><br><span class="line">    for _i in range(8):</span><br><span class="line">        tmp_a = keyPool[((car &gt;&gt; 11) &amp; 3)] + car</span><br><span class="line">        tmp_b = ((foo &gt;&gt; 5) ^ (16 * foo)) + foo</span><br><span class="line">        bar -= tmp_a ^ tmp_b</span><br><span class="line">        bar = (bar + 0xffffffff + 1) &amp; 0xffffffff</span><br><span class="line">        car -= 1735289196</span><br><span class="line">        car = (car + 0xffffffff + 1) &amp; 0xffffffff</span><br><span class="line">        tmp_a = keyPool[(car &amp; 3)] + car</span><br><span class="line">        tmp_b = ((bar &gt;&gt; 5) ^ (bar &lt;&lt; 4)) + bar</span><br><span class="line">        foo -= tmp_a ^ tmp_b</span><br><span class="line">        foo = (foo + 0xffffffff + 1) &amp; 0xffffffff</span><br><span class="line">    return foo, bar</span><br><span class="line"></span><br><span class="line"># 执行流程</span><br><span class="line">target = de_xor(target.copy())  # 避免修改原始列表</span><br><span class="line">print(&quot;=====&quot;)</span><br><span class="line">for t in target:</span><br><span class="line">    print(hex(t))</span><br><span class="line"></span><br><span class="line">for i in range(2):</span><br><span class="line">    target[i * 2], target[i * 2 + 1] = solver(target[i * 2], target[i * 2 + 1])</span><br><span class="line"></span><br><span class="line">print(&quot;=====&quot;)</span><br><span class="line">for t in target:</span><br><span class="line">    print(hex(t))</span><br><span class="line"></span><br><span class="line">target = de_xor(target.copy())</span><br><span class="line">print(&quot;=====&quot;)</span><br><span class="line">for t in target:</span><br><span class="line">    print(hex(t))</span><br><span class="line"></span><br><span class="line">for i in range(2):</span><br><span class="line">    target[i * 2], target[i * 2 + 1] = solver(target[i * 2], target[i * 2 + 1])</span><br><span class="line"></span><br><span class="line">print(&quot;=====&quot;)</span><br><span class="line">for t in target:</span><br><span class="line">    print(hex(t))</span><br><span class="line"></span><br><span class="line">target = de_xor(target.copy())</span><br><span class="line">print(&quot;=====&quot;)</span><br><span class="line">for t in target:</span><br><span class="line">    print(hex(t))</span><br><span class="line"></span><br><span class="line">for i in range(2):</span><br><span class="line">    target[i * 2], target[i * 2 + 1] = solver(target[i * 2], target[i * 2 + 1])</span><br><span class="line"></span><br><span class="line">print(&quot;=====&quot;)</span><br><span class="line">for t in target:</span><br><span class="line">    print(t)</span><br><span class="line"></span><br><span class="line"># 最终输出解码字符串</span><br><span class="line">print(&quot;=====&quot;)</span><br><span class="line">result = b&#x27;&#x27;.join([bytes.fromhex(hex(t)[2:])[::-1] for t in target]).decode(&#x27;utf-8&#x27;)</span><br><span class="line">print(result)  # 应输出 &quot;f1Nd_TH3HldeC0dE&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="baby-re"><a href="#baby-re" class="headerlink" title="baby_re"></a>baby_re</h2>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2023/08/16/qwb2018/" data-id="cuiddOCwJkQsZ4VI6vQycltPo" data-title="qwb2018" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+  </nav>
 
 </section>
         
