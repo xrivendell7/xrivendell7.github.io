@@ -304,8 +304,8 @@
   
     <article id="post-qwb2020-crypto" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2020/11/01/qwb2020-crypto/" class="article-date">
-  <time class="dt-published" datetime="2020-11-01T03:18:11.000Z" itemprop="datePublished">2020-11-01</time>
+    <a href="/2020/11/02/qwb2020-crypto/" class="article-date">
+  <time class="dt-published" datetime="2020-11-02T03:18:11.000Z" itemprop="datePublished">2020-11-02</time>
 </a>
     
   </div>
@@ -316,7 +316,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/11/01/qwb2020-crypto/">qwb2020-crypto</a>
+      <a class="p-name article-title" href="/2020/11/02/qwb2020-crypto/">qwb2020-crypto</a>
     </h1>
   
 
@@ -378,11 +378,11 @@
 <p>AES分块，每块都是128bits。</p>
 <p>AES-CBC加解密如下：</p>
 <p>$$Cᵢ &#x3D; Encrypt(Pᵢ ⊕ Cᵢ₋₁)\ Pᵢ &#x3D; Decrypt(Cᵢ) ⊕ Cᵢ₋₁$$</p>
-<style>.qzdmmvtxmlrb{zoom:67%;}</style><img src="/2020/11/01/qwb2020-crypto/1763435936656-12.png" class="qzdmmvtxmlrb" alt="img">
+<style>.jqeqaoiuawmj{zoom:67%;}</style><img src="/2020/11/02/qwb2020-crypto/1763435936656-12.png" class="jqeqaoiuawmj" alt="img">
 
-<style>.ovkvrirtfvmc{zoom:67%;}</style><img src="/2020/11/01/qwb2020-crypto/1763435936651-1.png" class="ovkvrirtfvmc" alt="img">
+<style>.teordfwqutyr{zoom:67%;}</style><img src="/2020/11/02/qwb2020-crypto/1763435936651-1.png" class="teordfwqutyr" alt="img">
 
-<style>.scugpmpxjpic{zoom:67%;}</style><img src="/2020/11/01/qwb2020-crypto/1763435936651-2.png" class="scugpmpxjpic" alt="img">
+<style>.ebnwizgqiheu{zoom:67%;}</style><img src="/2020/11/02/qwb2020-crypto/1763435936651-2.png" class="ebnwizgqiheu" alt="img">
 
 <p>伪造一个合适的checksum，使得解密后admin&#x3D;1。</p>
 <p>对于AES128的CBC解密模式，将密文按照16字节（128bits）分块，每个密文块先进行AES解密，然后再与前一个密文块（或IV）进行异或操作，得到明文块。</p>
@@ -398,7 +398,7 @@
 <p>那么输入两次相同的16字节字符串，将这个字符串异或两次解密出的明文，即为IV。</p>
 <h2 id="challenge3"><a href="#challenge3" class="headerlink" title="challenge3"></a>challenge3</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">[$</span><span class="language-bash">] challenge 3</span></span><br><span class="line">[+] cookie=session:0884ce7c;timedl=1;admin=0;guess_cookie_ma=1;guess_mp_ab=1;guess_cookie_mb=0;hell_pad=233</span><br><span class="line">[+] 128bit_ecb_encrypt(cookie):0632b3e7adb2f6d5ae4a92f553f2f4a4c9f95b099cfd8e3408137d134eb51d147045f278246a831fabdbdccde099b4b694b07e699ffae6a82c6cfbc4454816b1c78e5d1be8b67e235fbbfd2a75e73f32bac806808bc2e102db8f2c159b250415</span><br><span class="line">[+] only admin can see the flag</span><br><span class="line">[-] input your encrypted cookie(encode hex):（待输入）</span><br></pre></td></tr></table></figure>
 
-<style>.tqokjinfpbei{zoom:67%;}</style><img src="/2020/11/01/qwb2020-crypto/1763435936651-3.png" class="tqokjinfpbei" alt="img">
+<style>.wlstnrjjydry{zoom:67%;}</style><img src="/2020/11/02/qwb2020-crypto/1763435936651-3.png" class="wlstnrjjydry" alt="img">
 
 <p>先将明密文分块</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">session:0884ce7c          0632b3e7adb2f6d5ae4a92f553f2f4a4</span><br><span class="line">;timedl=1;admin=          c9f95b099cfd8e3408137d134eb51d14</span><br><span class="line">0;guess_cookie_m          7045f278246a831fabdbdccde099b4b6</span><br><span class="line">a=1;guess_mp_ab=          94b07e699ffae6a82c6cfbc4454816b1</span><br><span class="line">1;guess_cookie_m          c78e5d1be8b67e235fbbfd2a75e73f32</span><br><span class="line">b=0;hell_pad=233          bac806808bc2e102db8f2c159b250415</span><br></pre></td></tr></table></figure>
@@ -421,11 +421,11 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">[$</span><span class="language-bash">] challenge 6</span></span><br><span class="line">[+] padding(m):m+chr(16-(len(m)%16))*(16-(len(m)%16))</span><br><span class="line">[+] unpadding(m):m[:-ord(m[-1])]</span><br><span class="line">[+] len(secret):16</span><br><span class="line">[+] iv+aes128_cbc(key,iv,padding(secret)):31313131313131313131313131313131891f3925b171f363bfc1ab0f4c03c9172cdfbd56dbd225d2accaf2b6fcbd0780</span><br><span class="line">[+] 1. server&#x27;s job: decrypt and unpadding</span><br><span class="line">[+] 2. your job: guess secret</span><br><span class="line">[-] your choice:（待输入）</span><br><span class="line"></span><br><span class="line">31313131313131313131313131313131 # IV，即ASCII &#x27;1&#x27;的重复</span><br><span class="line">891f3925b171f363bfc1ab0f4c03c917 # 第一组密文</span><br><span class="line">2cdfbd56dbd225d2accaf2b6fcbd0780 # 第二组密文</span><br></pre></td></tr></table></figure>
 
 <p>首先详细了解CBC模式的加解密过程</p>
-<style>.uaayenqtszkp{zoom:67%;}</style><img src="/2020/11/01/qwb2020-crypto/1763435936651-4.png" class="uaayenqtszkp" alt="img">
+<style>.gtoifmdczagx{zoom:67%;}</style><img src="/2020/11/02/qwb2020-crypto/1763435936651-4.png" class="gtoifmdczagx" alt="img">
 
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 加密</span></span><br><span class="line"><span class="number">1</span>. 明文经过填充后，分为不同的组block，以组的方式对数据进行处理 </span><br><span class="line"><span class="number">2</span>. 初始化向量（IV）首先和第一组明文进行XOR（异或）操作，得到”中间值“</span><br><span class="line"><span class="number">3</span>. 采用密钥对中间值进行块加密，删除第一组加密的密文 （加密过程涉及复杂的变换、移位等） </span><br><span class="line"><span class="number">4</span>. 第一组加密的密文作为第二组的初始向量（IV），参与第二组明文的异或操作  </span><br><span class="line"><span class="number">5</span>. 依次执行块加密，最后将每一块的密文拼接成密文  </span><br></pre></td></tr></table></figure>
 
-<style>.olxtciakxerz{zoom:67%;}</style><img src="/2020/11/01/qwb2020-crypto/1763435936652-5.png" class="olxtciakxerz" alt="img">
+<style>.wineedkxqikj{zoom:67%;}</style><img src="/2020/11/02/qwb2020-crypto/1763435936652-5.png" class="wineedkxqikj" alt="img">
 
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">解密</span></span><br><span class="line">1. 会将密文进行分组（按照加密采用的分组大小），前面的第一组是初始化向量，从第二组开始才是真正的密文</span><br><span class="line">2. 使用加密密钥对密文的第一组进行解密，得到”中间值“  </span><br><span class="line">3. 将中间值和初始化向量进行异或，得到该组的明文</span><br><span class="line">4. 前一块密文是后一块密文的IV，通过异或中间值，得到明文</span><br><span class="line">5. 块全部解密完成后，拼接得到明文，密码算法校验明文的格式（填充格式是否正确）</span><br><span class="line">6. 校验通过得到明文，校验失败得到密文 </span><br></pre></td></tr></table></figure>
 
@@ -440,28 +440,28 @@
 </ul>
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/833582b2f560">Padding Oracle Attack(填充提示攻击)详解及验证 - 简书</a></p>
 <p>通过上面的例题，详细了解一下padding oracle attack的原理，再针对上面的例题，从已知明文的角度详细了解一下加解密的过程。</p>
-<style>.cotmxsgcsmkx{zoom:67%;}</style><img src="/2020/11/01/qwb2020-crypto/1763435936652-6.png" class="cotmxsgcsmkx" alt="img">
+<style>.cteuochywxzm{zoom:67%;}</style><img src="/2020/11/02/qwb2020-crypto/1763435936652-6.png" class="cteuochywxzm" alt="img">
 
-<style>.corgwzovdfyi{zoom:50%;}</style><img src="/2020/11/01/qwb2020-crypto/1763435936652-7.png" class="corgwzovdfyi" alt="img">
+<style>.hrsabormxovx{zoom:50%;}</style><img src="/2020/11/02/qwb2020-crypto/1763435936652-7.png" class="hrsabormxovx" alt="img">
 
 <p>例题密文如下，对其进行分组</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">7B216A634951170F  # IV</span><br><span class="line">F851D6CC68FC9537  # 第一组密文c1</span><br><span class="line">858795A28ED4AAC6  # 第二组密文c2</span><br></pre></td></tr></table></figure>
 
 <p>那么可以首先通过构造初始向量IV破解第一组密文。</p>
 <p>将IV设置为全0，向服务器提交IV+c1，即00000000000000000F851D6CC68FC9537。</p>
-<style>.fbmbpnbbutqg{zoom:50%;}</style><img src="/2020/11/01/qwb2020-crypto/1763435936652-8.png" class="fbmbpnbbutqg" alt="img">
+<style>.lagxwxvvybeh{zoom:50%;}</style><img src="/2020/11/02/qwb2020-crypto/1763435936652-8.png" class="lagxwxvvybeh" alt="img">
 
 <p>首先假设明文从c1填充了最后一字节，那么按照填充规则，最后一字节明文应当是填充0x01。</p>
 <p>那么此时全0 IV一定会解密失败，解密的过程是先解密密文得到一个中间值，然后将中间值和IV异或得到明文，而此时解密出的明文不满足填充规则，也就是不是0x01。</p>
 <p>依次将IV最后一个字节从0x01~0xFF递增，直到解密的明文最后一个字节为0x01时，才是正确的padding，而此时IV为0000000000000003C，此时将0000000000000003C+c1提交给服务器，将会返回解密正确的提示，如下图。</p>
-<style>.qlxpeowklokk{zoom:50%;}</style><img src="/2020/11/01/qwb2020-crypto/1763435936652-9.png" class="qlxpeowklokk" alt="img">
+<style>.mfhohnxtroci{zoom:50%;}</style><img src="/2020/11/02/qwb2020-crypto/1763435936652-9.png" class="mfhohnxtroci" alt="img">
 
 <p>此时已知IV的最后一个字节为0x3C，最后一个填充字节为0x01，那么即可得到c1解密过程中的中间值的最后一个字节是0x01^0x3C &#x3D; 0x3D。</p>
 <p>接着利用同样的方法，假设c1填充了最后两字节，那么填充的内容应当是0x02 0x02。而此时已经知道了中间值的最后一字节是0x3D，那么可以得到IV的最后一字节应该是0x3D^0x02 &#x3D; 0x3F，那么将IV&#x3D;000000000000003F，此时开始从0x00~0xFF遍历IV的倒数第2个字节，直到返回解密成功，如下图</p>
-<style>.bpytlonitnsl{zoom:50%;}</style><img src="/2020/11/01/qwb2020-crypto/1763435936652-10.png" class="bpytlonitnsl" alt="img">
+<style>.wmzklkepditu{zoom:50%;}</style><img src="/2020/11/02/qwb2020-crypto/1763435936652-10.png" class="wmzklkepditu" alt="img">
 
 <p>那么此时猜解出了中间值的倒数第二个字节是0x02^0x24 &#x3D; 0x26。以此类推，一直假设至填充8字节0x08，即可完成中间值猜解，如下图。</p>
-<style>.wqfevlzzuqpl{zoom:50%;}</style><img src="/2020/11/01/qwb2020-crypto/1763435936652-11.png" class="wqfevlzzuqpl" alt="img">
+<style>.glcsqurdsecs{zoom:50%;}</style><img src="/2020/11/02/qwb2020-crypto/1763435936652-11.png" class="glcsqurdsecs" alt="img">
 
 <p>当中间值全部猜解完毕后，将中间值和题目给的IV异或，即可得到c1的明文。</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x39</span> <span class="number">0x73</span> <span class="number">0x23</span> <span class="number">0x22</span> <span class="number">0x07</span> <span class="number">0x6A</span> <span class="number">0x26</span> <span class="number">0x3D</span>  <span class="comment"># c1中间值</span></span><br><span class="line"><span class="keyword">xor</span> </span><br><span class="line"><span class="number">0x7B</span> <span class="number">0x21</span> <span class="number">0x6A</span> <span class="number">0x63</span> <span class="number">0x49</span> <span class="number">0x51</span> <span class="number">0x17</span> <span class="number">0x0F</span>  <span class="comment"># 初始IV</span></span><br><span class="line">= </span><br><span class="line">BRIAN;<span class="number">12</span>  <span class="comment"># 明文m1</span></span><br></pre></td></tr></table></figure>
@@ -510,7 +510,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/11/01/qwb2020-crypto/" data-id="cuidOvvP1WG2XapC7cKqzMiPm" data-title="qwb2020-crypto" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2020/11/02/qwb2020-crypto/" data-id="cuidOvvP1WG2XapC7cKqzMiPm" data-title="qwb2020-crypto" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
