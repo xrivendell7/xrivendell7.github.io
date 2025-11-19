@@ -4,13 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>Archives: 2021 | xrivendell7</title>
+  <title>xrivendell7</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
+  <meta name="description" content="2022 Cakectffrozencake-crypto$$\begin{align*}&amp; m^p \equiv a \mod{n} \&amp; m^q \equiv b \mod{n} \&amp; m^n \equiv c \mod{n} \&amp; n &#x3D; pq \&amp; \varphi(n)&#x3D;(p-1)(q-1)\\&amp; m^{(p-1)(q-1">
+<meta property="og:type" content="article">
 <meta property="og:title" content="xrivendell7">
-<meta property="og:url" content="http://example.com/archives/2021/index.html">
+<meta property="og:url" content="http://example.com/2025/11/19/cakectf2022/index.html">
 <meta property="og:site_name" content="xrivendell7">
+<meta property="og:description" content="2022 Cakectffrozencake-crypto$$\begin{align*}&amp; m^p \equiv a \mod{n} \&amp; m^q \equiv b \mod{n} \&amp; m^n \equiv c \mod{n} \&amp; n &#x3D; pq \&amp; \varphi(n)&#x3D;(p-1)(q-1)\\&amp; m^{(p-1)(q-1">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-11-19T12:59:10.788Z">
+<meta property="article:modified_time" content="2025-11-06T12:35:12.000Z">
 <meta property="article:author" content="xrivendell7">
 <meta name="twitter:card" content="summary">
   
@@ -69,134 +73,55 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/11/02/2021hackluctf/" class="archive-article-date">
-  <time class="dt-published" datetime="2021-11-02T03:07:10.000Z" itemprop="datePublished">Nov 2</time>
+        <section id="main"><article id="post-cakectf2022" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/11/19/cakectf2022/" class="article-date">
+  <time class="dt-published" datetime="2025-11-19T12:59:10.788Z" itemprop="datePublished">2025-11-19</time>
 </a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/11/02/2021hackluctf/">Hacklu CTF 2021</a>
-    </h1>
-  
-
-    </header>
+    
   </div>
-</article>
-  
+  <div class="article-inner">
     
     
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/09/23/2021acscctf/" class="archive-article-date">
-  <time class="dt-published" datetime="2021-09-23T03:07:10.000Z" itemprop="datePublished">Sep 23</time>
-</a>
+    <div class="e-content article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/09/23/2021acscctf/">2021 ACSC CTF</a>
-    </h1>
-  
+        <h1 id="2022-Cakectf"><a href="#2022-Cakectf" class="headerlink" title="2022 Cakectf"></a>2022 Cakectf</h1><h2 id="frozencake-crypto"><a href="#frozencake-crypto" class="headerlink" title="frozencake-crypto"></a>frozencake-crypto</h2><p>$$<br>\begin{align*}<br>&amp; m^p \equiv a \mod{n} \<br>&amp; m^q \equiv b \mod{n} \<br>&amp; m^n \equiv c \mod{n} \<br>&amp; n &#x3D; p<em>q \<br>&amp; \varphi(n)&#x3D;(p-1)</em>(q-1)\<br>\<br>&amp; m^{(p-1)<em>(q-1)} \equiv 1 \mod{n}\<br>&amp; m^{pq-p-q+1} \equiv 1 \mod{n}  \<br>&amp; \Longrightarrow  \frac{mc}{ab}  \equiv1 \mod{n} \<br>&amp; \Longrightarrow  m &#x3D; \frac{ab}{c} \mod{n} \<br>&amp; \Longrightarrow  m &#x3D; abc^{\varphi{(n)}-1} % n \<br>\end{align</em>}<br>$$</p>
+<p>其中$c^{-1} %n$可以通过<code>pow(c,-1,n)</code>直接进行计算，python3.9支持</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line">n = <span class="number">101205131618457490641888226172378900782027938652382007193297646066245321085334424928920128567827889452079884571045344711457176257019858157287424646000972526730522884040459357134430948940886663606586037466289300864147185085616790054121654786459639161527509024925015109654917697542322418538800304501255357308131</span></span><br><span class="line">a = <span class="number">38686943509950033726712042913718602015746270494794620817845630744834821038141855935687477445507431250618882887343417719366326751444481151632966047740583539454488232216388308299503129892656814962238386222995387787074530151173515835774172341113153924268653274210010830431617266231895651198976989796620254642528</span></span><br><span class="line">b = <span class="number">83977895709438322981595417453453058400465353471362634652936475655371158094363869813512319678334779139681172477729044378942906546785697439730712057649619691929500952253818768414839548038664187232924265128952392200845425064991075296143440829148415481807496095010301335416711112897000382336725454278461965303477</span></span><br><span class="line">c = <span class="number">21459707600930866066419234194792759634183685313775248277484460333960658047171300820279668556014320938220170794027117386852057041210320434076253459389230704653466300429747719579911728990434338588576613885658479123772761552010662234507298817973164062457755456249314287213795660922615911433075228241429771610549</span></span><br><span class="line"><span class="built_in">print</span>(long_to_bytes(a*b*<span class="built_in">pow</span>(c,-<span class="number">1</span>,n)%n))</span><br><span class="line"><span class="comment"># CakeCTF&#123;oh_you_got_a_tepid_cake_sorry&#125;</span></span><br></pre></td></tr></table></figure>
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/08/16/2021ijctf/" class="archive-article-date">
-  <time class="dt-published" datetime="2021-08-16T03:07:10.000Z" itemprop="datePublished">Aug 16</time>
-</a>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/08/16/2021ijctf/">IJCTF 2021</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/02/25/2021darkconctf/" class="archive-article-date">
-  <time class="dt-published" datetime="2021-02-25T03:07:10.000Z" itemprop="datePublished">Feb 25</time>
-</a>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2025/11/19/cakectf2022/" data-id="cuidswYz7R7AHoXraqg19pyT5" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/02/25/2021darkconctf/">DarkCon 2021 CTF</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/02/16/2021dicectf/" class="archive-article-date">
-  <time class="dt-published" datetime="2021-02-16T03:07:10.000Z" itemprop="datePublished">Feb 16</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/02/16/2021dicectf/">Dice 2021 CTF</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/01/25/2021bamboofox/" class="archive-article-date">
-  <time class="dt-published" datetime="2021-01-25T03:07:10.000Z" itemprop="datePublished">Jan 25</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/01/25/2021bamboofox/">2021 ACSC CTF</a>
-    </h1>
-  
-
-    </header>
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/11/19/ciscn2019%E5%8D%8E%E4%B8%AD%E8%B5%9B%E5%8C%BA%E5%8C%BA%E5%9F%9F%E8%B5%9B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/11/19/2025crewctf/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
-  
 
 
 </section>
