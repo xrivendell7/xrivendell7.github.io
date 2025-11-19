@@ -71,339 +71,6 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-justCTF2025" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/08/10/justCTF2025/" class="article-date">
-  <time class="dt-published" datetime="2025-08-10T10:20:25.000Z" itemprop="datePublished">2025-08-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/08/10/justCTF2025/">justCTF2025 web</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="justCTF-2025"><a href="#justCTF-2025" class="headerlink" title="justCTF 2025"></a>justCTF 2025</h2><h3 id="positive-player"><a href="#positive-player" class="headerlink" title="positive_player"></a>positive_player</h3><h4 id="前置知识–JS原型链污染"><a href="#前置知识–JS原型链污染" class="headerlink" title="前置知识–JS原型链污染"></a>前置知识–JS原型链污染</h4><h5 id="原型链概念"><a href="#原型链概念" class="headerlink" title="原型链概念"></a>原型链概念</h5><p>JavaScript 的每个对象拥有一个原型对象，以该原型为模板、继承方法和属性；原型对象也可能拥有原型，并从中继承方法和属性，以此类推。这种关系常被称为<strong>原型链</strong> (prototype chain)。</p>
-<p>任何对象的祖先原型都是 <code>object.prototype</code>。</p>
-<h6 id="相关属性"><a href="#相关属性" class="headerlink" title="相关属性"></a>相关属性</h6><p><strong>一、<em>proto</em>_ 属性</strong></p>
-<p>每个对象实例都有的一个内部属性，指向该对象的“原型对象”，即该对象从哪里继承属性和方法</p>
-<p>可通过 <code>__proto__</code> 访问其原型对象</p>
-<p><strong>二、prototype 属性</strong></p>
-<p>函数（包括构造函数）的一个属性</p>
-<p>本质上是一个模板对象，新实例会继承它上面的属性和方法</p>
-<p><strong>三、constructor 属性</strong></p>
-<p>默认存在于函数的 <code>prototype</code> 对象上。</p>
-<p>指向创建该 <code>prototype</code> 对象的构造函数本身。如 <code>A.prototype.constructor</code> 默认指向 <code>A</code>。</p>
-<h6 id="重要关系"><a href="#重要关系" class="headerlink" title="重要关系"></a>重要关系</h6><p>任意对象可通过属性 <code>__proto__</code> 访问其原型对象，即 <code>obj.__proto__ == Object.prototype</code></p>
-<p>实例对象可以通过原型链访问到 <code>constructor</code> 属性，即：<code>obj.constructor.prototype</code> &#x3D;&#x3D;&#x3D; <code>Object.prototype</code>。比如：</p>
-<h5 id="原型链污染"><a href="#原型链污染" class="headerlink" title="原型链污染"></a>原型链污染</h5><p>JavaScript类的所有属性都允许被公开的访问和修改，包括属性 <code>__proto__</code> ，<code>constructor</code>和<code>prototype</code>。</p>
-<p>原型污染指的是攻击者能够修改应用程序或库使用的对象原型（通常是 <code>Object.prototype</code>）的属性，且被所有经过该原型链的对象所继承，从而导致不可预期的行为，如拒绝服务攻击（通过触发JavaScript异常）或者远程代码执行等。</p>
-<p>原型链污染目的是在<code>Object.prototype</code>上造成污染，主要有两种场景：</p>
-<p>​	不安全的对象递归合并</p>
-<p>​	按路径定义属性</p>
-<h6 id="不安全的对象递归合并"><a href="#不安全的对象递归合并" class="headerlink" title="不安全的对象递归合并"></a>不安全的对象递归合并</h6><p>递归合并函数<code>merge()</code>的基本逻辑和代码如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 符合模式一：obj[a][b] = value</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">merge</span>(<span class="params">target, source</span>) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> source) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> target[key] === <span class="string">&#x27;object&#x27;</span> &amp;&amp; <span class="keyword">typeof</span> source[key] === <span class="string">&#x27;object&#x27;</span>) &#123;</span><br><span class="line">      <span class="title function_">merge</span>(target[key], source[key]);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      target[key] = source[key];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>若 <code>source</code> 包含<strong>可枚举</strong>属性 <code>__proto__</code>， 则可以新增&#x2F;修改 <code>tagret[__proto__]</code> 属性</p>
-<p>以下代码存在原型链污染漏洞：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123;&#125;;</span><br><span class="line"><span class="title function_">merge</span>(obj, <span class="title class_">JSON</span>.<span class="title function_">parse</span>(<span class="string">&#x27;&#123;&quot;__proto__&quot;: &#123;&quot;isAdmin&quot;: true&#125;&#125;&#x27;</span>));</span><br><span class="line"><span class="comment">// 此时 obj.__proto__.isAdmin = true</span></span><br><span class="line"><span class="comment">// 而 obj.__proto__ 就是 Object.prototype（因为 obj 是 &#123;&#125;）</span></span><br><span class="line"><span class="comment">// 所以 Object.prototype.isAdmin = true</span></span><br><span class="line"><span class="keyword">let</span> user = &#123;&#125;;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(user.<span class="property">isAdmin</span>); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-<p>即使 <code>user</code> 是新对象，也“自动”获得了 <code>isAdmin: true</code>。</p>
-<h6 id="按路径定义属性"><a href="#按路径定义属性" class="headerlink" title="按路径定义属性"></a>按路径定义属性</h6><p>有些JavaScript库的函数支持根据指定的路径修改或定义对象的属性值。如以下的函数：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将对象object的指定路径path的属性值修改为value</span></span><br><span class="line"><span class="title function_">theFunction</span>(object, path, value)</span><br></pre></td></tr></table></figure>
-
-<p>如果攻击者可以控制路径<code>path</code>的值，那么将路径设置为<code>_proto_.value</code>，运行theFunction函数后就有可能将<code>value</code>属性注入到object的原型中</p>
-<p>如joint.js中的代码：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> setByPath = <span class="keyword">function</span>(<span class="params">obj, path, value, delimiter</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> keys = <span class="title class_">Array</span>.<span class="title function_">isArray</span>(path) ? path : path.<span class="title function_">split</span>(delimiter || <span class="string">&#x27;/&#x27;</span>);</span><br><span class="line">    <span class="keyword">const</span> last = keys.<span class="property">length</span> - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">let</span> diver = obj;</span><br><span class="line">    <span class="keyword">let</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (; i &lt; last; i++) &#123;</span><br><span class="line">        <span class="keyword">const</span> key = keys[i];</span><br><span class="line">        <span class="keyword">const</span> value = diver[key];</span><br><span class="line">        <span class="comment">// diver creates an empty object if there is no nested object under such a key.</span></span><br><span class="line">        <span class="comment">// This means that one can populate an empty nested object with setByPath().</span></span><br><span class="line">        diver = value || (diver[key] = &#123;&#125;); <span class="comment">//自动创建中间层级：如果路径中的某层不存在，自动创建为&#123;&#125;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    diver[keys[last]] = value;</span><br><span class="line">    <span class="keyword">return</span> obj;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p><code>setByPath</code>函数在对象 <code>obj</code> 中，将 <code>path</code> 路径对应的属性设置为 <code>value</code></p>
-<p>输入以下的路径，那就会造成原型污染：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> jointjs = <span class="built_in">require</span>(<span class="string">&quot;jointjs&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> obj = &#123;&#125;;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Before : &quot;</span> + obj.<span class="property">polluted</span>);</span><br><span class="line">jointjs.<span class="property">util</span>.<span class="title function_">setByPath</span>(&#123; &#125;, <span class="string">&#x27;__proto__/polluted&#x27;</span>, <span class="string">&quot;yes&quot;</span>, <span class="string">&#x27;/&#x27;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;After : &quot;</span> + obj.<span class="property">polluted</span>);</span><br></pre></td></tr></table></figure>
-
-<h5 id="漏洞危害"><a href="#漏洞危害" class="headerlink" title="漏洞危害"></a>漏洞危害</h5><h6 id="权限提升"><a href="#权限提升" class="headerlink" title="权限提升"></a>权限提升</h6><p>假设后端检查权限，通过污染让所有对象都有 <code>isAdmin: true</code> → 直接获得管理员权限</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (user.<span class="property">isAdmin</span>) <span class="title function_">grantAdminAccess</span>();</span><br></pre></td></tr></table></figure>
-
-<h6 id="绕过属性检查"><a href="#绕过属性检查" class="headerlink" title="绕过属性检查"></a>绕过属性检查</h6><p>如果污染了 <code>Object.prototype.hasOwnProperty</code>，就可以绕过检查</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> obj) &#123;</span><br><span class="line">  <span class="keyword">if</span> (obj.<span class="title function_">hasOwnProperty</span>(key)) &#123;</span><br><span class="line">    <span class="comment">// 以为安全</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h6 id="远程代码执行"><a href="#远程代码执行" class="headerlink" title="远程代码执行"></a>远程代码执行</h6><p>通常发生在代码程序执行了对象上的一个特殊属性。如</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span>(someobject.<span class="property">someattr</span>)</span><br></pre></td></tr></table></figure>
-
-<p>在这种情况下，如果攻击者污染了 <code>Object.prototype.someattr</code> ，那么就可能导致远程代码执行。</p>
-<h6 id="DOS"><a href="#DOS" class="headerlink" title="DOS"></a>DOS</h6><p>通常发生在 <code>Object</code> 对象持有的一些方法被隐式调用（如<code>toString</code> 和 <code>valueOf</code>）。</p>
-<p>攻击者可以污染 <code>Object.prototype.someattr</code> 并改变为一个程序非预期的值，如<code>Int</code> 或 <code>Object</code>，可能导致程序无法正常工作，从而造成DoS。</p>
-<h5 id="原型污染防范"><a href="#原型污染防范" class="headerlink" title="原型污染防范"></a>原型污染防范</h5><ol>
-<li><p>过滤关键字： <code>__proto__</code> 、 <code>prototype</code>和 <code>constructor</code> 属性</p>
-</li>
-<li><p>避免使用不规范的递归。即使使用也要严格检查<code>key</code>，不能是<code>__proto__</code>和<code>constructor</code>。</p>
-</li>
-<li><p>考虑使用不带原型的对象，从而打断原型链。如<code>Object.create(null)</code>。</p>
-</li>
-<li><p>使用<code>Map</code>替换<code>Object</code>。</p>
-</li>
-</ol>
-<h4 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h4><p>由 Gemini 生成的 Express 应用，包括用户注册、登录功能和自定义主题等功能。</p>
-<p>注册用户 user1&#x2F;123 ，登录之后可看到的页面如右图</p>
-<h4 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h4><p><strong>一、定位关键字 <code>flag</code></strong></p>
-<p>分析源码，搜索关键字 <code>flag</code> ，发现如下代码：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 15. Define the `/flag` endpoint (protected)</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/flag&#x27;</span>, isAuthenticated, <span class="function">(<span class="params">req, res, next</span>)=&gt;</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(users[req.<span class="property">session</span>.<span class="property">userId</span>].<span class="property">isAdmin</span> == <span class="literal">true</span>)&#123; </span><br><span class="line">    <span class="keyword">return</span> res.<span class="title function_">end</span>(<span class="variable constant_">FLAG</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> res.<span class="title function_">end</span>(<span class="string">&quot;Not admin :(&quot;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>代码逻辑如下：</p>
-<p>1）用户访问 &#x2F;flag 页面时触发该处理器</p>
-<p>2）首先验证用户是否成功登录</p>
-<p>3）若成功登录，判断是否具备管理员权限；若具备则返回FLAG，反之返回 Not admin</p>
-<p>结合上述分析，需要一个具备管理员权限的用户，登录成功后访问 &#x2F;flag 路径即可获得FLAG。</p>
-<p><strong>二、定位危险函数 <code>deepMerge</code></strong> </p>
-<p>分析源码发现，定义了递归合并函数 <code>deepMerge</code> ，代码如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 6. A function to recursively merge objects</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">deepMerge</span> = (<span class="params">target, source</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">in</span> source) &#123;</span><br><span class="line">    <span class="keyword">if</span> (source[key] <span class="keyword">instanceof</span> <span class="title class_">Object</span> &amp;&amp; key <span class="keyword">in</span> target) &#123;</span><br><span class="line">      <span class="title class_">Object</span>.<span class="title function_">assign</span>(source[key], <span class="title function_">deepMerge</span>(target[key], source[key]));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title class_">Object</span>.<span class="title function_">assign</span>(target || &#123;&#125;, source);</span><br><span class="line">  <span class="keyword">return</span> target;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>函数作用是将 <code>source</code> 对象的所有可枚举属性地复制到 <code>target</code>（有可能为{}）上。</p>
-<p>存在递归合并函数时，考虑原型链污染漏洞。</p>
-<p><strong>三、分析原型链污染的可能性</strong></p>
-<p>查找函数调用链，发现 <code>app.get(&#39;theme&#39;,....)</code> 调用 <code>deepMerge</code> ，部分代码如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 15. Define the `/theme` endpoint (protected)</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/theme&#x27;</span>, isAuthenticated, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  ......</span><br><span class="line">  <span class="comment">// 解析请求参数，过滤关键字 __proto__，prototype，constructor等</span></span><br><span class="line">  <span class="keyword">const</span> parsedUpdates = <span class="title function_">parseQueryParams</span>(queryString);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="title class_">Object</span>.<span class="title function_">keys</span>(parsedUpdates).<span class="property">length</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// 调用deepMerge</span></span><br><span class="line">    user.<span class="property">themeConfig</span> = <span class="title function_">deepMerge</span>(user.<span class="property">themeConfig</span>, parsedUpdates);</span><br><span class="line">  &#125;</span><br><span class="line">  ......</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>但是在调用 <code>parseQueryParams</code> 函数之前，先调用<code>parseQueryParams</code>函数解析请求参数，过滤了 <code>[&#39;__proto__&#39;, &#39;prototype&#39;, &#39;constructor&#39;]</code> 等关键字。代码如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 7. A function to parse a query string with dot-notation keys.</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">parseQueryParams</span> = (<span class="params">queryString</span>) =&gt; &#123;</span><br><span class="line">  .....</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> [key, value] <span class="keyword">of</span> params.<span class="title function_">entries</span>()) &#123;</span><br><span class="line">    <span class="keyword">const</span> path = key.<span class="title function_">split</span>(<span class="string">&#x27;.&#x27;</span>);</span><br><span class="line">    .....</span><br><span class="line">      <span class="comment">// 过滤关键字</span></span><br><span class="line">      <span class="keyword">if</span>([<span class="string">&#x27;__proto__&#x27;</span>, <span class="string">&#x27;prototype&#x27;</span>, <span class="string">&#x27;constructor&#x27;</span>].<span class="title function_">includes</span>(part))&#123;</span><br><span class="line">        part = <span class="string">&#x27;__unsafe$&#x27;</span> + part;</span><br><span class="line">      &#125;</span><br><span class="line">      ......</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>故直接污染 <code>object.prototype.isAdmin</code>的思路行不通</p>
-<p><strong>四、原型链污染扩展</strong></p>
-<p>再次查看获取 <code>flag</code> 的相关代码</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 15. Define the `/flag` endpoint (protected)</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/flag&#x27;</span>, isAuthenticated, <span class="function">(<span class="params">req, res, next</span>)=&gt;</span>&#123;</span><br><span class="line">  <span class="comment">// 关键判断</span></span><br><span class="line">  <span class="keyword">if</span>(users[req.<span class="property">session</span>.<span class="property">userId</span>].<span class="property">isAdmin</span> == <span class="literal">true</span>)&#123; </span><br><span class="line">    <span class="keyword">return</span> res.<span class="title function_">end</span>(<span class="variable constant_">FLAG</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> res.<span class="title function_">end</span>(<span class="string">&quot;Not admin :(&quot;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>关键代码是 <code>users[req.session.userId].isAdmin == true</code> ，其中：</p>
-<p>​	<code>req.session.userId</code> 在用户登录认证通过后赋值为 <code>username</code> </p>
-<p>​	<code>users</code> 初始化为 {} ，在用户注册成功后存入数据 <code>&#123; username: &#123; password, userThemeConfig, isAdmin &#125; &#125;</code></p>
-<p>可知<code>users.__proto__</code> 就是 <code>Object.prototype</code> ，如下：</p>
-<style>.tiqbytvzxmpp{zoom: 67%;}</style><img src="/2025/08/10/justCTF2025/image-20250812193235289-1762219779844-12.png" class="tiqbytvzxmpp" alt="image-20250812193235289-1762219779844-12">
-
-<p>故<code>users</code> 除了自身的属性：<code>user1</code> 之外；还有继承自原型（即 <code>Object</code>）的属性，如 <code>constructor</code>，<code>hasOwnProperty</code>，<code>isPrototypeOf</code> 和 <code>toString</code> 等</p>
-<p><code>users[req.session.userId]</code> 本质上是获取users的一个属性，所以 <code>req.session.userId</code> 不一定是合法的用户名（如 <code>user1</code>），也可以是 <code>users</code> 的其它属性（如 <code>constructor</code>，<code>hasOwnProperty</code>，<code>isPrototypeOf</code> 和 <code>toString</code> 等），只要保证<code>users[某属性]</code> 返回非空的结果即可</p>
-<p>然后确保 <code>users[某属性]</code> 的<code>.isAdmin</code> 值为 1，就可以使得 <code>if</code> 条件判断为真，进获取 <code>FLAG</code> 。</p>
-<p>综上所述，攻击思路如下：</p>
-<p>​	1）通过原型链污染原型Object的属性（如 <code>constructor</code>，<code>hasOwnProperty</code>和 <code>toString</code> 等），在该受污染属性上添加 <code>isAdmin</code> 、并将值设置为1 。</p>
-<p>​	2）尝试以该属性名称为 <code>username</code> 注册&#x2F;登录系统，则 <code>users[受污染属性].isAdmin</code>  值为1 ，然后访问 <code>/flag</code> 即可获取FLAG。</p>
-<p>第1步前面已讨论过，存在递归合并函数 <code>deepMerge</code> ，可以实现原型链污染。下面讨论第2步如何实现以特殊用户（属性名称）登录系统</p>
-<p><strong>五、登录认证绕过</strong></p>
-<p>尝试以原型Object的属性名称注册&#x2F;登录用户，以 <code>toString</code> 为例（使用其它继承自<code>Object</code>的属性，如 <code>constructor</code>，<code>hasOwnProperty</code>和 <code>toLocalString</code> 等都可以）。</p>
-<p>理想情况是先注册、再登录。但是在注册时提示用户已经存在：</p>
-<style>.tsnnfpedxste{zoom: 50%;}</style><img src="/2025/08/10/justCTF2025/image-20250812201006695.png" class="tsnnfpedxste" alt="image-20250812201006695">
-
-<p>查看注册相关的代码：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">post</span>(<span class="string">&#x27;/register&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; username, password &#125; = req.<span class="property">body</span>;</span><br><span class="line">  <span class="comment">// 判断用户名是否存在</span></span><br><span class="line">  <span class="keyword">if</span> (users[username]) &#123;</span><br><span class="line">    req.<span class="property">session</span>.<span class="property">errorMessage</span> = <span class="string">&#x27;User already exists!&#x27;</span>;</span><br><span class="line">    <span class="keyword">return</span> res.<span class="title function_">redirect</span>(<span class="string">&#x27;/register&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  ......</span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
-
-<p>如前所述，<code>users</code> 的原型为 <code>Object</code> 。当 <code>username</code> 为 <code>toString</code>时，因为<code>users</code>自身不包含 <code>toString</code> 属性，故<code>users[username]</code> 返回的是<code>users.__proto__.toString</code> 即<code>Object.toString</code> 方法。如下：</p>
-<style>.rxaoysymxgtw{zoom:67%;}</style><img src="/2025/08/10/justCTF2025/image-20250812201644955.png" class="rxaoysymxgtw" alt="image-20250812201644955">
-
-<p><code>users[username]</code>非空，返回用户已存在，所以没有办法再次注册。</p>
-<p>尝试 <code>toString/123</code> 直接登录，调试发现执行到304行验证用户名和密码时，关键变量的值如下：</p>
-<style>.kqsmgoafzbrs{zoom:50%;}</style><img src="/2025/08/10/justCTF2025/image-20250812202547181-1762342243354-5.png" class="kqsmgoafzbrs" alt="image-20250812202547181">
-
-<p>​	<code>user</code> 值为 <code>Object.toString()</code> 方法，非空；</p>
-<p>​	<code>user.password</code> &#x3D;&#x3D; <code>toString().password</code> &#x3D;&#x3D; <code>undefined</code></p>
-<p>故要想通过304行的检查，将变量 <code>password</code> 的值设置为 <code>undefined</code> 即可。这样就可以绕过认证，以用户名 <code>toString</code> 成功登录系统。</p>
-<p><strong>六、攻击步骤</strong></p>
-<p>结合以上分析，可执行的攻击步骤如下：</p>
-<ol>
-<li>污染原型属性 <code>Object.toString</code></li>
-</ol>
-<p>原型链污染发生的函数为 <code>deepMerge</code>，其调用链为：</p>
-<p>​	 <code>app.get(&#39;/theme&#39;,isAuthenticated,...)</code>  –&gt;  <code>parseQueryParams</code>  –&gt;  <code>deepMerge</code> </p>
-<p>访问 &#x2F;theme 时需要用户已经登录，故先注册、登录普通用户 <code>user1</code> ，然后通过传递 <code>toString.isAdmin=1</code> 的查询参数，污染 <code>Object.prototype.toString</code>，在<code>toString</code>上添加 <code>isAdmin</code>、并将值置为 1 </p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 原型污染 url</span><br><span class="line">http://<span class="number">192.168</span><span class="number">.43</span><span class="number">.148</span>:<span class="number">3000</span>/theme?toString.isAdmin=<span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>访问过程中<code>parseQueryParams</code> 函数会生成对象：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">toString</span>: &#123; <span class="attr">isAdmin</span>: <span class="string">&quot;1&quot;</span> &#125; &#125;</span><br></pre></td></tr></table></figure>
-
-<p>随后调用 <code>deepMerge</code> 函数合并对象时，会将 <code>&#123; isAdmin: &quot;1&quot; &#125;</code> 合并到 <code>Object.prototype.toString</code> 上，导致所有对象的 <code>toString.isAdmin</code> 被污染。下图是污染前后 的<code>toString</code> ，可以看到污染后的 <code>toString</code> 多了 <code>isAdmin</code> 属性，且值为1：</p>
-<style>.jqtoymtdeshp{zoom:67%;}</style><img src="/2025/08/10/justCTF2025/image-20250812205418685.png" class="jqtoymtdeshp" alt="image-20250812205418685">
-
-
-
-<ol start="2">
-<li>登录为 <code>toString</code> 用户</li>
-</ol>
-<p>污染成功后，使用 <code>toString</code>用户名登录，<code>password</code>处随便填写，使用bp抓包后删除<code>password</code>字段后发送</p>
-<p>页面跳转后说明登录成功，然后访问 &#x2F;flag 成功</p>
-<p><img src="/gKArT-n1j8HpMhq69a5SQdMfXrSCd1B072R-nVOSWVA.png" alt="gKArT-n1j8HpMhq69a5SQdMfXrSCd1B072R-nVOSWVA"></p>
-<h4 id="题目总结"><a href="#题目总结" class="headerlink" title="题目总结"></a>题目总结</h4><h5 id="考察点"><a href="#考察点" class="headerlink" title="考察点"></a>考察点</h5><ol>
-<li>JS原型链污染漏洞利用及扩展</li>
-<li>登录认证函数逻辑漏洞的识别与利用</li>
-</ol>
-<h5 id="关键技巧"><a href="#关键技巧" class="headerlink" title="关键技巧"></a>关键技巧</h5><ol>
-<li><strong>原型污染扩展</strong>：</li>
-</ol>
-<p>​	利用原生属性（如 <code>toString</code>）绕过对 <code>__proto__</code> 的过滤。</p>
-<p>​	通过 <code>deepMerge</code> 将污染扩散到原型链。</p>
-<ol start="2">
-<li><strong>认证函数逻辑漏洞</strong>：</li>
-</ol>
-<p>​	利用 <code>users</code> 对象继承 <code>Object.prototype</code> 的特性，使 <code>toString</code> 成为“已存在用户”。</p>
-<p>​	通过 <code>undefined === undefined</code> 绕过密码检查。</p>
-<p>参考链接：<a target="_blank" rel="noopener" href="https://gist.github.com/terjanq/fa6f19d46bcb85bb61c146747dec0758#positive-players--write-up-by-terjanq">https://gist.github.com/terjanq/fa6f19d46bcb85bb61c146747dec0758#positive-players--write-up-by-terjanq</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2025/08/10/justCTF2025/" data-id="cuidT5qwmRvaiqEwgrJT4VupB" data-title="justCTF2025 web" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-SWPUCTF2024" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/11/26/SWPUCTF2024/" class="article-date">
-  <time class="dt-published" datetime="2024-11-26T08:07:31.000Z" itemprop="datePublished">2024-11-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/11/26/SWPUCTF2024/">SWPUCTF2024</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h3 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h3><ul>
-<li>题目名称：[SWPUCTF 2024 秋季新生赛] 动态调试 </li>
-<li>题目链接：<a target="_blank" rel="noopener" href="https://www.nssctf.cn/problem/5985">https://www.nssctf.cn/problem/5985</a></li>
-<li>考点清单：动态调试，RC4</li>
-<li>工具清单：IDA Pro，Die，dbg</li>
-</ul>
-<h3 id="4-1-看到什么"><a href="#4-1-看到什么" class="headerlink" title="4.1 看到什么"></a>4.1 看到什么</h3><p><em><strong>题目关键信息列表：</strong></em></p>
-<p>下载附件后发现是rc4.exe文件</p>
-<h3 id="4-2-解题思路"><a href="#4-2-解题思路" class="headerlink" title="4.2 解题思路"></a>4.2 解题思路</h3><p>根据文件名，能想到涉及到RC4加密算法，所以先了解RC4加密算法才能做出来.</p>
-<p>常见的rc4流程：</p>
-<ol>
-<li>初始化密钥流</li>
-<li>使用伪随机算法处理密钥流</li>
-<li>将明文与密钥流逐字节异或，输出密文</li>
-</ol>
-<p>接下来就是查壳，有壳脱，无壳直接丢进IDA进行静态调试分析，分析不出就用动态调试，再写脚本得出flag。<del>（简单粗暴）</del></p>
-<p>这个题其实只用静态调试就能做出来，我第一遍就是这样，但是多少有些不尊重题目名字，于是用动态又做了一遍，发现动态简单许多，别有一番风味。</p>
-<h3 id="4-3-✅-尝试过程和结果记录"><a href="#4-3-✅-尝试过程和结果记录" class="headerlink" title="4.3 ✅ 尝试过程和结果记录"></a>4.3 ✅ 尝试过程和结果记录</h3><ol>
-<li><p>查壳，发现64位无壳</p>
-<style>.tvayxpqmmhpc{zoom:67%;}</style>
-</li>
-<li><p>丢进IDA，按下F5之后，观察和分析函数</p>
-<style>.ibxpmetzhsqr{zoom:67%;}</style>
-
-<p>首先将用户输入存在V2中，v3是密钥key的长度， <code>rc4_init(s, key, v3)</code>就是初始化密钥的函数</p>
-<p><code>puts(&quot;....&quot;)/puts(&quot;..........&quot;)/.../puts(&quot;........................&quot;)</code>夹杂 <code>Sleep(500)</code> ，这部分是模拟正在处理（没有什么用，<del>没开会员的某度网盘估计就有一堆sleep</del>）</p>
-<p> <code>rc4_crypt(s, v2, len)</code>便是加密函数，最后将处理后的V2和V1进行比较，全都相同就是正确的flag，那么思路就是V1反方向进行RC4解密即可，于是有两种做法。</p>
-<h4 id="静态："><a href="#静态：" class="headerlink" title="静态："></a>静态：</h4><ol>
-<li><p>首先得知道，如果要只凭静态调试得出flag，我们需要知道V1和key，还有详细的 <code>rc4_init(s, key, v3)</code>和 <code>rc4_crypt(s, v2, len)</code>流程，才能写出逆向脚本求得flag，所以我们一个个去寻找和分析。</p>
-</li>
-<li><p>待解密的V1和密钥key如下：</p>
-<style>.vzorgqceuvsi{zoom:67%;}</style>
-
-<style>.scybeyfgynwr{zoom:67%;}</style>
-
-<p>我一般喜欢看16进制的界面（方便复制写脚本），如下：</p>
-<style>.uphphbfmvccx{zoom:67%;}</style>
-
-<style>.xfyuscgifvjb{zoom:67%;}</style>
-
-<p>所以</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">V1=[</span><br><span class="line">    0xCF, 0xA0, 0xC7, 0x24, 0x93, 0xEC, 0x51, 0xFB, 0x5E, 0xA5, 0xEE, 0xC5,</span><br><span class="line">    0xE7, 0xEA, 0xBB, 0x4A, 0xE0, 0x6E, 0x16, 0x63, 0xF0, 0x1A, 0x91, 0x04,</span><br><span class="line">    0xC1, 0x7E, 0x3F, 0x2B, 0x4F, 0x53, 0xB0, 0x62, 0xA3, 0xA1, 0xCF, 0xC1,</span><br><span class="line">    0x73, 0x85, 0x5F, 0xEC, 0x14, 0xD8, 0xD4, 0xE2, 0x00</span><br><span class="line">]</span><br><span class="line">key = b&quot;ysyy_114514&quot;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>接下来便是 <code>rc4_init</code>和 <code>rc4_crypt</code>函数</p>
-<p><code>rc4_init</code>如下：</p>
-<style>.bhhksoejwuil{zoom:67%;}</style>
-
-<p>显然，这是RC4 加密算法中标准的<strong>密钥调度算法KSA</strong>，总结就是<code>s</code> 是一个被打乱的 0~255 的排列，它的顺序取决于提供的 <code>key</code>。这个数组 <code>s</code> 就是后续 RC4 加密&#x2F;解密过程中使用的密钥流的前身，也就是基础。</p>
-<p><code>rc4_crypt</code>如下：</p>
-<style>.nsikyzhdxnvt{zoom:67%;}</style>
-
-<p>这部分就是RC4的加密函数，但是和标准的RC4有区别，新增了 <code>+ key[k % strlen(key)]</code> 这部分，说明出题人偷偷加了点自己的东西，但不多，影响不大。</p>
-<p>流程是：</p>
-<ol>
-<li>每处理一个字节时，更新索引 <code>i</code> 和 <code>j</code>。</li>
-<li>交换 <code>s[i]</code> 和 <code>s[j]</code>。</li>
-<li>生成一个密钥字节：<code>s[(s[i] + s[j]) % 256]</code>。</li>
-<li>用偏移后的密钥字节和明文异或：<code>Data[k] ^= key_byte+偏移值</code>，偏移值就是**<code>key[k % strlen(key)]</code>**，标准RC4是没有的。</li>
-</ol>
-</li>
-<li><p>那么都齐全了，就可以写出逆向脚本了，我写的如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">key = b&quot;ysyy_114514&quot;</span><br><span class="line"></span><br><span class="line">v1 = bytes([</span><br><span class="line">    0xCF, 0xA0, 0xC7, 0x24, 0x93, 0xEC, 0x51, 0xFB, 0x5E, 0xA5, 0xEE, 0xC5,</span><br><span class="line">    0xE7, 0xEA, 0xBB, 0x4A, 0xE0, 0x6E, 0x16, 0x63, 0xF0, 0x1A, 0x91, 0x04,</span><br><span class="line">    0xC1, 0x7E, 0x3F, 0x2B, 0x4F, 0x53, 0xB0, 0x62, 0xA3, 0xA1, 0xCF, 0xC1,</span><br><span class="line">    0x73, 0x85, 0x5F, 0xEC, 0x14, 0xD8, 0xD4, 0xE2, 0x00</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">def rc4_init(key: bytes):</span><br><span class="line">    # 初始化状态 S 和辅助数组 K</span><br><span class="line">    S = list(range(256))</span><br><span class="line">    K = [key[i % len(key)] for i in range(256)]</span><br><span class="line">    j = 0</span><br><span class="line">    for i in range(256):</span><br><span class="line">        j = (j + S[i] + K[i]) &amp; 0xFF</span><br><span class="line">        S[i], S[j] = S[j], S[i]</span><br><span class="line">    return S</span><br><span class="line"></span><br><span class="line">def rc4_crote(S: list, data: bytearray, key: bytes):</span><br><span class="line">    i = 0</span><br><span class="line">    j = 0</span><br><span class="line">    for idx in range(len(data)):</span><br><span class="line">        i = (i + 1) &amp; 0xFF</span><br><span class="line">        j = (j + S[i]) &amp; 0xFF</span><br><span class="line">        S[i], S[j] = S[j], S[i]</span><br><span class="line">        ks = S[(S[i] + S[j] + 1) &amp; 0xFF]</span><br><span class="line">        data[idx] = ((key[idx % len(key)] + ks) &amp; 0xFF) ^ data[idx]</span><br><span class="line"></span><br><span class="line">S = rc4_init(key)</span><br><span class="line"># 用 bytearray 可原地修改</span><br><span class="line">buf = bytearray(v1)</span><br><span class="line">rc4_crote(S, buf, key)</span><br><span class="line"># 以 0x00 为结束符，打印前面的所有字符</span><br><span class="line">flag = buf.split(b&#x27;\x00&#x27;, 1)[0].decode(&#x27;utf-8&#x27;, errors=&#x27;ignore&#x27;)</span><br><span class="line">print(&quot;flag =&quot;, flag)</span><br></pre></td></tr></table></figure>
-
-<p>运行即可得到flag：<code>NSSCTF&#123;0d6f90ac-4b5e-4efb-8502-6349cf798f2e&#125;</code></p>
-</li>
-</ol>
-<h4 id="动态："><a href="#动态：" class="headerlink" title="动态："></a>动态：</h4><ol>
-<li>动态调试的工具，常见的就有：dbg，OD（Ollydbg），GDB（ELF文件）等等。这里当然IDA也是具备一定的动态调试能力，所以这道也可以试试IDA的动态调试</li>
-<li>首先我们都知道RC4是对称加密算法，那么我们可以将原来代码中把 <code>v2</code> 内容直接改成 <code>v1</code> 的内容（密文），把 <code>len</code> 改为 <code>v1</code> 的长度</li>
-</ol>
-<p>那么接下来调用的 <code>rc4_crypt</code> 实际是：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">明文 = 密文 ⊕ keystream</span><br></pre></td></tr></table></figure>
-
-<p>那么利用程序本身就可以得出flag，，不需要自己去编写脚本了！</p>
-<ol start="3">
-<li><p>那么开始吧（来自师傅llc43212）：</p>
-</li>
-<li><p>在<code>rc4_crypt</code> 按下F2设置断点，同时IDA进入调试模式</p>
-<style>.enoinpndcngy{zoom:67%;}</style>
-</li>
-<li><p>然后随便输入字符串，断点在<code>rc4_crypt</code> </p>
-<style>.xsuliwstilnq{zoom:67%;}</style>
-</li>
-<li><p>然后一步步到 4019E8 停下. 接下来修改寄存器的值,</p>
-<p>首先是传入的 Len 变量, 我们把它修改成密文一样的长度44</p>
-<style>.bneyacytsurr{zoom:67%;}</style>
-</li>
-<li><p>右键 <strong>R8</strong> 寄存器然后选择 <strong>Modify Value,</strong> 输入 <strong>2C</strong></p>
-<p>接下来我们返回源码窗口，找到 v1 的地址<br>然后将%rdx 修改为 v1 的地址</p>
-<style>.gewlllyrbjgy{zoom:67%;}</style>
-
-<p>然后返回源码窗口一步步调试. 再次进入 v1</p>
-<style>.egiunhebgymh{zoom:67%;}</style>
-
-<p>它的值已经被修改成flag，转成字符即可。</p>
-</li>
-</ol>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2024/11/26/SWPUCTF2024/" data-id="cuideJrVPxhBRLxIjXzfMIf94" data-title="SWPUCTF2024" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
     <article id="post-S1mpleVM" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2024/11/17/S1mpleVM/" class="article-date">
@@ -630,6 +297,47 @@
     </div>
     <footer class="article-footer">
       <a data-url="http://example.com/2023/05/01/xctffinal2023/" data-id="cuid45LoVHir3MT93eXMPoaQF" data-title="2023 XCTF-final" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-cakectf2022" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/09/10/cakectf2022/" class="article-date">
+  <time class="dt-published" datetime="2022-09-10T07:08:30.000Z" itemprop="datePublished">2022-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/09/10/cakectf2022/">2022 Cakectf</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="frozencake-crypto"><a href="#frozencake-crypto" class="headerlink" title="frozencake-crypto"></a>frozencake-crypto</h2><p>$$<br>\begin{align*}<br>&amp; m^p \equiv a \mod{n} \<br>&amp; m^q \equiv b \mod{n} \<br>&amp; m^n \equiv c \mod{n} \<br>&amp; n &#x3D; p<em>q \<br>&amp; \varphi(n)&#x3D;(p-1)</em>(q-1)\<br>\<br>&amp; m^{(p-1)<em>(q-1)} \equiv 1 \mod{n}\<br>&amp; m^{pq-p-q+1} \equiv 1 \mod{n}  \<br>&amp; \Longrightarrow  \frac{mc}{ab}  \equiv1 \mod{n} \<br>&amp; \Longrightarrow  m &#x3D; \frac{ab}{c} \mod{n} \<br>&amp; \Longrightarrow  m &#x3D; abc^{\varphi{(n)}-1} % n \<br>\end{align</em>}<br>$$</p>
+<p>其中$c^{-1} %n$可以通过<code>pow(c,-1,n)</code>直接进行计算，python3.9支持</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line">n = <span class="number">101205131618457490641888226172378900782027938652382007193297646066245321085334424928920128567827889452079884571045344711457176257019858157287424646000972526730522884040459357134430948940886663606586037466289300864147185085616790054121654786459639161527509024925015109654917697542322418538800304501255357308131</span></span><br><span class="line">a = <span class="number">38686943509950033726712042913718602015746270494794620817845630744834821038141855935687477445507431250618882887343417719366326751444481151632966047740583539454488232216388308299503129892656814962238386222995387787074530151173515835774172341113153924268653274210010830431617266231895651198976989796620254642528</span></span><br><span class="line">b = <span class="number">83977895709438322981595417453453058400465353471362634652936475655371158094363869813512319678334779139681172477729044378942906546785697439730712057649619691929500952253818768414839548038664187232924265128952392200845425064991075296143440829148415481807496095010301335416711112897000382336725454278461965303477</span></span><br><span class="line">c = <span class="number">21459707600930866066419234194792759634183685313775248277484460333960658047171300820279668556014320938220170794027117386852057041210320434076253459389230704653466300429747719579911728990434338588576613885658479123772761552010662234507298817973164062457755456249314287213795660922615911433075228241429771610549</span></span><br><span class="line"><span class="built_in">print</span>(long_to_bytes(a*b*<span class="built_in">pow</span>(c,-<span class="number">1</span>,n)%n))</span><br><span class="line"><span class="comment"># CakeCTF&#123;oh_you_got_a_tepid_cake_sorry&#125;</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/09/10/cakectf2022/" data-id="cuidswYz7R7AHoXraqg19pyT5" data-title="2022 Cakectf" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -943,6 +651,48 @@ return (__int64)a1;
 
 
   
+    <article id="post-2021acscctf" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/09/23/2021acscctf/" class="article-date">
+  <time class="dt-published" datetime="2021-09-23T03:07:10.000Z" itemprop="datePublished">2021-09-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/09/23/2021acscctf/">2021 ACSC CTF</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>逆向一个UEFI</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">sub_240</span><span class="params">(EFI_HANDLE a1, <span class="keyword">struct</span> EFI_SYSTEM_TABLE *a2, __int64 a3)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  __int64 v3; <span class="comment">// rdx</span></span><br><span class="line">  __int64 v4; <span class="comment">// rdx</span></span><br><span class="line">  __int64 v5; <span class="comment">// rax</span></span><br><span class="line">  __int64 v6; <span class="comment">// rdx</span></span><br><span class="line">  __int64 v7; <span class="comment">// rax</span></span><br><span class="line">  __int64 v8; <span class="comment">// rdx</span></span><br><span class="line">  __int64 v9; <span class="comment">// rdx</span></span><br><span class="line">  __int64 v10; <span class="comment">// rdx</span></span><br><span class="line">  __int64 v11; <span class="comment">// rdx</span></span><br><span class="line">  __int64 v13; <span class="comment">// [rsp+0h] [rbp-490h]</span></span><br><span class="line">  __int64 v14; <span class="comment">// [rsp+8h] [rbp-488h]</span></span><br><span class="line">  __int64 v15; <span class="comment">// [rsp+10h] [rbp-480h]</span></span><br><span class="line">  __int64 v16; <span class="comment">// [rsp+18h] [rbp-478h]</span></span><br><span class="line">  <span class="type">char</span> v17[<span class="number">16</span>]; <span class="comment">// [rsp+30h] [rbp-460h] BYREF</span></span><br><span class="line">  <span class="type">char</span> v18[<span class="number">16</span>]; <span class="comment">// [rsp+40h] [rbp-450h] BYREF</span></span><br><span class="line">  __int64 v19[<span class="number">7</span>]; <span class="comment">// [rsp+50h] [rbp-440h]</span></span><br><span class="line">  __int64 v20; <span class="comment">// [rsp+88h] [rbp-408h] BYREF</span></span><br><span class="line">  __int64 v21; <span class="comment">// [rsp+250h] [rbp-240h] BYREF</span></span><br><span class="line">  __int64 v22; <span class="comment">// [rsp+258h] [rbp-238h] BYREF</span></span><br><span class="line">  __int64 v23; <span class="comment">// [rsp+260h] [rbp-230h] BYREF</span></span><br><span class="line">  <span class="type">char</span> v24[<span class="number">2</span>]; <span class="comment">// [rsp+26Ch] [rbp-224h] BYREF</span></span><br><span class="line">  __int16 v25; <span class="comment">// [rsp+26Eh] [rbp-222h]</span></span><br><span class="line">  __int16 v26[<span class="number">38</span>]; <span class="comment">// [rsp+270h] [rbp-220h] BYREF</span></span><br><span class="line">  <span class="type">int</span> *v27; <span class="comment">// [rsp+478h] [rbp-18h]</span></span><br><span class="line">  __int64 Status; <span class="comment">// [rsp+480h] [rbp-10h]</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> i; <span class="comment">// [rsp+48Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  (ST-&gt;ConOut-&gt;ClearScreen)(ST-&gt;ConOut-&gt;ClearScreen, ST-&gt;ConOut);</span><br><span class="line">  <span class="built_in">printf</span>(a1, a2, v3, <span class="string">L&quot;Input flag: &quot;</span>);</span><br><span class="line">  <span class="built_in">sub_1D43</span>(a1, a2, <span class="number">0x200uLL</span>, v26);</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">0xFE</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    (BS-&gt;WaitForEvent)(a1, a2, &amp;ST-&gt;ConIn-&gt;WaitForKey, <span class="number">1LL</span>, <span class="number">0LL</span>);</span><br><span class="line">    (ST-&gt;ConIn-&gt;ReadKeyStroke)(a1, a2, v24, ST-&gt;ConIn);</span><br><span class="line">    <span class="keyword">if</span> ( v25 == <span class="number">0xD</span> )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    v26[i] = v25;</span><br><span class="line">    (ST-&gt;ConOut-&gt;OutputString)(a1, a2, &amp;v26[i], *(a3 + <span class="number">0x40</span>));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(a1, a2, v4, <span class="string">L&quot;\n&quot;</span>);</span><br><span class="line">  <span class="built_in">LODWORD</span>(v5) = <span class="built_in">strlen</span>(a1);</span><br><span class="line">  <span class="keyword">if</span> ( v5 != <span class="number">0x26</span> || <span class="built_in">sub_1122</span>(a1, a2, v26, <span class="string">L&quot;ACSC&#123;&quot;</span>, <span class="number">5LL</span>) || <span class="built_in">sub_1122</span>(a1, a2, &amp;v26[<span class="number">37</span>], <span class="string">&quot;&#125;&quot;</span>, <span class="number">1LL</span>) )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(a1, a2, v6, <span class="string">L&quot;Wrong!\n&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    v23 = <span class="built_in">sub_20D4</span>(a1, a2, v6, <span class="string">L&quot;PciRoot(0x0)/Pci(0x1,0x1)/Ata(0x0)&quot;</span>);</span><br><span class="line">    Status = (BS-&gt;LocateDevicePath)(a1, a2, &amp;v23, &amp;unk_9620, &amp;v22);</span><br><span class="line">    <span class="keyword">if</span> ( Status &gt;= <span class="number">0</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      Status = (BS-&gt;HandleProtocol)(a1, a2, &amp;unk_9620, v22, &amp;v21);</span><br><span class="line">      <span class="keyword">if</span> ( Status &gt;= <span class="number">0</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        Status = (*(v21 + <span class="number">0x18</span>))(a1, a2, **(v21 + <span class="number">8</span>), v21, <span class="number">1LL</span>, <span class="number">512LL</span>);</span><br><span class="line">        <span class="keyword">if</span> ( Status &gt;= <span class="number">0</span> )</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="keyword">if</span> ( v19[<span class="number">0</span>] == <span class="string">&#x27;TRAP IFE&#x27;</span> )</span><br><span class="line">          &#123;</span><br><span class="line">            v7 = <span class="built_in">sub_7D9</span>();</span><br><span class="line">            v27 = <span class="built_in">sub_1F8D</span>(a1, a2, v8, v7);</span><br><span class="line">            <span class="keyword">if</span> ( <span class="built_in">sub_C24</span>(a1, a2, qword_6620, v27, <span class="number">128LL</span>) )</span><br><span class="line">            &#123;</span><br><span class="line">              <span class="keyword">if</span> ( <span class="built_in">sub_4D87</span>(a1, a2, &amp;v20, v27, <span class="number">0x10uLL</span>, qword_6630, v13, v14, v15, v16, v18) )</span><br><span class="line">              &#123;</span><br><span class="line">                <span class="built_in">sub_1060</span>();</span><br><span class="line">                Status = <span class="built_in">sub_11DD</span>(a1, a2, <span class="number">0x20uLL</span>, &amp;v26[<span class="number">5</span>], v17, <span class="number">0x10uLL</span>);</span><br><span class="line">                <span class="keyword">if</span> ( Status &gt;= <span class="number">0</span> )</span><br><span class="line">                &#123;</span><br><span class="line">                  <span class="keyword">if</span> ( <span class="built_in">sub_1D10</span>(a1, a2, v17, v18, <span class="number">0x10LL</span>) )</span><br><span class="line">                    <span class="built_in">printf</span>(a1, a2, v11, <span class="string">L&quot;Wrong!\n&quot;</span>);</span><br><span class="line">                  <span class="keyword">else</span></span><br><span class="line">                    <span class="built_in">printf</span>(a1, a2, v11, <span class="string">L&quot;Correct!\n&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                &#123;</span><br><span class="line">                  <span class="built_in">printf</span>(a1, a2, Status, <span class="string">L&quot;ERROR: StrHexToBytes() failed: %r\n&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">              &#125;</span><br><span class="line">              <span class="keyword">else</span></span><br><span class="line">              &#123;</span><br><span class="line">                <span class="built_in">printf</span>(a1, a2, v10, <span class="string">L&quot;ERROR: AesCbcEncrypt() failed.\n&quot;</span>);</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">              <span class="built_in">printf</span>(a1, a2, v9, <span class="string">L&quot;ERROR: AesInit() failed.\n&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">else</span></span><br><span class="line">          &#123;</span><br><span class="line">            <span class="built_in">printf</span>(a1, a2, <span class="string">&#x27;TRAP IFE&#x27;</span>, <span class="string">L&quot;ERROR: Header signature mismatch.\n&quot;</span>);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">          <span class="built_in">printf</span>(a1, a2, Status, <span class="string">L&quot;ERROR: BlockIo-&gt;ReadBlocks() failed: %r\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="built_in">printf</span>(a1, a2, Status, <span class="string">L&quot;ERROR: gBS-&gt;HandleProtocol() failed: %r\n&quot;</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">printf</span>(a1, a2, Status, <span class="string">L&quot;ERROR: gBS-&gt;LocateDevicePath() failed: %r\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  (*(qword_9BB8 + <span class="number">0x68</span>))(a1, a2, <span class="number">0LL</span>, <span class="number">2LL</span>, <span class="number">0LL</span>, <span class="number">0LL</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0LL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>qemu调试将该PE加载到固定地址0x6668000</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/09/23/2021acscctf/" data-id="cuidsXYsO23BGezgopUOSWW2s" data-title="2021 ACSC CTF" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
 
 
   <nav id="page-nav">
@@ -966,7 +716,7 @@ return (__int64)a1;
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
     </div>
   </div>
 
@@ -979,23 +729,23 @@ return (__int64)a1;
       <ul>
         
           <li>
-            <a href="/2025/11/19/ciscn2019%E5%8D%8E%E4%B8%AD%E8%B5%9B%E5%8C%BA%E5%8C%BA%E5%9F%9F%E8%B5%9B/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2025/11/19/cakectf2022/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2025/11/19/2025crewctf/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2025/11/19/2025%E7%9C%8B%E9%9B%AAkctf/">(no title)</a>
-          </li>
-        
-          <li>
             <a href="/2025/11/18/n1ctfjunior-re/">n1ctfjunior-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/25/qwb2025-pwn/">qwb2025-pwn flagmarket</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/10/junior/">n1ctf junior 2/2 web</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/09/2025crewctf/">crewCTF2025</a>
           </li>
         
       </ul>

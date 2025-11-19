@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>xrivendell7</title>
+  <title>2022 Cakectf | xrivendell7</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="2022 Cakectffrozencake-crypto$$\begin{align*}&amp; m^p \equiv a \mod{n} \&amp; m^q \equiv b \mod{n} \&amp; m^n \equiv c \mod{n} \&amp; n &#x3D; pq \&amp; \varphi(n)&#x3D;(p-1)(q-1)\\&amp; m^{(p-1)(q-1">
+  <meta name="description" content="frozencake-crypto$$\begin{align*}&amp; m^p \equiv a \mod{n} \&amp; m^q \equiv b \mod{n} \&amp; m^n \equiv c \mod{n} \&amp; n &#x3D; pq \&amp; \varphi(n)&#x3D;(p-1)(q-1)\\&amp; m^{(p-1)(q-1)} \equiv 1">
 <meta property="og:type" content="article">
-<meta property="og:title" content="xrivendell7">
-<meta property="og:url" content="http://example.com/2025/11/19/cakectf2022/index.html">
+<meta property="og:title" content="2022 Cakectf">
+<meta property="og:url" content="http://example.com/2022/09/10/cakectf2022/index.html">
 <meta property="og:site_name" content="xrivendell7">
-<meta property="og:description" content="2022 Cakectffrozencake-crypto$$\begin{align*}&amp; m^p \equiv a \mod{n} \&amp; m^q \equiv b \mod{n} \&amp; m^n \equiv c \mod{n} \&amp; n &#x3D; pq \&amp; \varphi(n)&#x3D;(p-1)(q-1)\\&amp; m^{(p-1)(q-1">
+<meta property="og:description" content="frozencake-crypto$$\begin{align*}&amp; m^p \equiv a \mod{n} \&amp; m^q \equiv b \mod{n} \&amp; m^n \equiv c \mod{n} \&amp; n &#x3D; pq \&amp; \varphi(n)&#x3D;(p-1)(q-1)\\&amp; m^{(p-1)(q-1)} \equiv 1">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2025-11-19T12:59:10.788Z">
-<meta property="article:modified_time" content="2025-11-06T12:35:12.000Z">
+<meta property="article:published_time" content="2022-09-10T07:08:30.000Z">
+<meta property="article:modified_time" content="2025-11-19T13:09:46.818Z">
 <meta property="article:author" content="xrivendell7">
 <meta name="twitter:card" content="summary">
   
@@ -75,25 +75,34 @@
       <div class="outer">
         <section id="main"><article id="post-cakectf2022" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2025/11/19/cakectf2022/" class="article-date">
-  <time class="dt-published" datetime="2025-11-19T12:59:10.788Z" itemprop="datePublished">2025-11-19</time>
+    <a href="/2022/09/10/cakectf2022/" class="article-date">
+  <time class="dt-published" datetime="2022-09-10T07:08:30.000Z" itemprop="datePublished">2022-09-10</time>
 </a>
     
   </div>
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      2022 Cakectf
+    </h1>
+  
+
+      </header>
+    
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="2022-Cakectf"><a href="#2022-Cakectf" class="headerlink" title="2022 Cakectf"></a>2022 Cakectf</h1><h2 id="frozencake-crypto"><a href="#frozencake-crypto" class="headerlink" title="frozencake-crypto"></a>frozencake-crypto</h2><p>$$<br>\begin{align*}<br>&amp; m^p \equiv a \mod{n} \<br>&amp; m^q \equiv b \mod{n} \<br>&amp; m^n \equiv c \mod{n} \<br>&amp; n &#x3D; p<em>q \<br>&amp; \varphi(n)&#x3D;(p-1)</em>(q-1)\<br>\<br>&amp; m^{(p-1)<em>(q-1)} \equiv 1 \mod{n}\<br>&amp; m^{pq-p-q+1} \equiv 1 \mod{n}  \<br>&amp; \Longrightarrow  \frac{mc}{ab}  \equiv1 \mod{n} \<br>&amp; \Longrightarrow  m &#x3D; \frac{ab}{c} \mod{n} \<br>&amp; \Longrightarrow  m &#x3D; abc^{\varphi{(n)}-1} % n \<br>\end{align</em>}<br>$$</p>
+        <h2 id="frozencake-crypto"><a href="#frozencake-crypto" class="headerlink" title="frozencake-crypto"></a>frozencake-crypto</h2><p>$$<br>\begin{align*}<br>&amp; m^p \equiv a \mod{n} \<br>&amp; m^q \equiv b \mod{n} \<br>&amp; m^n \equiv c \mod{n} \<br>&amp; n &#x3D; p<em>q \<br>&amp; \varphi(n)&#x3D;(p-1)</em>(q-1)\<br>\<br>&amp; m^{(p-1)<em>(q-1)} \equiv 1 \mod{n}\<br>&amp; m^{pq-p-q+1} \equiv 1 \mod{n}  \<br>&amp; \Longrightarrow  \frac{mc}{ab}  \equiv1 \mod{n} \<br>&amp; \Longrightarrow  m &#x3D; \frac{ab}{c} \mod{n} \<br>&amp; \Longrightarrow  m &#x3D; abc^{\varphi{(n)}-1} % n \<br>\end{align</em>}<br>$$</p>
 <p>其中$c^{-1} %n$可以通过<code>pow(c,-1,n)</code>直接进行计算，python3.9支持</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line">n = <span class="number">101205131618457490641888226172378900782027938652382007193297646066245321085334424928920128567827889452079884571045344711457176257019858157287424646000972526730522884040459357134430948940886663606586037466289300864147185085616790054121654786459639161527509024925015109654917697542322418538800304501255357308131</span></span><br><span class="line">a = <span class="number">38686943509950033726712042913718602015746270494794620817845630744834821038141855935687477445507431250618882887343417719366326751444481151632966047740583539454488232216388308299503129892656814962238386222995387787074530151173515835774172341113153924268653274210010830431617266231895651198976989796620254642528</span></span><br><span class="line">b = <span class="number">83977895709438322981595417453453058400465353471362634652936475655371158094363869813512319678334779139681172477729044378942906546785697439730712057649619691929500952253818768414839548038664187232924265128952392200845425064991075296143440829148415481807496095010301335416711112897000382336725454278461965303477</span></span><br><span class="line">c = <span class="number">21459707600930866066419234194792759634183685313775248277484460333960658047171300820279668556014320938220170794027117386852057041210320434076253459389230704653466300429747719579911728990434338588576613885658479123772761552010662234507298817973164062457755456249314287213795660922615911433075228241429771610549</span></span><br><span class="line"><span class="built_in">print</span>(long_to_bytes(a*b*<span class="built_in">pow</span>(c,-<span class="number">1</span>,n)%n))</span><br><span class="line"><span class="comment"># CakeCTF&#123;oh_you_got_a_tepid_cake_sorry&#125;</span></span><br></pre></td></tr></table></figure>
 
-<h2 id=""><a href="#" class="headerlink" title=""></a></h2>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2025/11/19/cakectf2022/" data-id="cuidswYz7R7AHoXraqg19pyT5" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2022/09/10/cakectf2022/" data-id="cuidswYz7R7AHoXraqg19pyT5" data-title="2022 Cakectf" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -103,19 +112,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2025/11/19/ciscn2019%E5%8D%8E%E4%B8%AD%E8%B5%9B%E5%8C%BA%E5%8C%BA%E5%9F%9F%E8%B5%9B/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2023/05/01/xctffinal2023/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          (no title)
+          2023 XCTF-final
         
       </div>
     </a>
   
   
-    <a href="/2025/11/19/2025crewctf/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2022/08/26/wmctf2022/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title"></div>
+      <div class="article-nav-title">2022 WMCTF</div>
     </a>
   
 </nav>
@@ -140,7 +149,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li></ul>
     </div>
   </div>
 
@@ -153,23 +162,23 @@
       <ul>
         
           <li>
-            <a href="/2025/11/19/ciscn2019%E5%8D%8E%E4%B8%AD%E8%B5%9B%E5%8C%BA%E5%8C%BA%E5%9F%9F%E8%B5%9B/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2025/11/19/cakectf2022/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2025/11/19/2025crewctf/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2025/11/19/2025%E7%9C%8B%E9%9B%AAkctf/">(no title)</a>
-          </li>
-        
-          <li>
             <a href="/2025/11/18/n1ctfjunior-re/">n1ctfjunior-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/25/qwb2025-pwn/">qwb2025-pwn flagmarket</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/10/junior/">n1ctf junior 2/2 web</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/09/2025crewctf/">crewCTF2025</a>
           </li>
         
       </ul>
