@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   
   
-  <title>qwb2025-pwn flagmarket | xrivendell7&#39;s ctf blog（佩奇小屋）</title>
+  <title>qwb2025-pwn flagmarket | xrivendell7</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="解体思路写代码里面了由于scanf向data段的全局变量里读，因此可以覆盖同样存在于data段中的printf的参数的字符串，构造格式化字符串漏洞，注意这里的格式化字符串漏洞写入内容不在栈上，但是read函数可以读0x10字节在栈上（覆盖memset地址时只用覆盖低6位即可）（建议自己调试时候把putchr下面的sleep逻辑patch掉，节省时间） 12345678910111213141516">
 <meta property="og:type" content="article">
 <meta property="og:title" content="qwb2025-pwn flagmarket">
 <meta property="og:url" content="http://example.com/2025/10/25/qwb2025-pwn/index.html">
-<meta property="og:site_name" content="xrivendell7&#39;s ctf blog（佩奇小屋）">
+<meta property="og:site_name" content="xrivendell7">
 <meta property="og:description" content="解体思路写代码里面了由于scanf向data段的全局变量里读，因此可以覆盖同样存在于data段中的printf的参数的字符串，构造格式化字符串漏洞，注意这里的格式化字符串漏洞写入内容不在栈上，但是read函数可以读0x10字节在栈上（覆盖memset地址时只用覆盖低6位即可）（建议自己调试时候把putchr下面的sleep逻辑patch掉，节省时间） 12345678910111213141516">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-10-25T12:37:58.000Z">
@@ -18,7 +18,7 @@
 <meta property="article:author" content="xrivendell7">
 <meta name="twitter:card" content="summary">
   
-    <link rel="alternate" href="/atom.xml" title="xrivendell7's ctf blog（佩奇小屋）" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="xrivendell7" type="application/atom+xml">
   
   
     <link rel="shortcut icon" href="/favicon.png">
@@ -45,7 +45,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">xrivendell7&#39;s ctf blog（佩奇小屋）</a>
+        <a href="/" id="logo">xrivendell7</a>
       </h1>
       
     </div>
