@@ -6,17 +6,19 @@
   
   <title>picoctf2022 | xrivendell7</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="include-web在script.js和style.css中藏了两部分的flag 1234567&#x2F;* style.css *&#x2F;body &#123;  background-color: lightblue;&#125;&#x2F;*  picoCTF&#123;1nclu51v17y_1of2_  *&#x2F;  script.js 1234567function greetings()&#123;  ale">
+  <meta name="description" content=".rvnrdgdxhvyv{zoom:80%;}  include-web在script.js和style.css中藏了两部分的flag 1234567&#x2F;* style.css *&#x2F;body &#123;  background-color: lightblue;&#125;&#x2F;*  picoCTF&#123;1nclu51v17y_1of2_  *&#x2F;  script.js 1234567funct">
 <meta property="og:type" content="article">
 <meta property="og:title" content="picoctf2022">
 <meta property="og:url" content="http://example.com/2022/04/09/2022picoctfctf/index.html">
 <meta property="og:site_name" content="xrivendell7">
-<meta property="og:description" content="include-web在script.js和style.css中藏了两部分的flag 1234567&#x2F;* style.css *&#x2F;body &#123;  background-color: lightblue;&#125;&#x2F;*  picoCTF&#123;1nclu51v17y_1of2_  *&#x2F;  script.js 1234567function greetings()&#123;  ale">
+<meta property="og:description" content=".rvnrdgdxhvyv{zoom:80%;}  include-web在script.js和style.css中藏了两部分的flag 1234567&#x2F;* style.css *&#x2F;body &#123;  background-color: lightblue;&#125;&#x2F;*  picoCTF&#123;1nclu51v17y_1of2_  *&#x2F;  script.js 1234567funct">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2022/04/09/2022picoctfctf/image-20251122120914524.png">
 <meta property="article:published_time" content="2022-04-09T03:07:10.000Z">
-<meta property="article:modified_time" content="2025-11-18T07:47:27.786Z">
+<meta property="article:modified_time" content="2025-11-22T05:01:35.055Z">
 <meta property="article:author" content="xrivendell7">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/04/09/2022picoctfctf/image-20251122120914524.png">
   
     <link rel="alternate" href="/atom.xml" title="xrivendell7" type="application/atom+xml">
   
@@ -95,7 +97,9 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="include-web"><a href="#include-web" class="headerlink" title="include-web"></a>include-web</h2><p>在script.js和style.css中藏了两部分的flag</p>
+        <style>.rvnrdgdxhvyv{zoom:80%;}</style><img src="/2022/04/09/2022picoctfctf/image-20251122120914524.png" class="rvnrdgdxhvyv" alt="image-20251122120914524">
+
+<h2 id="include-web"><a href="#include-web" class="headerlink" title="include-web"></a>include-web</h2><p>在script.js和style.css中藏了两部分的flag</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* style.css */</span></span><br><span class="line"><span class="selector-tag">body</span> &#123;</span><br><span class="line">  <span class="attribute">background-color</span>: lightblue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*  picoCTF&#123;1nclu51v17y_1of2_  */</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>script.js</p>
@@ -103,21 +107,21 @@
 
 
 
-<p>拼起来：<code>picoCTF{1nclu51v17y_1of2_f7w_2of2_f4593d9d}</code></p>
+<p>拼起来：<code>picoCTF&#123;1nclu51v17y_1of2_f7w_2of2_f4593d9d&#125;</code></p>
 <h2 id="inspect-HTML-web"><a href="#inspect-HTML-web" class="headerlink" title="inspect HTML-web"></a>inspect HTML-web</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.21.6</span><br><span class="line">Date: Thu, 07 Apr 2022 12:42:58 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 916</span><br><span class="line">Last-Modified: Tue, 15 Mar 2022 07:17:06 GMT</span><br><span class="line">Connection: close</span><br><span class="line">ETag: &quot;62303d72-394&quot;</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="attr">content</span>=<span class="string">&quot;ie=edge&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>On Histiaeus<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>On Histiaeus<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>However, according to Herodotus, Histiaeus was unhappy having to stay in</span><br><span class="line">       Susa, and made plans to return to his position as King of Miletus by </span><br><span class="line">       instigating a revolt in Ionia. In 499 BC, he shaved the head of his </span><br><span class="line">       most trusted slave, tattooed a message on his head, and then waited for </span><br><span class="line">       his hair to grow back. The slave was then sent to Aristagoras, who was </span><br><span class="line">       instructed to shave the slave&#x27;s head again and read the message, which </span><br><span class="line">       told him to revolt against the Persians.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span> Source: Wikipedia on Histiaeus <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--picoCTF&#123;1n5p3t0r_0f_h7ml_dd513514&#125;--&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>直接藏在http的返回respone里面</p>
-<p><code>picoCTF{1n5p3t0r_0f_h7ml_dd513514}</code></p>
+<p><code>picoCTF&#123;1n5p3t0r_0f_h7ml_dd513514&#125;</code></p>
 <h2 id="Local-Authority-web"><a href="#Local-Authority-web" class="headerlink" title="Local Authority-web"></a>Local Authority-web</h2><p>输入<code>username</code>和<code>password</code></p>
 <p>输入错误的请求在respone中有secure.js内容如下：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">checkPassword</span>(<span class="params">username, password</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>( username === <span class="string">&#x27;admin&#x27;</span> &amp;&amp; password === <span class="string">&#x27;strongPassword098765&#x27;</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>所以输入admin 和 strongPassword098765</p>
-<p>得到flag <code>picoCTF{j5_15_7r4n5p4r3n7_6309e949}</code></p>
+<p>得到flag <code>picoCTF&#123;j5_15_7r4n5p4r3n7_6309e949&#125;</code></p>
 <h2 id="Search-source-web"><a href="#Search-source-web" class="headerlink" title="Search source-web"></a>Search source-web</h2><p>藏在style.css中</p>
-<p><code>picoCTF{1nsp3ti0n_0f_w3bpag3s_227d64bd}</code></p>
+<p><code>picoCTF&#123;1nsp3ti0n_0f_w3bpag3s_227d64bd&#125;</code></p>
 <h2 id="Forbidden-Paths-web"><a href="#Forbidden-Paths-web" class="headerlink" title="Forbidden Paths-web"></a>Forbidden Paths-web</h2><p>相对路径读 <code>../../../../flag.txt</code></p>
-<p>直接读到flag <code>picoCTF{7h3_p47h_70_5ucc355_26b22ab3}</code></p>
+<p>直接读到flag <code>picoCTF&#123;7h3_p47h_70_5ucc355_26b22ab3&#125;</code></p>
 <h2 id="Powercookie-web"><a href="#Powercookie-web" class="headerlink" title="Powercookie-web"></a>Powercookie-web</h2><p>在cookie中有这样一条</p>
 <table>
 <thead>
@@ -148,7 +152,7 @@
 </tr>
 </tbody></table>
 <p>把isAdmin修改为1即可顺利登陆得到flag</p>
-<p><code>picoCTF{gr4d3_A_c00k13_dcb9f091}</code></p>
+<p><code>picoCTF&#123;gr4d3_A_c00k13_dcb9f091&#125;</code></p>
 <h2 id="Roboto-Sans-web"><a href="#Roboto-Sans-web" class="headerlink" title="Roboto Sans-web"></a>Roboto Sans-web</h2><p>robots.txt</p>
 <p><strong>robots协议也叫robots.txt</strong>（统一小写）是一种存放于网站根目录下的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/ASCII">ASCII</a>编码的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6">文本文件</a>，它通常告诉网络<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E">搜索引擎</a>的漫游器（又称<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%BD%91%E7%BB%9C%E8%9C%98%E8%9B%9B">网络蜘蛛</a>），此网站中的哪些内容是不应被搜索引擎的漫游器获取的，哪些是可以被漫游器获取的。因为一些系统中的URL是大小写敏感的，所以robots.txt的文件名应统一为小写。robots.txt应放置于网站的根目录下。如果想单独定义搜索引擎的漫游器访问子目录时的行为，那么可以将自定的设置合并到根目录下的robots.txt，或者使用robots<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%85%83%E6%95%B0%E6%8D%AE">元数据</a>（Metadata，又称元数据）。</p>
 <p>robots协议并不是一个规范，而只是约定俗成的，所以并不能保证网站的隐私。</p>
@@ -259,7 +263,7 @@
           </li>
         
           <li>
-            <a href="/2025/10/09/2025crewctf/">crewCTF2025</a>
+            <a href="/2025/10/09/2025crewctf/">crewCTF2025。</a>
           </li>
         
       </ul>

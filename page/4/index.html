@@ -575,7 +575,9 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="babykernel2"><a href="#babykernel2" class="headerlink" title="babykernel2"></a>babykernel2</h2><p>直接给了AAW和AAR</p>
+        <style>.xlowhwmrdrbu{zoom:80%;}</style><img src="/2019/11/09/2019hacklu/image-20251122133227303.png" class="xlowhwmrdrbu" alt="image-20251122133227303">
+
+<h2 id="babykernel2"><a href="#babykernel2" class="headerlink" title="babykernel2"></a>babykernel2</h2><p>直接给了AAW和AAR</p>
 <p>Each process has a struct called task_struct which is stored in kernel space, this structure contains a lot of information related to the process like scheduling information, memory descriptor(mm_struct) which has information about programs memory, parent process, linked list of child process, next task and more importantly it has a pointer to process privileges which is a structure named cred. So our task is to overwrite the identifiers( uid, gid, group id, fsuid, fsgid) to 0 which is nothing but a process with root privileges.</p>
 <ol>
 <li>Read <code>current_task</code> ptr address based on provided <code>System.map</code></li>
@@ -687,7 +689,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2019/10/10/2019flareonctf/">2019 FlareOntf</a>
+      <a class="p-name article-title" href="/2019/10/10/2019flareonctf/">2019 FlareOnctf</a>
     </h1>
   
 
@@ -695,24 +697,26 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id=""><a href="#" class="headerlink" title=""></a></h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">FireButton_Click</span>(<span class="params"><span class="built_in">object</span> **sender**, EventArgs **e**</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.codeTextBox.Text == <span class="string">&quot;RAINBOW&quot;</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">this</span>.fireButton.Visible = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">this</span>.codeTextBox.Visible = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">this</span>.armingCodeLabel.Visible = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">this</span>.invalidWeaponLabel.Visible = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">this</span>.WeaponCode = <span class="keyword">this</span>.codeTextBox.Text;</span><br><span class="line">    <span class="keyword">this</span>.victoryAnimationTimer.Start();</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">this</span>.invalidWeaponLabel.Visible = <span class="literal">true</span>;</span><br><span class="line">  <span class="keyword">this</span>.codeTextBox.Text = <span class="string">&quot;&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <style>.iocpnisowtqp{zoom:80%;}</style><img src="/2019/10/10/2019flareonctf/image-20251122134032818.png" class="iocpnisowtqp" alt="image-20251122134032818">
+
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">FireButton_Click</span>(<span class="params"><span class="built_in">object</span> **sender**, EventArgs **e**</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.codeTextBox.Text == <span class="string">&quot;RAINBOW&quot;</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">this</span>.fireButton.Visible = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">this</span>.codeTextBox.Visible = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">this</span>.armingCodeLabel.Visible = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">this</span>.invalidWeaponLabel.Visible = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">this</span>.WeaponCode = <span class="keyword">this</span>.codeTextBox.Text;</span><br><span class="line">    <span class="keyword">this</span>.victoryAnimationTimer.Start();</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">this</span>.invalidWeaponLabel.Visible = <span class="literal">true</span>;</span><br><span class="line">  <span class="keyword">this</span>.codeTextBox.Text = <span class="string">&quot;&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"> private bool isValidWeaponCode(string **s**)</span><br><span class="line">&#123;</span><br><span class="line">  char[] array = **s**.ToCharArray();</span><br><span class="line">  int length = **s**.Length;</span><br><span class="line">  for (int i = 0; i &lt; length; i++)</span><br><span class="line">  &#123;</span><br><span class="line">    char[] expr_19_cp_0 = array;</span><br><span class="line">    int expr_19_cp_1 = i;</span><br><span class="line">    expr_19_cp_0[expr_19_cp_1] ^= &#x27;A&#x27;;</span><br><span class="line">  &#125;</span><br><span class="line">  return array.*SequenceEqual*(new char[]</span><br><span class="line">  &#123;</span><br><span class="line">    &#x27;\u0003&#x27;,</span><br><span class="line">    &#x27; &#x27;,</span><br><span class="line">    &#x27;&amp;&#x27;,</span><br><span class="line">    &#x27;$&#x27;,</span><br><span class="line">    &#x27;-&#x27;,</span><br><span class="line">    &#x27;\u001e&#x27;,</span><br><span class="line">    &#x27;\u0002&#x27;,</span><br><span class="line">    &#x27; &#x27;,</span><br><span class="line">    &#x27;/&#x27;,</span><br><span class="line">    &#x27;/&#x27;,</span><br><span class="line">    &#x27;.&#x27;,</span><br><span class="line">    &#x27;/&#x27;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
 
 <pre><code>  private bool isValidWeaponCode(string **s**)
- {
+ &#123;
    char[] array = **s**.ToCharArray();
    int length = **s**.Length;
    for (int i = 0; i &lt; length; i++)
-   {
+   &#123;
      char[] expr_19_cp_0 = array;
      int expr_19_cp_1 = i;
      expr_19_cp_0[expr_19_cp_1] ^= &#39;A&#39;;
-   }
+   &#125;
    return array.*SequenceEqual*(new char[]
-   {
+   &#123;
      &#39;\u0003&#39;,
      &#39; &#39;,
      &#39;&amp;&#39;,
@@ -725,8 +729,8 @@
      &#39;/&#39;,
      &#39;.&#39;,
      &#39;/&#39;
-   });
- }
+   &#125;);
+ &#125;
 </code></pre>
 <p><code>Kitteh_save_galixy@flare-on.com</code></p>
 <h2 id="-1"><a href="#-1" class="headerlink" title=""></a></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __stdcall <span class="title function_">start</span><span class="params">(<span class="type">int</span> a1, <span class="type">int</span> a2, <span class="type">int</span> a3, <span class="type">int</span> a4)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> v4; <span class="comment">// eax</span></span><br><span class="line">  <span class="type">char</span> Text[<span class="number">128</span>]; <span class="comment">// [esp+0h] [ebp-84h]</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> v7; <span class="comment">// [esp+80h] [ebp-4h]</span></span><br><span class="line"></span><br><span class="line">  v4 = sub_D21160(Text, byte_D22008, <span class="number">0x3Cu</span>);</span><br><span class="line">  v7 = v4;</span><br><span class="line">  Text[v4] = <span class="number">0</span>;</span><br><span class="line">  MessageBoxA(<span class="number">0</span>, Text, Caption, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -740,7 +744,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2019/10/10/2019flareonctf/" data-id="cuidcfuYnHXv-fa7RTq4O8Zle" data-title="2019 FlareOntf" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2019/10/10/2019flareonctf/" data-id="cuidcfuYnHXv-fa7RTq4O8Zle" data-title="2019 FlareOnctf" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -1460,7 +1464,7 @@
           </li>
         
           <li>
-            <a href="/2025/10/09/2025crewctf/">crewCTF2025</a>
+            <a href="/2025/10/09/2025crewctf/">crewCTF2025。</a>
           </li>
         
       </ul>

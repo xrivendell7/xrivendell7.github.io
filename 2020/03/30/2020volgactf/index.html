@@ -6,19 +6,20 @@
   
   <title>VolgaCTF 2020 | xrivendell7</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="excellent-crackme-rev尼玛，用LibreOffice Calc打开exevl，vbs的密码自动解除…. 以后不用找工具了提取出vbscript，关键代码实际就在sub VolgaCTF中，手动解混淆后如下: 123456789101112131415161718192021Private Sub VolgaCTF()    Dim flag As String    Dim n">
+  <meta name="description" content=".goydnfxbtlgu{zoom:80%;}  excellent-crackme-rev尼玛，用LibreOffice Calc打开exevl，vbs的密码自动解除…. 以后不用找工具了提取出vbscript，关键代码实际就在sub VolgaCTF中，手动解混淆后如下: 123456789101112131415161718192021Private Sub VolgaCTF()    D">
 <meta property="og:type" content="article">
 <meta property="og:title" content="VolgaCTF 2020">
 <meta property="og:url" content="http://example.com/2020/03/30/2020volgactf/index.html">
 <meta property="og:site_name" content="xrivendell7">
-<meta property="og:description" content="excellent-crackme-rev尼玛，用LibreOffice Calc打开exevl，vbs的密码自动解除…. 以后不用找工具了提取出vbscript，关键代码实际就在sub VolgaCTF中，手动解混淆后如下: 123456789101112131415161718192021Private Sub VolgaCTF()    Dim flag As String    Dim n">
+<meta property="og:description" content=".goydnfxbtlgu{zoom:80%;}  excellent-crackme-rev尼玛，用LibreOffice Calc打开exevl，vbs的密码自动解除…. 以后不用找工具了提取出vbscript，关键代码实际就在sub VolgaCTF中，手动解混淆后如下: 123456789101112131415161718192021Private Sub VolgaCTF()    D">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/03/30/2020volgactf/image-20251122130258123.png">
 <meta property="og:image" content="http://tacqiniu.jagger2zr.com/20200331005140.png">
 <meta property="article:published_time" content="2020-03-30T03:07:10.000Z">
-<meta property="article:modified_time" content="2025-11-18T07:40:10.793Z">
+<meta property="article:modified_time" content="2025-11-22T05:03:01.081Z">
 <meta property="article:author" content="xrivendell7">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://tacqiniu.jagger2zr.com/20200331005140.png">
+<meta name="twitter:image" content="http://example.com/2020/03/30/2020volgactf/image-20251122130258123.png">
   
     <link rel="alternate" href="/atom.xml" title="xrivendell7" type="application/atom+xml">
   
@@ -97,7 +98,9 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="excellent-crackme-rev"><a href="#excellent-crackme-rev" class="headerlink" title="excellent-crackme-rev"></a>excellent-crackme-rev</h2><p>尼玛，用LibreOffice Calc打开exevl，vbs的密码自动解除…. 以后不用找工具了<br>提取出vbscript，关键代码实际就在<code>sub VolgaCTF</code>中，手动解混淆后如下:</p>
+        <style>.goydnfxbtlgu{zoom:80%;}</style><img src="/2020/03/30/2020volgactf/image-20251122130258123.png" class="goydnfxbtlgu" alt="image-20251122130258123">
+
+<h2 id="excellent-crackme-rev"><a href="#excellent-crackme-rev" class="headerlink" title="excellent-crackme-rev"></a>excellent-crackme-rev</h2><p>尼玛，用LibreOffice Calc打开exevl，vbs的密码自动解除…. 以后不用找工具了<br>提取出vbscript，关键代码实际就在<code>sub VolgaCTF</code>中，手动解混淆后如下:</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Private Sub <span class="title">VolgaCTF</span>()</span></span><br><span class="line"><span class="function">    Dim flag As String</span></span><br><span class="line"><span class="function">    Dim num As Long</span></span><br><span class="line"><span class="function">    Dim tmp As Long</span></span><br><span class="line"><span class="function">    Dim <span class="keyword">value</span> As Long</span></span><br><span class="line"><span class="function">    flag</span> = Range(<span class="string">&quot;L15&quot;</span>)</span><br><span class="line">    For i = <span class="number">1</span> <span class="function">To <span class="title">Len</span>(<span class="params">flag</span>)</span></span><br><span class="line"><span class="function">        num</span> = <span class="number">0</span></span><br><span class="line">        For j = <span class="number">1</span> <span class="function">To <span class="title">Len</span>(<span class="params">flag</span>)</span></span><br><span class="line"><span class="function">            tmp</span> = CInt(Cells(<span class="number">99</span> + i, <span class="number">99</span> + j).Value)</span><br><span class="line">            ch = Mid(flag, j, <span class="number">1</span>)</span><br><span class="line">            num = num + tmp * Asc(ch)</span><br><span class="line">            Next j</span><br><span class="line">            <span class="keyword">value</span> = CLng(Cells(<span class="number">99</span> + i, <span class="number">99</span> + Len(flag) + <span class="number">1</span>).Value)</span><br><span class="line">            If (<span class="keyword">value</span> &lt;&gt; num) <span class="function">Then</span></span><br><span class="line"><span class="function">                MsgBox <span class="title">mWfDCE1CY0a</span>(<span class="params"><span class="string">&quot;yrr9VuqqcETgYfVV&quot;</span></span>) &#x27;failed&#x27;</span></span><br><span class="line"><span class="function">                Exit Sub</span></span><br><span class="line"><span class="function">            End If</span></span><br><span class="line"><span class="function">            Next i</span></span><br><span class="line"><span class="function">    MsgBox <span class="title">mWfDCE1CY0a</span>(<span class="params"><span class="string">&quot;mq19VeLpVFr42H1d&quot;</span></span>)   &#x27;success&#x27;</span></span><br><span class="line"><span class="function">End Sub</span></span><br></pre></td></tr></table></figure>
 
 <p>可见,flag是在execl中的数据计算产生的，数据在(100,100) cell后，如下图:<br><img src="http://tacqiniu.jagger2zr.com/20200331005140.png"></p>
@@ -199,7 +202,7 @@
           </li>
         
           <li>
-            <a href="/2025/10/09/2025crewctf/">crewCTF2025</a>
+            <a href="/2025/10/09/2025crewctf/">crewCTF2025。</a>
           </li>
         
       </ul>

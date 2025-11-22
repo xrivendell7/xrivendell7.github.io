@@ -6,19 +6,20 @@
   
   <title>gyctf2020 | xrivendell7</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="吃鸡神器QT程序,详细分析了一下,通过字符串引用找到了failed_dialog slot函数: 1234567891011121314151617181920212223242526int __fastcall sub_401E00(int a1)&#123;  int v1; &#x2F;&#x2F; esi  volatile signed __int32 *v2; &#x2F;&#x2F; eax  signed __int32">
+  <meta name="description" content=".fkbipnyafyoc{zoom:80%;}  吃鸡神器QT程序,详细分析了一下,通过字符串引用找到了failed_dialog slot函数: 1234567891011121314151617181920212223242526int __fastcall sub_401E00(int a1)&#123;  int v1; &#x2F;&#x2F; esi  volatile signed __int32 *">
 <meta property="og:type" content="article">
 <meta property="og:title" content="gyctf2020">
-<meta property="og:url" content="http://example.com/2020/02/22/2020qyctf/index.html">
+<meta property="og:url" content="http://example.com/2020/02/22/2020gyctf/index.html">
 <meta property="og:site_name" content="xrivendell7">
-<meta property="og:description" content="吃鸡神器QT程序,详细分析了一下,通过字符串引用找到了failed_dialog slot函数: 1234567891011121314151617181920212223242526int __fastcall sub_401E00(int a1)&#123;  int v1; &#x2F;&#x2F; esi  volatile signed __int32 *v2; &#x2F;&#x2F; eax  signed __int32">
+<meta property="og:description" content=".fkbipnyafyoc{zoom:80%;}  吃鸡神器QT程序,详细分析了一下,通过字符串引用找到了failed_dialog slot函数: 1234567891011121314151617181920212223242526int __fastcall sub_401E00(int a1)&#123;  int v1; &#x2F;&#x2F; esi  volatile signed __int32 *">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/02/22/2020gyctf/image-20251122131928705.png">
 <meta property="og:image" content="http://tacqiniu.jagger2zr.com/Snipaste_2020-03-03_22-37-17.png">
 <meta property="article:published_time" content="2020-02-22T03:07:10.000Z">
-<meta property="article:modified_time" content="2025-11-18T07:39:22.197Z">
+<meta property="article:modified_time" content="2025-11-22T05:19:35.935Z">
 <meta property="article:author" content="xrivendell7">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://tacqiniu.jagger2zr.com/Snipaste_2020-03-03_22-37-17.png">
+<meta name="twitter:image" content="http://example.com/2020/02/22/2020gyctf/image-20251122131928705.png">
   
     <link rel="alternate" href="/atom.xml" title="xrivendell7" type="application/atom+xml">
   
@@ -75,9 +76,9 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-2020qyctf" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-2020gyctf" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2020/02/22/2020qyctf/" class="article-date">
+    <a href="/2020/02/22/2020gyctf/" class="article-date">
   <time class="dt-published" datetime="2020-02-22T03:07:10.000Z" itemprop="datePublished">2020-02-22</time>
 </a>
     
@@ -97,7 +98,9 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="吃鸡神器"><a href="#吃鸡神器" class="headerlink" title="吃鸡神器"></a>吃鸡神器</h2><p>QT程序,详细分析了一下,通过字符串引用找到了failed_dialog slot函数:</p>
+        <style>.fkbipnyafyoc{zoom:80%;}</style><img src="/2020/02/22/2020gyctf/image-20251122131928705.png" class="fkbipnyafyoc" alt="image-20251122131928705">
+
+<h2 id="吃鸡神器"><a href="#吃鸡神器" class="headerlink" title="吃鸡神器"></a>吃鸡神器</h2><p>QT程序,详细分析了一下,通过字符串引用找到了failed_dialog slot函数:</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> __fastcall <span class="title">sub_401E00</span><span class="params">(<span class="type">int</span> a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> v1; <span class="comment">// esi</span></span><br><span class="line">  <span class="keyword">volatile</span> <span class="type">signed</span> __int32 *v2; <span class="comment">// eax</span></span><br><span class="line">  <span class="type">signed</span> __int32 v3; <span class="comment">// et0</span></span><br><span class="line">  <span class="keyword">volatile</span> <span class="type">signed</span> __int32 *v4; <span class="comment">// eax</span></span><br><span class="line">  <span class="type">signed</span> __int32 v5; <span class="comment">// et0</span></span><br><span class="line">  <span class="type">int</span> v7; <span class="comment">// [esp-8h] [ebp-50h]</span></span><br><span class="line">  <span class="type">int</span> v8; <span class="comment">// [esp-4h] [ebp-4Ch]</span></span><br><span class="line">  <span class="type">int</span> v9; <span class="comment">// [esp+1Ch] [ebp-2Ch]</span></span><br><span class="line">  <span class="keyword">volatile</span> <span class="type">signed</span> __int32 *v10[<span class="number">7</span>]; <span class="comment">// [esp+2Ch] [ebp-1Ch]</span></span><br><span class="line"></span><br><span class="line">  v1 = a1;</span><br><span class="line">  v9 = *(_DWORD *)(*(_DWORD *)(a1 + <span class="number">24</span>) + <span class="number">4</span>);</span><br><span class="line">  <span class="built_in">ZNK11QMetaObject2trEPKcS1_i</span>(v10, &amp;dword_405008);</span><br><span class="line">  <span class="built_in">ZN6QLabel7setTextERK7QString</span>(v9, v10, v7, v8);</span><br><span class="line">  v2 = v10[<span class="number">0</span>];</span><br><span class="line">  <span class="keyword">if</span> ( !*v10[<span class="number">0</span>] || *v10[<span class="number">0</span>] != <span class="number">-1</span> &amp;&amp; (v3 = _InterlockedSub(v10[<span class="number">0</span>], <span class="number">1u</span>), v2 = v10[<span class="number">0</span>], !v3) )</span><br><span class="line">    <span class="built_in">ZN10QArrayData10deallocateEPS_jj</span>(v2, <span class="number">2</span>, <span class="number">4</span>);</span><br><span class="line">  <span class="built_in">ZNK11QMetaObject2trEPKcS1_i</span>(v10, &amp;dword_405008);</span><br><span class="line">  <span class="built_in">ZN7QWidget14setWindowTitleERK7QString</span>(v1, v10);</span><br><span class="line">  v4 = v10[<span class="number">0</span>];</span><br><span class="line">  <span class="keyword">if</span> ( !*v10[<span class="number">0</span>] || *v10[<span class="number">0</span>] != <span class="number">-1</span> &amp;&amp; (v5 = _InterlockedSub(v10[<span class="number">0</span>], <span class="number">1u</span>), v4 = v10[<span class="number">0</span>], !v5) )</span><br><span class="line">    <span class="built_in">ZN10QArrayData10deallocateEPS_jj</span>(v4, <span class="number">2</span>, <span class="number">4</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">ZN7QWidget4showEv</span>(v1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>通过槽函数的交叉应用,找到了Qt程序的singal to slot的func, 类似<code>qt_static_metacall</code>,<br>以active函数照猫画虎共找到3个Qt signal 与 slot, 如下:</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">v96 = sub_402150;</span><br><span class="line">v97 = <span class="number">0</span>;</span><br><span class="line">v94 = ZN15QAbstractButton7clickedEb;</span><br><span class="line">v54 = (_DWORD *)<span class="built_in">Znwj</span>(<span class="number">16</span>, v70);</span><br><span class="line">v55 = v96;</span><br><span class="line">v94 = ZN15QAbstractButton7clickedEb;</span><br><span class="line">v54 = (_DWORD *)<span class="built_in">Znwj</span>(<span class="number">16</span>, v70);</span><br><span class="line">v55 = v96;</span><br><span class="line">*v54 = <span class="number">1</span>;</span><br><span class="line">v54[<span class="number">1</span>] = sub_404A20;</span><br><span class="line">v54[<span class="number">2</span>] = v55;</span><br><span class="line">v54[<span class="number">3</span>] = v97;</span><br><span class="line"><span class="built_in">ZN7QObject11connectImplEPKS_PPvS1_S3_PN9QtPrivate15QSlotObjectBaseEN2Qt14ConnectionTypeEPKiPK11QMetaObject</span>(v75);</span><br><span class="line"><span class="built_in">ZN11QMetaObject10ConnectionD1Ev</span>(v75);</span><br><span class="line">v98 = sub_403240;</span><br><span class="line">v99 = <span class="number">0</span>;</span><br><span class="line">v100 = welcom_dialog;</span><br><span class="line">v101 = <span class="number">0</span>;</span><br><span class="line">v56 = (_DWORD *)<span class="built_in">Znwj</span>(<span class="number">16</span>, v53);</span><br><span class="line">v57 = v100;</span><br><span class="line">*v56 = <span class="number">1</span>;</span><br><span class="line">v56[<span class="number">1</span>] = sub_404910;</span><br><span class="line">v56[<span class="number">2</span>] = v57;</span><br><span class="line">v56[<span class="number">3</span>] = v101;</span><br><span class="line"><span class="built_in">ZN7QObject11connectImplEPKS_PPvS1_S3_PN9QtPrivate15QSlotObjectBaseEN2Qt14ConnectionTypeEPKiPK11QMetaObject</span>(v76);</span><br><span class="line"><span class="built_in">ZN11QMetaObject10ConnectionD1Ev</span>(v76);</span><br><span class="line">v102 = sub_403210;</span><br><span class="line">v103 = <span class="number">0</span>;</span><br><span class="line">v104 = failed_dialog;</span><br><span class="line">v105 = <span class="number">0</span>;</span><br><span class="line">v58 = (_DWORD *)<span class="built_in">Znwj</span>(<span class="number">16</span>, v74);</span><br><span class="line">v59 = v104;</span><br><span class="line">*v58 = <span class="number">1</span>;</span><br><span class="line">v58[<span class="number">1</span>] = sub_4049A0;</span><br><span class="line">v58[<span class="number">2</span>] = v59;</span><br><span class="line">v58[<span class="number">3</span>] = v105;</span><br><span class="line"><span class="built_in">ZN7QObject11connectImplEPKS_PPvS1_S3_PN9QtPrivate15QSlotObjectBaseEN2Qt14ConnectionTypeEPKiPK11QMetaObject</span>(v77);</span><br><span class="line"><span class="keyword">return</span> <span class="built_in">ZN11QMetaObject10ConnectionD1Ev</span>(v77);</span><br></pre></td></tr></table></figure>
@@ -132,7 +135,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2020/02/22/2020qyctf/" data-id="cuidzbBL8ZBb5P2Snsh5ZOob9" data-title="gyctf2020" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2020/02/22/2020gyctf/" data-id="cuidjGvvWx0i7s5CaPROSbfqm" data-title="gyctf2020" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -208,7 +211,7 @@
           </li>
         
           <li>
-            <a href="/2025/10/09/2025crewctf/">crewCTF2025</a>
+            <a href="/2025/10/09/2025crewctf/">crewCTF2025。</a>
           </li>
         
       </ul>
