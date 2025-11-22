@@ -4,22 +4,22 @@
   <meta charset="utf-8">
   
   
-  <title>qwb2025-re | xrivendell7</title>
+  <title>qwb2025-re。 | xrivendell7</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="ABabyChal1.&#x2F;ark_js_vm chal.abc  指的是运行 Ark 引擎 (Ark JavaScript VM) 来执行一个 编译好的字节码文件 chal.abc。 .abc 文件是 Ark ByteCode（方舟字节码）文件。 这是鸿蒙系统中由 arkcompile 或 es2abc 工具生成的中间格式。 Disassembler是ArkTS反汇编工具。如果需要分析方舟字节码文件">
 <meta property="og:type" content="article">
-<meta property="og:title" content="qwb2025-re">
+<meta property="og:title" content="qwb2025-re。">
 <meta property="og:url" content="http://example.com/2025/11/01/qwb2025-re/index.html">
 <meta property="og:site_name" content="xrivendell7">
 <meta property="og:description" content="ABabyChal1.&#x2F;ark_js_vm chal.abc  指的是运行 Ark 引擎 (Ark JavaScript VM) 来执行一个 编译好的字节码文件 chal.abc。 .abc 文件是 Ark ByteCode（方舟字节码）文件。 这是鸿蒙系统中由 arkcompile 或 es2abc 工具生成的中间格式。 Disassembler是ArkTS反汇编工具。如果需要分析方舟字节码文件">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/2025/11/01/qwb2025-re/image-20251019011550085.png">
+<meta property="og:image" content="http://example.com/2025/11/01/qwb2025-re/1.png">
 <meta property="og:image" content="http://example.com/2025/11/01/qwb2025-re/image-20251020140119923.png">
 <meta property="article:published_time" content="2025-11-01T02:15:47.000Z">
-<meta property="article:modified_time" content="2025-11-22T01:25:40.261Z">
+<meta property="article:modified_time" content="2025-11-22T02:36:02.132Z">
 <meta property="article:author" content="xrivendell7">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2025/11/01/qwb2025-re/image-20251019011550085.png">
+<meta name="twitter:image" content="http://example.com/2025/11/01/qwb2025-re/1.png">
   
     <link rel="alternate" href="/atom.xml" title="xrivendell7" type="application/atom+xml">
   
@@ -90,7 +90,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      qwb2025-re
+      qwb2025-re。
     </h1>
   
 
@@ -108,7 +108,7 @@
 <p>方舟字节码文件格式：</p>
 <p>字节码文件起始于<a target="_blank" rel="noopener" href="https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/arkts-bytecode-file-format-V5#header">Header</a>结构。文件中的所有结构均可以从Header出发，直接或间接地访问到。字节码文件中所有的多字节值均采用小端字节序。</p>
 <p>执行abc文件：</p>
-<style>.xhwqstfkfdlj{zoom: 80%;}</style><img src="/2025/11/01/qwb2025-re/image-20251019011550085.png" class="xhwqstfkfdlj" alt="image-20251019011550085">
+<style>.elylfgejtcmz{zoom: 80%;}</style><img src="/2025/11/01/qwb2025-re/1.png" class="elylfgejtcmz" alt="image-20251019011550085">
 
 <p><code>v80</code> 是一个 <code>std::vector&lt;std::string&gt;</code> 的底层数组，存储分割后的 ABC 文件路径（或者入口函数信息）。</p>
 <p>循环调用：panda::JSNApi::Execute(EcmaVM, path, &amp;entry, 0, &amp;set)</p>
@@ -124,7 +124,7 @@
 <p>用jadx-dev-all.jar打开.abc文件有大量报错，猜测修改了字节码。搜索找到一份字节码表： <a target="_blank" rel="noopener" href="https://www.seaxiang.com/blog/JdVvVU#menu_7">harmony 鸿蒙Ark Bytecode Fundamentals</a></p>
 <p>或者搜索⼀圈后找到函数 panda::ecmascript::RuntimeStubs::DebugPrintInstruction </p>
 <p>尝试在libark_jsruntime.so中搜索一个字节码名称，还真能找到：  </p>
-<style>.qeunkhpiqvkc{zoom:80%;}</style><img src="/2025/11/01/qwb2025-re/image-20251020140119923.png" class="qeunkhpiqvkc" alt="image-20251020140119923">
+<style>.irkcfmrwhxbt{zoom:80%;}</style><img src="/2025/11/01/qwb2025-re/image-20251020140119923.png" class="irkcfmrwhxbt" alt="image-20251020140119923">
 
 <p>根据这个字节码找到修改后的字节码表函数sub_1F73E90:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall sub_1F73E90(__int64 a1, unsigned __int8 **a2)</span><br><span class="line">&#123;</span><br><span class="line">  int v3; // eax</span><br><span class="line">  char *v4; // rsi</span><br><span class="line">  const char *v5; // rsi</span><br><span class="line">  const char *v6; // rsi</span><br><span class="line">  const char *v7; // rsi</span><br><span class="line">  const char *v8; // rsi</span><br><span class="line">  const char *v9; // rsi</span><br></pre></td></tr></table></figure>
@@ -178,7 +178,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2025/11/01/qwb2025-re/" data-id="cuid0P0QLBFLn499T3dQ--ylw" data-title="qwb2025-re" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2025/11/01/qwb2025-re/" data-id="cuid0P0QLBFLn499T3dQ--ylw" data-title="qwb2025-re。" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -192,7 +192,7 @@
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          n1ctfjunior-re
+          n1ctfjunior-re。
         
       </div>
     </a>
@@ -238,11 +238,11 @@
       <ul>
         
           <li>
-            <a href="/2025/11/18/n1ctfjunior-re/">n1ctfjunior-re</a>
+            <a href="/2025/11/18/n1ctfjunior-re/">n1ctfjunior-re。</a>
           </li>
         
           <li>
-            <a href="/2025/11/01/qwb2025-re/">qwb2025-re</a>
+            <a href="/2025/11/01/qwb2025-re/">qwb2025-re。</a>
           </li>
         
           <li>
