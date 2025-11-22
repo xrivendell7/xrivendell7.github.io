@@ -1349,7 +1349,7 @@
       
         <p>本次比赛只做出来两道Pwn HMI流水灯运行与实时数据监测。剩下两道Pwn在师傅指点下，赛后进行了复现。</p>
 <p>前面的两个Pwn是相对比较常规的</p>
-<h2 id="实时数据监测"><a href="#实时数据监测" class="headerlink" title="实时数据监测"></a>实时数据监测</h2><img src="2018网鼑杯ctf\image-20251122095728795.png" alt="img" />
+<h2 id="实时数据监测"><a href="#实时数据监测" class="headerlink" title="实时数据监测"></a>实时数据监测</h2><img src="2018网鼑杯ctf/image-20251122095728795.png" alt="img" style="zoom:67%;" />
 
 <p>实时数据监测是一道盲Pwn，利用格式化字符串的Blind Pwn。<br>首先，确定存在format string，随后我直接开始从0x8048000~0x8049000 dump 服务端的程序<br>由于程序每次需要等待20s左右才能触发一次format string 泄露一次地址，所以dump的格外慢，大约持续了4个小时….</p>
 <p>只有将Binary 拖入IDA，然而由于部分dump有误，无法解析成ELF,只能成binary….<br>将支离破碎的binary汇编源码理顺，得到以下的汇编:</p>
