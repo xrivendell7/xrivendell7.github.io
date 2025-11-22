@@ -14,7 +14,7 @@
 <meta property="og:description" content="4.1 看到什么题目关键信息列表： 下载附件后发现是rc4.exe文件 4.2 解题思路根据文件名，能想到涉及到RC4加密算法，所以先了解RC4加密算法才能做出来. 常见的rc4流程：  初始化密钥流 使用伪随机算法处理密钥流 将明文与密钥流逐字节异或，输出密文  接下来就是查壳，有壳脱，无壳直接丢进IDA进行静态调试分析，分析不出就用动态调试，再写脚本得出flag。（简单粗暴） 这个题其实只用静">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-11-26T08:07:31.000Z">
-<meta property="article:modified_time" content="2025-11-22T01:37:23.391Z">
+<meta property="article:modified_time" content="2025-11-22T03:30:23.965Z">
 <meta property="article:author" content="xrivendell7">
 <meta name="twitter:card" content="summary">
   
@@ -106,12 +106,13 @@
 </ol>
 <p>接下来就是查壳，有壳脱，无壳直接丢进IDA进行静态调试分析，分析不出就用动态调试，再写脚本得出flag。<del>（简单粗暴）</del></p>
 <p>这个题其实只用静态调试就能做出来，我第一遍就是这样，但是多少有些不尊重题目名字，于是用动态又做了一遍，发现动态简单许多，别有一番风味。</p>
+<p>“D:\readme\blog\source_posts\SWPUCTF2024[SWPUCTF 2024 秋季新生赛] 动态调试_1.png”</p>
 <h3 id="4-3-✅-尝试过程和结果记录"><a href="#4-3-✅-尝试过程和结果记录" class="headerlink" title="4.3 ✅ 尝试过程和结果记录"></a>4.3 ✅ 尝试过程和结果记录</h3><ol>
 <li><p>查壳，发现64位无壳</p>
-<style>.xnbbnejggebx{zoom:67%;}</style>
+<style>.ecftypmxqfze{zoom: 67%;}</style>
 </li>
 <li><p>丢进IDA，按下F5之后，观察和分析函数</p>
-<style>.woditfgrogal{zoom:67%;}</style>
+<style>.htwkemiqtptf{zoom:67%;}</style>
 
 <p>首先将用户输入存在V2中，v3是密钥key的长度， <code>rc4_init(s, key, v3)</code>就是初始化密钥的函数</p>
 <p><code>puts(&quot;....&quot;)/puts(&quot;..........&quot;)/.../puts(&quot;........................&quot;)</code>夹杂 <code>Sleep(500)</code> ，这部分是模拟正在处理（没有什么用，<del>没开会员的某度网盘估计就有一堆sleep</del>）</p>
@@ -120,25 +121,25 @@
 <li><p>首先得知道，如果要只凭静态调试得出flag，我们需要知道V1和key，还有详细的 <code>rc4_init(s, key, v3)</code>和 <code>rc4_crypt(s, v2, len)</code>流程，才能写出逆向脚本求得flag，所以我们一个个去寻找和分析。</p>
 </li>
 <li><p>待解密的V1和密钥key如下：</p>
-<style>.pjdcozqrspkv{zoom:67%;}</style>
+<style>.eqltbqkwjecu{zoom:67%;}</style>
 
-<style>.ykxodmycwius{zoom:67%;}</style>
+<style>.nupwelndejqn{zoom:67%;}</style>
 
 <p>我一般喜欢看16进制的界面（方便复制写脚本），如下：</p>
-<style>.ixaqdofqfwqg{zoom:67%;}</style>
+<style>.qfhpluwchkbh{zoom:67%;}</style>
 
-<style>.fdanqkybhxlr{zoom:67%;}</style>
+<style>.rbtoocnkaury{zoom:67%;}</style>
 
 <p>所以</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">V1=[</span><br><span class="line">    0xCF, 0xA0, 0xC7, 0x24, 0x93, 0xEC, 0x51, 0xFB, 0x5E, 0xA5, 0xEE, 0xC5,</span><br><span class="line">    0xE7, 0xEA, 0xBB, 0x4A, 0xE0, 0x6E, 0x16, 0x63, 0xF0, 0x1A, 0x91, 0x04,</span><br><span class="line">    0xC1, 0x7E, 0x3F, 0x2B, 0x4F, 0x53, 0xB0, 0x62, 0xA3, 0xA1, 0xCF, 0xC1,</span><br><span class="line">    0x73, 0x85, 0x5F, 0xEC, 0x14, 0xD8, 0xD4, 0xE2, 0x00</span><br><span class="line">]</span><br><span class="line">key = b&quot;ysyy_114514&quot;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>接下来便是 <code>rc4_init</code>和 <code>rc4_crypt</code>函数</p>
 <p><code>rc4_init</code>如下：</p>
-<style>.wtpckeccgdex{zoom:67%;}</style>
+<style>.etukhllukeuy{zoom:67%;}</style>
 
 <p>显然，这是RC4 加密算法中标准的<strong>密钥调度算法KSA</strong>，总结就是<code>s</code> 是一个被打乱的 0~255 的排列，它的顺序取决于提供的 <code>key</code>。这个数组 <code>s</code> 就是后续 RC4 加密&#x2F;解密过程中使用的密钥流的前身，也就是基础。</p>
 <p><code>rc4_crypt</code>如下：</p>
-<style>.jwypmektyxen{zoom:67%;}</style>
+<style>.rqlulcklkakr{zoom:67%;}</style>
 
 <p>这部分就是RC4的加密函数，但是和标准的RC4有区别，新增了 <code>+ key[k % strlen(key)]</code> 这部分，说明出题人偷偷加了点自己的东西，但不多，影响不大。</p>
 <p>流程是：</p>
@@ -167,21 +168,21 @@
 <li><p>那么开始吧（来自师傅llc43212）：</p>
 </li>
 <li><p>在<code>rc4_crypt</code> 按下F2设置断点，同时IDA进入调试模式</p>
-<style>.dojaufqtrbhg{zoom:67%;}</style>
+<style>.apkmogdlfpbr{zoom:67%;}</style>
 </li>
 <li><p>然后随便输入字符串，断点在<code>rc4_crypt</code> </p>
-<style>.bnbwrvvdcote{zoom:67%;}</style>
+<style>.lborsdcyrmsm{zoom:67%;}</style>
 </li>
 <li><p>然后一步步到 4019E8 停下. 接下来修改寄存器的值,</p>
 <p>首先是传入的 Len 变量, 我们把它修改成密文一样的长度44</p>
-<style>.hsdmhmckobft{zoom:67%;}</style>
+<style>.touneszvyqpt{zoom:67%;}</style>
 </li>
 <li><p>右键 <strong>R8</strong> 寄存器然后选择 <strong>Modify Value,</strong> 输入 <strong>2C</strong></p>
 <p>接下来我们返回源码窗口，找到 v1 的地址<br>然后将%rdx 修改为 v1 的地址</p>
-<style>.kkxovscgjyrd{zoom:67%;}</style>
+<style>.ybierbpjcfdu{zoom:67%;}</style>
 
 <p>然后返回源码窗口一步步调试. 再次进入 v1</p>
-<style>.xghhankowqqr{zoom:67%;}</style>
+<style>.kmvrotbyedoy{zoom:67%;}</style>
 
 <p>它的值已经被修改成flag，转成字符即可。</p>
 </li>

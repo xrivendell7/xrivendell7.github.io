@@ -416,7 +416,7 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <h3 id="online-unzipper"><a href="#online-unzipper" class="headerlink" title="online_unzipper"></a>online_unzipper</h3><p>普通用户：</p>
-<style>.orcgcxetdorw{zoom:80%;}</style><img src="/2025/10/10/junior/image-20250913225038087.png" class="orcgcxetdorw" alt="image-20250913225038087">
+<style>.auzxhikmqrvs{zoom:80%;}</style><img src="/2025/10/10/junior/4.png" class="auzxhikmqrvs" alt="image-20250913225038087">
 
 <p>admin：</p>
 <p><img src="/image-20250913231927943.png" alt="image-20250913231927943"></p>
@@ -451,7 +451,7 @@
 <p>上传之后，访问 <code>/download/root_link</code> 即可获取根目录文件列表，下载flagxxxxx.txt文件即可</p>
 <p>exp如下：</p>
 <h3 id="ping"><a href="#ping" class="headerlink" title="ping"></a>ping</h3><p>提供 <code>ping</code> 功能，用户输入合法 <code>ip</code> 地址，返回 <code>ping</code> 的结果</p>
-<p>;<style>.uboxceotoaoe{zoom:67%;}</style><img src="/2025/10/10/junior/image-20250913234250983.png" class="uboxceotoaoe" alt="image-20250913234250983"></p>
+<p>;<style>.puhigrmumpui{zoom:67%;}</style><img src="/2025/10/10/junior/image-20250913234250983.png" class="puhigrmumpui" alt="image-20250913234250983"></p>
 <p>根据Dockerfile提示，FLAG存放在根目录</p>
 <p>用户输入 <code>ip</code> 主要在 <code>run_ping</code> 函数中进行处理</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">run_ping</span>(<span class="params">ip_base64</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># 使用base64.b64decode解码得到decoded_ip，并进行一系列检查</span></span><br><span class="line">        decoded_ip = base64.b64decode(ip_base64).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> re.<span class="keyword">match</span>(<span class="string">r&#x27;^\d+\.\d+\.\d+\.\d+$&#x27;</span>, decoded_ip):</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> decoded_ip.count(<span class="string">&#x27;.&#x27;</span>) != <span class="number">3</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">all</span>(<span class="number">0</span> &lt;= <span class="built_in">int</span>(part) &lt; <span class="number">256</span> <span class="keyword">for</span> part <span class="keyword">in</span> decoded_ip.split(<span class="string">&#x27;.&#x27;</span>)):</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> ipaddress.ip_address(decoded_ip):</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(decoded_ip) &gt; <span class="number">15</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="comment"># 对为解码的 ip_base64 进行检查</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> re.<span class="keyword">match</span>(<span class="string">r&#x27;^[A-Za-z0-9+/=]+$&#x27;</span>, ip_base64):</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    <span class="comment"># 最后拼接到 command 的是 base64 -d ip_base64 的结构</span></span><br><span class="line">    command = <span class="string">f&quot;&quot;&quot;echo &quot;ping -c 1 $(echo &#x27;<span class="subst">&#123;ip_base64&#125;</span>&#x27; | base64 -d)&quot; | sh&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        process = subprocess.run(command, shell=<span class="literal">True</span>, check=<span class="literal">True</span>, capture_output=<span class="literal">True</span>, text=<span class="literal">True</span>)</span><br><span class="line">        ......</span><br></pre></td></tr></table></figure>
@@ -466,7 +466,7 @@
 <p>正常<code>ping</code> 一个<code>ip</code>地址，bp改包依次获取 根目录文件，查看<code>/flag</code>内容</p>
 <p><img src="/image-20250914001106283.png" alt="image-20250914001106283"></p>
 <h3 id="unfinished"><a href="#unfinished" class="headerlink" title="unfinished"></a>unfinished</h3><p>用户注册、登录之后，可写入笔记、然后提交审核，典型XSS</p>
-<style>.trqtqqpltkqq{zoom:80%;}</style><img src="/2025/10/10/junior/image-20250914001412760.png" class="trqtqqpltkqq" alt="image-20250914001412760">
+<style>.sbfsmcijtues{zoom:80%;}</style><img src="/2025/10/10/junior/image-20250914001412760.png" class="sbfsmcijtues" alt="image-20250914001412760">
 
 <p>flag存放在网页的cookie中</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">context.add_cookies([&#123;</span><br><span class="line">    <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;flag&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;value&#x27;</span>: flag_value,</span><br><span class="line">    <span class="string">&#x27;domain&#x27;</span>: <span class="string">&#x27;localhost&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;path&#x27;</span>: <span class="string">&#x27;/&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;httponly&#x27;</span>: <span class="literal">True</span></span><br><span class="line">&#125;])</span><br></pre></td></tr></table></figure>
@@ -490,7 +490,7 @@
 
 <p>访问 <code>/api/bio/user.css</code> ,生成缓存</p>
 <p>然后在访问 &#x2F;view ，触发机器人读取 payload，并将cookie值带出</p>
-<style>.tfvxwrprckim{zoom:80%;}</style><img src="/2025/10/10/junior/image-20250914005025512.png" class="tfvxwrprckim" alt="image-20250914005025512">
+<style>.baolqqvvkgkb{zoom:80%;}</style><img src="/2025/10/10/junior/image-20250914005025512.png" class="baolqqvvkgkb" alt="image-20250914005025512">
 
 <h3 id="peekafork"><a href="#peekafork" class="headerlink" title="peekafork"></a>peekafork</h3><p>处理HTTP请求，并根据请求的文件名和offset读取文件内容</p>
 <p>flag被写入某段内存中</p>
@@ -1150,12 +1150,13 @@
 </ol>
 <p>接下来就是查壳，有壳脱，无壳直接丢进IDA进行静态调试分析，分析不出就用动态调试，再写脚本得出flag。<del>（简单粗暴）</del></p>
 <p>这个题其实只用静态调试就能做出来，我第一遍就是这样，但是多少有些不尊重题目名字，于是用动态又做了一遍，发现动态简单许多，别有一番风味。</p>
+<p>“D:\readme\blog\source_posts\SWPUCTF2024[SWPUCTF 2024 秋季新生赛] 动态调试_1.png”</p>
 <h3 id="4-3-✅-尝试过程和结果记录"><a href="#4-3-✅-尝试过程和结果记录" class="headerlink" title="4.3 ✅ 尝试过程和结果记录"></a>4.3 ✅ 尝试过程和结果记录</h3><ol>
 <li><p>查壳，发现64位无壳</p>
-<style>.xnbbnejggebx{zoom:67%;}</style>
+<style>.ecftypmxqfze{zoom: 67%;}</style>
 </li>
 <li><p>丢进IDA，按下F5之后，观察和分析函数</p>
-<style>.woditfgrogal{zoom:67%;}</style>
+<style>.htwkemiqtptf{zoom:67%;}</style>
 
 <p>首先将用户输入存在V2中，v3是密钥key的长度， <code>rc4_init(s, key, v3)</code>就是初始化密钥的函数</p>
 <p><code>puts(&quot;....&quot;)/puts(&quot;..........&quot;)/.../puts(&quot;........................&quot;)</code>夹杂 <code>Sleep(500)</code> ，这部分是模拟正在处理（没有什么用，<del>没开会员的某度网盘估计就有一堆sleep</del>）</p>
@@ -1164,25 +1165,25 @@
 <li><p>首先得知道，如果要只凭静态调试得出flag，我们需要知道V1和key，还有详细的 <code>rc4_init(s, key, v3)</code>和 <code>rc4_crypt(s, v2, len)</code>流程，才能写出逆向脚本求得flag，所以我们一个个去寻找和分析。</p>
 </li>
 <li><p>待解密的V1和密钥key如下：</p>
-<style>.pjdcozqrspkv{zoom:67%;}</style>
+<style>.eqltbqkwjecu{zoom:67%;}</style>
 
-<style>.ykxodmycwius{zoom:67%;}</style>
+<style>.nupwelndejqn{zoom:67%;}</style>
 
 <p>我一般喜欢看16进制的界面（方便复制写脚本），如下：</p>
-<style>.ixaqdofqfwqg{zoom:67%;}</style>
+<style>.qfhpluwchkbh{zoom:67%;}</style>
 
-<style>.fdanqkybhxlr{zoom:67%;}</style>
+<style>.rbtoocnkaury{zoom:67%;}</style>
 
 <p>所以</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">V1=[</span><br><span class="line">    0xCF, 0xA0, 0xC7, 0x24, 0x93, 0xEC, 0x51, 0xFB, 0x5E, 0xA5, 0xEE, 0xC5,</span><br><span class="line">    0xE7, 0xEA, 0xBB, 0x4A, 0xE0, 0x6E, 0x16, 0x63, 0xF0, 0x1A, 0x91, 0x04,</span><br><span class="line">    0xC1, 0x7E, 0x3F, 0x2B, 0x4F, 0x53, 0xB0, 0x62, 0xA3, 0xA1, 0xCF, 0xC1,</span><br><span class="line">    0x73, 0x85, 0x5F, 0xEC, 0x14, 0xD8, 0xD4, 0xE2, 0x00</span><br><span class="line">]</span><br><span class="line">key = b&quot;ysyy_114514&quot;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>接下来便是 <code>rc4_init</code>和 <code>rc4_crypt</code>函数</p>
 <p><code>rc4_init</code>如下：</p>
-<style>.wtpckeccgdex{zoom:67%;}</style>
+<style>.etukhllukeuy{zoom:67%;}</style>
 
 <p>显然，这是RC4 加密算法中标准的<strong>密钥调度算法KSA</strong>，总结就是<code>s</code> 是一个被打乱的 0~255 的排列，它的顺序取决于提供的 <code>key</code>。这个数组 <code>s</code> 就是后续 RC4 加密&#x2F;解密过程中使用的密钥流的前身，也就是基础。</p>
 <p><code>rc4_crypt</code>如下：</p>
-<style>.jwypmektyxen{zoom:67%;}</style>
+<style>.rqlulcklkakr{zoom:67%;}</style>
 
 <p>这部分就是RC4的加密函数，但是和标准的RC4有区别，新增了 <code>+ key[k % strlen(key)]</code> 这部分，说明出题人偷偷加了点自己的东西，但不多，影响不大。</p>
 <p>流程是：</p>
@@ -1211,21 +1212,21 @@
 <li><p>那么开始吧（来自师傅llc43212）：</p>
 </li>
 <li><p>在<code>rc4_crypt</code> 按下F2设置断点，同时IDA进入调试模式</p>
-<style>.dojaufqtrbhg{zoom:67%;}</style>
+<style>.apkmogdlfpbr{zoom:67%;}</style>
 </li>
 <li><p>然后随便输入字符串，断点在<code>rc4_crypt</code> </p>
-<style>.bnbwrvvdcote{zoom:67%;}</style>
+<style>.lborsdcyrmsm{zoom:67%;}</style>
 </li>
 <li><p>然后一步步到 4019E8 停下. 接下来修改寄存器的值,</p>
 <p>首先是传入的 Len 变量, 我们把它修改成密文一样的长度44</p>
-<style>.hsdmhmckobft{zoom:67%;}</style>
+<style>.touneszvyqpt{zoom:67%;}</style>
 </li>
 <li><p>右键 <strong>R8</strong> 寄存器然后选择 <strong>Modify Value,</strong> 输入 <strong>2C</strong></p>
 <p>接下来我们返回源码窗口，找到 v1 的地址<br>然后将%rdx 修改为 v1 的地址</p>
-<style>.kkxovscgjyrd{zoom:67%;}</style>
+<style>.ybierbpjcfdu{zoom:67%;}</style>
 
 <p>然后返回源码窗口一步步调试. 再次进入 v1</p>
-<style>.xghhankowqqr{zoom:67%;}</style>
+<style>.kmvrotbyedoy{zoom:67%;}</style>
 
 <p>它的值已经被修改成flag，转成字符即可。</p>
 </li>
